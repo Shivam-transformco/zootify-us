@@ -1,0 +1,469 @@
+{% doc %}
+  @prompt
+    Add a "Select Device" dropdown/selector option inside the product Details block on the product page. The selector should allow customers to choose their device model (e.g., iPhone 17, iPhone 16, etc.) and should be visually prominent, fitting naturally within the product details section alongside other product information.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-device-selector-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    margin: {{ block.settings.spacing_top }}px 0 {{ block.settings.spacing_bottom }}px;
+  }
+
+  .ai-device-selector__label-{{ ai_gen_id }} {
+    display: block;
+    font-size: {{ block.settings.label_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.label_color }};
+    margin-bottom: 12px;
+    font-family: var(--font-subheading-family);
+  }
+
+  .ai-device-selector__wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+  }
+
+  .ai-device-selector__select-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 14px 40px 14px 16px;
+    font-size: {{ block.settings.dropdown_text_size }}px;
+    font-family: var(--font-body-family);
+    color: {{ block.settings.text_color }};
+    background-color: {{ block.settings.background_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    cursor: pointer;
+    appearance: none;
+    transition: all 0.2s ease;
+  }
+
+  .ai-device-selector__select-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.hover_background_color }};
+    border-color: {{ block.settings.hover_border_color }};
+  }
+
+  .ai-device-selector__select-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.focus_color }};
+    outline-offset: 2px;
+    border-color: {{ block.settings.focus_color }};
+  }
+
+  .ai-device-selector__icon-{{ ai_gen_id }} {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: {{ block.settings.text_color }};
+    transition: transform 0.2s ease;
+  }
+
+  .ai-device-selector__select-{{ ai_gen_id }}:focus ~ .ai-device-selector__icon-{{ ai_gen_id }} {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  .ai-device-selector__selected-value-{{ ai_gen_id }} {
+    margin-top: 12px;
+    padding: 12px 16px;
+    background-color: {{ block.settings.selected_bg_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    font-size: 14px;
+    color: {{ block.settings.selected_text_color }};
+    display: none;
+  }
+
+  .ai-device-selector__selected-value-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-device-selector__selected-label-{{ ai_gen_id }} {
+    font-weight: 600;
+    margin-right: 8px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-device-selector__label-{{ ai_gen_id }} {
+      font-size: {{ block.settings.label_size | times: 0.9 }}px;
+    }
+
+    .ai-device-selector__select-{{ ai_gen_id }} {
+      font-size: {{ block.settings.dropdown_text_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<device-selector-{{ ai_gen_id }}
+  class="ai-device-selector-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.label != blank %}
+    <label
+      for="device-select-{{ ai_gen_id }}"
+      class="ai-device-selector__label-{{ ai_gen_id }}"
+    >
+      {{ block.settings.label }}
+      {% if block.settings.show_required %}
+        <span aria-label="required">*</span>
+      {% endif %}
+    </label>
+  {% endif %}
+
+  <div class="ai-device-selector__wrapper-{{ ai_gen_id }}">
+    <select
+      id="device-select-{{ ai_gen_id }}"
+      class="ai-device-selector__select-{{ ai_gen_id }}"
+      {% if block.settings.show_required %}required{% endif %}
+      aria-label="{{ block.settings.label | default: 'Select your device' }}"
+    >
+      <option value="" disabled selected>{{ block.settings.placeholder }}</option>
+      
+      {% if block.settings.device_1 != blank %}
+        <option value="{{ block.settings.device_1 }}">{{ block.settings.device_1 }}</option>
+      {% endif %}
+      
+      {% if block.settings.device_2 != blank %}
+        <option value="{{ block.settings.device_2 }}">{{ block.settings.device_2 }}</option>
+      {% endif %}
+      
+      {% if block.settings.device_3 != blank %}
+        <option value="{{ block.settings.device_3 }}">{{ block.settings.device_3 }}</option>
+      {% endif %}
+      
+      {% if block.settings.device_4 != blank %}
+        <option value="{{ block.settings.device_4 }}">{{ block.settings.device_4 }}</option>
+      {% endif %}
+      
+      {% if block.settings.device_5 != blank %}
+        <option value="{{ block.settings.device_5 }}">{{ block.settings.device_5 }}</option>
+      {% endif %}
+      
+      {% if block.settings.device_6 != blank %}
+        <option value="{{ block.settings.device_6 }}">{{ block.settings.device_6 }}</option>
+      {% endif %}
+      
+      {% if block.settings.device_7 != blank %}
+        <option value="{{ block.settings.device_7 }}">{{ block.settings.device_7 }}</option>
+      {% endif %}
+      
+      {% if block.settings.device_8 != blank %}
+        <option value="{{ block.settings.device_8 }}">{{ block.settings.device_8 }}</option>
+      {% endif %}
+      
+      {% if block.settings.device_9 != blank %}
+        <option value="{{ block.settings.device_9 }}">{{ block.settings.device_9 }}</option>
+      {% endif %}
+      
+      {% if block.settings.device_10 != blank %}
+        <option value="{{ block.settings.device_10 }}">{{ block.settings.device_10 }}</option>
+      {% endif %}
+    </select>
+
+    <svg
+      class="ai-device-selector__icon-{{ ai_gen_id }}"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M5 7.5L10 12.5L15 7.5"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </div>
+
+  {% if block.settings.show_selected_value %}
+    <div
+      class="ai-device-selector__selected-value-{{ ai_gen_id }}"
+      id="selected-device-{{ ai_gen_id }}"
+      role="status"
+      aria-live="polite"
+    >
+      <span class="ai-device-selector__selected-label-{{ ai_gen_id }}">Selected device:</span>
+      <span id="selected-device-text-{{ ai_gen_id }}"></span>
+    </div>
+  {% endif %}
+</device-selector-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class DeviceSelector{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.select = this.querySelector('#device-select-{{ ai_gen_id }}');
+        this.selectedValueContainer = this.querySelector('#selected-device-{{ ai_gen_id }}');
+        this.selectedValueText = this.querySelector('#selected-device-text-{{ ai_gen_id }}');
+        
+        if (this.select) {
+          this.select.addEventListener('change', this.handleChange.bind(this));
+        }
+      }
+
+      handleChange(event) {
+        const selectedValue = event.target.value;
+        
+        if (this.selectedValueContainer && this.selectedValueText) {
+          if (selectedValue) {
+            this.selectedValueText.textContent = selectedValue;
+            this.selectedValueContainer.classList.add('active');
+          } else {
+            this.selectedValueContainer.classList.remove('active');
+          }
+        }
+
+        this.dispatchEvent(new CustomEvent('device-selected', {
+          detail: { device: selectedValue },
+          bubbles: true,
+          composed: true
+        }));
+      }
+    }
+
+    customElements.define('device-selector-{{ ai_gen_id }}', DeviceSelector{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Device selector",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Label"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label text",
+      "default": "Select your device"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Label size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "show_required",
+      "label": "Show required indicator",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Dropdown"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder text",
+      "default": "Choose a device model"
+    },
+    {
+      "type": "range",
+      "id": "dropdown_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "show_selected_value",
+      "label": "Show selected value below",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Device options"
+    },
+    {
+      "type": "text",
+      "id": "device_1",
+      "label": "Device 1",
+      "default": "iPhone 17 Pro Max"
+    },
+    {
+      "type": "text",
+      "id": "device_2",
+      "label": "Device 2",
+      "default": "iPhone 17 Pro"
+    },
+    {
+      "type": "text",
+      "id": "device_3",
+      "label": "Device 3",
+      "default": "iPhone 17"
+    },
+    {
+      "type": "text",
+      "id": "device_4",
+      "label": "Device 4",
+      "default": "iPhone 16 Pro Max"
+    },
+    {
+      "type": "text",
+      "id": "device_5",
+      "label": "Device 5",
+      "default": "iPhone 16 Pro"
+    },
+    {
+      "type": "text",
+      "id": "device_6",
+      "label": "Device 6",
+      "default": "iPhone 16"
+    },
+    {
+      "type": "text",
+      "id": "device_7",
+      "label": "Device 7",
+      "default": "iPhone 15 Pro Max"
+    },
+    {
+      "type": "text",
+      "id": "device_8",
+      "label": "Device 8",
+      "default": "iPhone 15 Pro"
+    },
+    {
+      "type": "text",
+      "id": "device_9",
+      "label": "Device 9",
+      "default": "iPhone 15"
+    },
+    {
+      "type": "text",
+      "id": "device_10",
+      "label": "Device 10"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "spacing_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "hover_background_color",
+      "label": "Hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "hover_border_color",
+      "label": "Hover border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "focus_color",
+      "label": "Focus",
+      "default": "#6ac857"
+    },
+    {
+      "type": "color",
+      "id": "selected_bg_color",
+      "label": "Selected value background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "selected_text_color",
+      "label": "Selected value text",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Device selector"
+    }
+  ]
+}
+{% endschema %}

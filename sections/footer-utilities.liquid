@@ -1,0 +1,236 @@
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+
+<div
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
+  {{ section.shopify_attributes }}
+>
+  <div
+    class="utilities spacing-style"
+    style="
+      {% render 'spacing-style', settings: section.settings %};
+      --border-width: {{ section.settings.divider_thickness }}px;
+      --gap: {{ section.settings.gap }}px;
+    "
+    data-testid="footer-utilities"
+  >
+
+    <!-- POLICY LINKS -->
+    <div class="footer-policy-list">
+      <ul>
+        {% for policy in shop.policies %}
+          {% if policy != blank %}
+            <li>
+              <a href="{{ policy.url }}">
+                {{ policy.title }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- COPYRIGHT -->
+    <div class="footer-copyright">
+      <p>
+        © {{ 'now' | date: '%Y' }} {{ shop.name }}, Powered by Shopify
+      </p>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="footer-contact">
+      <p>
+        For queries :
+        <a href="tel:+918392839383">Contact - 91 8392839383</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+{% stylesheet %}
+
+  /*  border-top: var(--border-width) solid rgba(0, 0, 0, 0.08); */
+
+  .utilities {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 30px 0;
+    text-align: center;
+    
+    color: #7d7d7d;
+  }
+
+  /* TEXT  */
+  .utilities,
+  .utilities a,
+  .utilities p,
+  .utilities span,
+  .utilities li {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #7d7d7d;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+    margin: 0;
+  }
+
+  /* POLICY LINKS */
+  .footer-policy-list {
+    width: 100%;
+  }
+
+  .footer-policy-list ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-policy-list li {
+    margin: 0;
+  }
+
+  .footer-policy-list a {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer-policy-list a:hover {
+    opacity: 0.7;
+  }
+
+  .footer-policy-list a::before,
+  .footer-policy-list a::after {
+    display: none !important;
+  }
+
+  /* COPYRIGHT */
+  .footer-copyright {
+    text-align: center;
+  }
+
+  /* CONTACT */
+  .footer-contact {
+    text-align: center;
+  }
+
+  .footer-contact a:hover {
+    opacity: 0.7;
+  }
+
+  /* MOBILE */
+  @media screen and (max-width: 749px) {
+    .utilities {
+      gap: 14px;
+      padding: 24px 16px;
+    }
+
+    .footer-policy-list ul {
+      gap: 18px;
+    }
+
+    .utilities,
+    .utilities a,
+    .utilities p,
+    .utilities span,
+    .utilities li {
+      font-size: 11px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Custom Footer Utilities",
+  "tag": "div",
+  "class": "footer-utilities",
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "Page Width"
+        },
+        {
+          "value": "full-width",
+          "label": "Full Width"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "divider_thickness",
+      "label": "Divider Thickness",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Footer Utilities",
+      "category": "Footer"
+    }
+  ]
+}
+{% endschema %}

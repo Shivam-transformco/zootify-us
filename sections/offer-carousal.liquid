@@ -1,0 +1,113 @@
+{% comment %}
+Offer Strip
+- Desktop grid
+- Mobile slider
+- Uses default theme spacing
+{% endcomment %}
+
+<section class="offer-strip section">
+  <div class="page-width">
+
+    <div class="offer-strip__grid" id="offer-slider-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="offer-card" {{ block.shopify_attributes }}>
+          <p class="offer-title">{{ block.settings.title }}</p>
+          <p class="offer-subtitle">{{ block.settings.subtitle }}</p>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+<style>
+
+/* GRID */
+.offer-strip__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* CARD */
+.offer-card {
+  background: #01161e;
+  border-radius: 4px;
+  padding: 18px 22px;
+}
+
+/* TEXT */
+.offer-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  letter-spacing: .5px;
+  color: #6ac857;
+}
+
+.offer-subtitle {
+  font-size: 13px;
+  color: #fff;
+  margin: 0;
+}
+
+/* MOBILE SLIDER */
+@media (max-width: 768px) {
+
+  .offer-strip__grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .offer-strip__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .offer-card {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+  }
+
+}
+
+</style>
+
+{% schema %}
+{
+  "name": "Offer Strip",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "offer",
+      "name": "Offer",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "EXTRA 10% OFF ON RBL BANK"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "Up to ₹500 on orders above ₹1999"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offer Strip",
+      "blocks": [
+        { "type": "offer" },
+        { "type": "offer" }
+      ]
+    }
+  ]
+}
+{% endschema %}

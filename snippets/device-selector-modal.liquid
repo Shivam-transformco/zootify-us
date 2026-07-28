@@ -1,0 +1,281 @@
+{% assign cover_model = product.metafields.custom.cover_model.value %}
+{% if cover_model %}
+
+<div class="dsm-selector-wrap">
+  <p class="dsm-label">Select Device</p>
+  <div class="dsm-selected-box" id="dsm-trigger">
+    <span id="dsm-current-label">
+      {% assign current_title = product.title %}
+      {% assign for_index = current_title | downcase | split: ' for ' %}
+      {% if for_index.size > 1 %}
+        {{ current_title | split: ' for ' | last }}
+      {% else %}
+        {{ current_title }}
+      {% endif %}
+    </span>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </div>
+</div>
+
+<div class="dsm-overlay" id="dsm-overlay">
+  <div class="dsm-modal">
+    <button class="dsm-close" id="dsm-close">&#x2715;</button>
+
+    {% comment %} Brand step hidden — only Apple for now {% endcomment %}
+    {% comment %}
+    <div id="dsm-step-brand">
+      <h3 class="dsm-heading">BRAND</h3>
+      <p class="dsm-subtext">Choose Brand</p>
+      <div class="dsm-divider"></div>
+      <ul class="dsm-list" id="dsm-brand-list">
+        <li class="dsm-loading">Loading...</li>
+      </ul>
+    </div>
+    {% endcomment %}
+
+    <div id="dsm-step-model">
+      {% comment %} Back button hidden — only one brand for now {% endcomment %}
+      {% comment %}
+      <div class="dsm-back" id="dsm-back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span id="dsm-brand-label" class="dsm-brand-active"></span>
+      </div>
+      {% endcomment %}
+      <h3 class="dsm-heading">MODEL</h3>
+      <p class="dsm-subtext">Choose Model</p>
+      <div class="dsm-divider"></div>
+      <ul class="dsm-list" id="dsm-model-list">
+        <li class="dsm-loading">Loading...</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.dsm-selector-wrap { margin: 12px 0 18px; }
+.dsm-selected-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  background: #fff;
+  color: #333;
+}
+.dsm-selected-box:hover { border-color: #aaa; }
+.dsm-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+.dsm-overlay.active { display: flex; }
+.dsm-modal {
+  background: #fff;
+  width: 90%;
+  max-width: 540px;
+  border-radius: 16px;
+  padding: 32px 28px 40px;
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(60px); opacity:0; }
+  to { transform: translateY(0); opacity:1; }
+}
+.dsm-close {
+  position: absolute;
+  top: 16px; right: 20px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer; color: #555;
+}
+.dsm-heading { font-size: 20px; font-weight: 700; margin: 0 0 4px; }
+.dsm-subtext { color: #aaa; font-size: 14px; margin: 0 0 12px; }
+.dsm-divider { border-top: 1px solid #eee; margin-bottom: 8px; }
+.dsm-list { list-style: none; padding: 0; margin: 0; }
+.dsm-list-item {
+  padding: 14px 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.dsm-list-item:hover { background: #f5f5f5; padding-left: 14px; }
+.dsm-list-item.active { background: #f0f0f0; font-weight: 600; }
+.dsm-loading { padding: 14px 8px; color: #aaa; font-size: 14px; }
+.dsm-brand-active { color: #2e7d32; font-size: 14px; font-weight: 500; }
+.dsm-back {
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer; margin-bottom: 16px; color: #555;
+}
+.dsm-back:hover { color: #000; }
+.dsm-label {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #333;
+  margin: 0 0 6px;
+}
+@media screen and (max-width: 749px) {
+  .dsm-label {
+    font-size: 16px !important;
+  }
+}
+</style>
+
+<script>
+(function() {
+  var coverModel = {{ cover_model | json }};
+  var currentHandle = {{ product.handle | json }};
+  var grouped = {};
+
+  function getBrand(title) {
+    var t = title.toLowerCase();
+    if (t.includes('iphone') || t.includes('ipad')) return 'Apple';
+    if (t.includes('samsung') || t.includes('galaxy')) return 'Samsung';
+    if (t.includes('pixel')) return 'Google';
+    if (t.includes('oneplus')) return 'OnePlus';
+    return 'Other';
+  }
+
+  function getModelOnly(title) {
+    var lower = title.toLowerCase();
+    var lastIndex = lower.lastIndexOf(' for ');
+    if (lastIndex !== -1) {
+      return title.slice(lastIndex + 5).trim();
+    }
+    return title;
+  }
+
+  // commented out — only needed when multiple brands exist
+  /*
+  function renderBrands() {
+    var list = document.getElementById('dsm-brand-list');
+    list.innerHTML = '';
+    Object.keys(grouped).forEach(function(brand) {
+      var li = document.createElement('li');
+      li.className = 'dsm-list-item';
+      li.textContent = brand;
+      li.addEventListener('click', function() { showModels(brand); });
+      list.appendChild(li);
+    });
+  }
+
+  function showBrands() {
+    document.getElementById('dsm-step-brand').style.display = 'block';
+    document.getElementById('dsm-step-model').style.display = 'none';
+  }
+  */
+
+  function fetchSiblings() {
+    // ✅ Return cached data if available
+    var cached = sessionStorage.getItem('dsm_' + coverModel);
+    if (cached) {
+      grouped = JSON.parse(cached);
+      showModels('Apple');
+      return;
+    }
+
+    var query = `{
+      products(first: 20, query: "metafield:custom.cover_model:${coverModel}") {
+        edges {
+          node {
+            title
+            handle
+          }
+        }
+      }
+    }`;
+
+    fetch('/api/2024-01/graphql.json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': '{{ shop.metafields.custom.storefront_token.value }}'
+      },
+      body: JSON.stringify({ query: query })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var edges = (data.data && data.data.products && data.data.products.edges) || [];
+
+      if (edges.length === 0) {
+        document.getElementById('dsm-model-list').innerHTML = '<li class="dsm-loading">No models found.</li>';
+        return;
+      }
+
+      grouped = {};
+      edges.forEach(function(edge) {
+        var p = edge.node;
+        var brand = getBrand(p.title);
+        if (!grouped[brand]) grouped[brand] = [];
+        grouped[brand].push({
+          title: getModelOnly(p.title),
+          url: '/products/' + p.handle,
+          handle: p.handle
+        });
+      });
+
+      // ✅ Save to session cache
+      sessionStorage.setItem('dsm_' + coverModel, JSON.stringify(grouped));
+
+      // Skip brand step — only Apple for now
+      // To re-enable: remove this line and uncomment renderBrands() below
+      showModels('Apple');
+      // renderBrands();
+
+    })
+    .catch(function() {
+      document.getElementById('dsm-model-list').innerHTML = '<li class="dsm-loading">Could not load models.</li>';
+    });
+  }
+
+  function showModels(brand) {
+    var list = document.getElementById('dsm-model-list');
+    list.innerHTML = '';
+    (grouped[brand] || []).forEach(function(p) {
+      var li = document.createElement('li');
+      li.className = 'dsm-list-item' + (p.handle === currentHandle ? ' active' : '');
+      li.textContent = p.title;
+      li.addEventListener('click', function() {
+        window.location.href = p.url;
+      });
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById('dsm-trigger').addEventListener('click', function() {
+    document.getElementById('dsm-overlay').classList.add('active');
+  });
+
+  document.getElementById('dsm-close').addEventListener('click', function() {
+    document.getElementById('dsm-overlay').classList.remove('active');
+  });
+
+  document.getElementById('dsm-overlay').addEventListener('click', function(e) {
+    if (e.target === this) document.getElementById('dsm-overlay').classList.remove('active');
+  });
+
+  // commented out — only needed when multiple brands exist
+  // document.getElementById('dsm-back').addEventListener('click', showBrands);
+
+  // ✅ Pre-fetch in background on page load
+  fetchSiblings();
+
+})();
+</script>
+
+{% endif %}

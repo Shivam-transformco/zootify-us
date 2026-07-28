@@ -1,0 +1,72 @@
+{%- comment -%}
+  Product metafield "custom.custom_image"
+  Type: file (image)
+  Desktop: vertical layout
+  Mobile: 2 per row (small phones), 3 per row (large phones)
+{%- endcomment -%}
+
+{% if product.metafields.custom.custom_image != blank %}
+  <div class="page-width">
+    <div class="static-div destop_view">
+      {% assign blocks = product.metafields.custom.custom_image.value %}
+      {% for item in blocks %}
+        <div class="static_image">
+          <img
+            src="{{ item | img_url: 'master' }}"
+            alt=""
+            loading="lazy"
+          >
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+<style>
+
+/* ================= DESKTOP (default vertical) ================= */
+.static-div {
+  width: 100%;
+}
+
+.static_image {
+  margin-bottom: 12px;
+}
+
+.static_image:last-child {
+  margin-bottom: 0;
+}
+
+.static_image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ================= SMALL PHONES (2 per row) ================= */
+@media (max-width: 480px) {
+  .static-div {
+    display: grid;
+    {% comment %} grid-template-columns: repeat(2, 1fr); {% endcomment %}
+    gap: 10px;
+  }
+
+  .static_image {
+    margin-bottom: 0;
+  }
+}
+
+/* ================= LARGE PHONES (3 per row) ================= */
+@media (min-width: 481px) and (max-width: 768px) {
+  .static-div {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .static_image {
+    margin-bottom: 0;
+  }
+}
+
+</style>

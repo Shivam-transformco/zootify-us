@@ -1,0 +1,901 @@
+{% if product.metafields.custom.upsell_products.value != blank %}
+
+<style>
+.buy-together-container{
+  width:100%;
+  margin-top:22px;
+}
+
+.buy-together-heading{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:14px;
+  color:#111;
+  margin-left:2px;
+}
+
+@media screen and (max-width: 749px) {
+  .buy-together-heading {
+    font-size: 16px !important;
+  }
+}
+
+.buy-together-list{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.buy-together-row{
+  width:100%;
+  border:1px solid #e2e2e2;
+  border-radius:14px;
+  background:#fff;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.buy-together-left{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex:1;
+  min-width:0;
+}
+
+.buy-together-image{
+  width:105px;
+  height:105px;
+  border-radius:10px;
+  overflow:hidden;
+  background:#f5f5f5;
+  flex-shrink:0;
+}
+
+.buy-together-image img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:10px;
+}
+
+.buy-together-info{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-width:0;
+  flex:1;
+}
+
+.buy-together-title{     /* current change */
+  font-size:16px;
+  font-weight:500;
+  line-height:1.3;
+  color:#111;
+  max-width:420px;
+}
+
+.buy-together-swatches{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.buy-together-swatch{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  border:1px solid #d5d5d5;
+  cursor:pointer;
+  padding:0;
+  transition:.2s ease;
+}
+
+.buy-together-swatch.active{
+  border:2px solid #111;
+  transform:scale(1.08);
+}
+
+.buy-together-price{  /* current change */
+  font-size:16px;
+  font-weight:600;
+  color:#000;
+}
+
+.buy-together-btn{
+  min-width:110px;
+  height:42px;
+  border:1.5px solid #111;
+  background:#fff;
+  color:#111;
+  border-radius:6px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.buy-together-btn:hover{
+  background:#111;
+  color:#fff;
+}
+
+/* POPUP */
+.upsell-popup-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+}
+
+.upsell-popup-overlay.active{
+  display:flex;
+}
+
+.upsell-popup{
+  width:920px;
+  max-width:94%;
+  background:#fff;
+  border-radius:10px;
+  padding:28px;
+  display:flex;
+  gap:30px;
+  position:relative;
+}
+
+.upsell-popup-left{
+  width:52%;
+  background:#f7f7f7;
+  border-radius:8px;
+  padding:30px;
+}
+
+.popup-slider-wrapper{
+  width:100%;
+  position:relative;
+  overflow:hidden;
+}
+
+.popup-slider{
+  display:flex;
+  transition:transform .35s ease;
+}
+
+.popup-slide{
+  min-width:100%;
+}
+
+.popup-slide img{
+  width:100%;
+  max-height:420px;
+  object-fit:contain;
+}
+
+.popup-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:none;
+  background:rgba(255,255,255,.95);
+  box-shadow:0 2px 10px rgba(0,0,0,.08);
+  font-size:28px;
+  cursor:pointer;
+  z-index:5;
+}
+
+.popup-prev{
+  left:10px;
+}
+
+.popup-next{
+  right:10px;
+}
+
+.popup-dots{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:14px;
+}
+
+.popup-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#cfcfcf;
+}
+
+.popup-dot.active{
+  background:#111;
+}
+
+.upsell-popup-right{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.upsell-popup-heading{
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:16px;
+}
+
+.upsell-popup-title{
+  font-size:20px;
+  line-height:1.3;
+  margin-bottom:10px;
+}
+
+.upsell-popup-price{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:20px;
+}
+
+.popup-swatches{
+  display:flex;
+  gap:12px;
+  margin-bottom:28px;
+  flex-wrap:wrap;
+}
+
+.popup-swatch{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  border:2px solid #e5e5e5;
+  cursor:pointer;
+  overflow:hidden;
+  background:#fff;
+  padding:4px;
+  transition:.2s ease;
+}
+
+.popup-swatch img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+.popup-swatch.active{
+  border-color:#111;
+  transform:scale(1.05);
+}
+
+.popup-cart-btn{
+  width:100%;
+  height:56px;
+  border:none;
+  background:#01161E;
+  color:#6AC857;
+  font-size:18px;
+  font-weight:300;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.popup-know-more{
+  width:100%;
+  height:56px;
+  border:1.5px solid #111;
+  background:#fff;
+  color:#111;
+  font-size:17px;
+  font-weight:300;
+  border-radius:6px;
+  cursor:pointer;
+  margin-top:14px;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.2s ease;
+}
+
+.popup-know-more:hover{
+  background:#111;
+  color:#fff;
+}
+
+.upsell-close{
+  position:absolute;
+  top:14px;
+  right:18px;
+  border:none;
+  background:none;
+  font-size:34px;
+  cursor:pointer;
+}
+
+@media(max-width:768px){
+
+  .buy-together-row{
+    padding:14px;
+    gap:12px;
+    align-items:flex-start;
+  }
+
+  .buy-together-left{
+    gap:12px;
+  }
+
+  .buy-together-image{
+    width:82px;
+    height:82px;
+  }
+
+  .buy-together-title{
+    font-size:14px;
+  }
+
+  .buy-together-price{
+    font-size:15px;
+  }
+
+  .buy-together-btn{
+    min-width:84px;
+    height:38px;
+    font-size:13px;
+  }
+
+  .buy-together-swatch{
+    width:18px;
+    height:18px;
+  }
+
+  .upsell-popup{
+    flex-direction:column;
+    padding:18px;
+  }
+
+  .upsell-popup-left{
+    width:100%;
+  }
+
+  .popup-swatch{
+    width:38px;
+    height:38px;
+  }
+}
+</style>
+
+<div class="buy-together-container">
+
+  <div class="buy-together-heading">
+    Pair Up With
+  </div>
+
+  <div class="buy-together-list">
+
+    {% assign wallet_found = false %}
+
+    {% for upsell_product in product.metafields.custom.upsell_products.value %}
+
+      {% assign title_lower = upsell_product.title | downcase %}
+
+      {% if title_lower contains 'magsafe wallet' or title_lower contains 'wallet' %}
+
+        {% unless wallet_found %}
+
+          {% assign wallet_found = true %}
+
+          <div class="buy-together-row">
+
+            <div class="buy-together-left">
+
+              <div class="buy-together-image">
+                <img
+                  id="walletMainImage"
+                  src="{{ upsell_product.featured_image | image_url: width: 600 }}"
+                  alt="{{ upsell_product.title }}"
+                >
+              </div>
+
+              <div class="buy-together-info">
+
+                <div class="buy-together-title" id="walletTitle">
+                  {{ upsell_product.title }}
+                </div>
+
+                <div class="buy-together-swatches">
+
+                  {% for wallet in product.metafields.custom.upsell_products.value %}
+
+                    {% assign wallet_title = wallet.title | downcase %}
+
+                    {% if wallet_title contains 'magsafe wallet' or wallet_title contains 'wallet' %}
+
+                      {% assign swatch = '#d9d9d9' %}
+
+                      {% if wallet_title contains 'sky blue' %}
+                        {% assign swatch = '#8ecfff' %}
+                      {% elsif wallet_title contains 'blue' %}
+                        {% assign swatch = '#1C253D' %}
+                      {% elsif wallet_title contains 'black' %}
+                        {% assign swatch = '#000000' %}
+                      {% elsif wallet_title contains 'pink' %}
+                        {% assign swatch = '#ead6d6' %}
+                      {% elsif wallet_title contains 'green' %}
+                        {% assign swatch = '#314842' %}
+                      {% elsif wallet_title contains 'navy' %}
+                        {% assign swatch = '#1f2d50' %}
+                      {% elsif wallet_title contains 'brown' %}
+                        {% assign swatch = '#8b5e3c' %}
+                      {% elsif wallet_title contains 'tan' %}
+                        {% assign swatch = '#c69c6d' %}
+                      {% elsif wallet_title contains 'white' %}
+                        {% assign swatch = '#ffffff' %}
+                      {% elsif wallet_title contains 'grey' or wallet_title contains 'gray' %}
+                        {% assign swatch = '#8b8b8b' %}
+                      {% endif %}
+
+                      <button
+                        type="button"
+                        class="buy-together-swatch walletSwatch {% if forloop.first %}active{% endif %}"
+                        style="background:{{ swatch }};"
+                        data-id="{{ wallet.selected_or_first_available_variant.id }}"
+                        data-title="{{ wallet.title }}"
+                        data-price="{{ wallet.price | money }}"
+                        data-image="{{ wallet.featured_image | image_url: width: 900 }}"
+                        data-url="{{ wallet.url }}"
+                        data-images='[
+                          {% for image in wallet.images %}
+                            "{{ image | image_url: width: 1400 }}"{% unless forloop.last %},{% endunless %}
+                          {% endfor %}
+                        ]'
+                      ></button>
+
+                    {% endif %}
+
+                  {% endfor %}
+
+                </div>
+
+                <div class="buy-together-price" id="walletPrice">
+                  {{ upsell_product.price | money }}
+                </div>
+
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              class="buy-together-btn addToCartBtn"
+              id="walletAddBtn"
+              data-id="{{ upsell_product.selected_or_first_available_variant.id }}"
+              data-url="{{ upsell_product.url }}"
+              data-title="{{ upsell_product.title }}"
+              data-price="{{ upsell_product.price | money }}"
+              data-image="{{ upsell_product.featured_image | image_url: width: 900 }}"
+              data-images='[
+                {% for image in upsell_product.images %}
+                  "{{ image | image_url: width: 1400 }}"{% unless forloop.last %},{% endunless %}
+                {% endfor %}
+              ]'
+            >
+              + ADD
+            </button>
+
+          </div>
+
+        {% endunless %}
+
+      {% else %}
+
+        <div class="buy-together-row">
+
+          <div class="buy-together-left">
+
+            <div class="buy-together-image">
+              <img
+                src="{{ upsell_product.featured_image | image_url: width: 600 }}"
+                alt="{{ upsell_product.title }}"
+              >
+            </div>
+
+            <div class="buy-together-info">
+
+              <div class="buy-together-title">
+                {{ upsell_product.title }}
+              </div>
+
+              <div class="buy-together-price">
+                {{ upsell_product.price | money }}
+              </div>
+
+            </div>
+
+          </div>
+
+          <button
+            type="button"
+            class="buy-together-btn addToCartBtn"
+            data-id="{{ upsell_product.selected_or_first_available_variant.id }}"
+            data-url="{{ upsell_product.url }}"
+            data-title="{{ upsell_product.title }}"
+            data-price="{{ upsell_product.price | money }}"
+            data-image="{{ upsell_product.featured_image | image_url: width: 900 }}"
+            data-images='[
+              {% for image in upsell_product.images %}
+                "{{ image | image_url: width: 1400 }}"{% unless forloop.last %},{% endunless %}
+              {% endfor %}
+            ]'
+          >
+            + ADD
+          </button>
+
+        </div>
+
+      {% endif %}
+
+    {% endfor %}
+
+  </div>
+
+</div>
+
+<!-- POPUP -->
+<div class="upsell-popup-overlay" id="upsellPopup">
+
+  <div class="upsell-popup">
+
+    <button class="upsell-close" id="upsellClose">
+      ×
+    </button>
+
+    <div class="upsell-popup-left">
+
+      <div class="popup-slider-wrapper">
+
+        <div class="popup-slider" id="popupSlider"></div>
+
+        <button class="popup-arrow popup-prev" id="popupPrev">
+          ‹
+        </button>
+
+        <button class="popup-arrow popup-next" id="popupNext">
+          ›
+        </button>
+
+        <div class="popup-dots" id="popupDots"></div>
+
+      </div>
+
+    </div>
+
+    <div class="upsell-popup-right">
+
+      <div class="upsell-popup-heading">
+        STACK-ON ACCESSORIES
+      </div>
+
+      <div class="upsell-popup-title" id="popupTitle"></div>
+
+      <div class="upsell-popup-price" id="popupPrice"></div>
+
+      <div class="popup-swatches" id="popupSwatches"></div>
+
+      <button id="popupAddBtn" class="popup-cart-btn">
+        ADD TO CART
+      </button>
+
+      <a
+        id="popupKnowMore"
+        class="popup-know-more"
+        href="#"
+      >
+        KNOW MORE
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+
+  let currentSlide = 0;
+
+  const walletSwatches = document.querySelectorAll('.walletSwatch');
+  const walletImage = document.getElementById('walletMainImage');
+  const walletTitle = document.getElementById('walletTitle');
+  const walletPrice = document.getElementById('walletPrice');
+  const walletAddBtn = document.getElementById('walletAddBtn');
+
+  /* MAIN WALLET SWATCH CHANGE */
+  if(walletSwatches.length){
+
+    walletSwatches.forEach((swatch)=>{
+
+      swatch.addEventListener('click', function(){
+
+        walletSwatches.forEach(item=>{
+          item.classList.remove('active');
+        });
+
+        this.classList.add('active');
+
+        if(walletImage){
+          walletImage.src = this.dataset.image;
+        }
+
+        if(walletTitle){
+          walletTitle.innerHTML = this.dataset.title;
+        }
+
+        if(walletPrice){
+          walletPrice.innerHTML = this.dataset.price;
+        }
+
+        if(walletAddBtn){
+          walletAddBtn.dataset.id = this.dataset.id;
+          walletAddBtn.dataset.url = this.dataset.url;
+          walletAddBtn.dataset.title = this.dataset.title;
+          walletAddBtn.dataset.price = this.dataset.price;
+          walletAddBtn.dataset.image = this.dataset.image;
+          walletAddBtn.dataset.images = this.dataset.images;
+        }
+
+      });
+
+    });
+
+  }
+
+  /* OPEN POPUP */
+  document.querySelectorAll('.addToCartBtn').forEach((btn)=>{
+
+    btn.addEventListener('click', function(){
+
+      const popup = document.getElementById('upsellPopup');
+
+      popup.classList.add('active');
+
+      document.getElementById('popupTitle').innerHTML =
+        this.dataset.title;
+
+      document.getElementById('popupPrice').innerHTML =
+        this.dataset.price;
+
+      document.getElementById('popupKnowMore').href =
+        this.dataset.url;
+
+      document.getElementById('popupAddBtn')
+        .dataset.id = this.dataset.id;
+
+      const popupSlider =
+        document.getElementById('popupSlider');
+
+      const popupDots =
+        document.getElementById('popupDots');
+
+      popupSlider.innerHTML = '';
+      popupDots.innerHTML = '';
+
+      const images =
+        JSON.parse(this.dataset.images || '[]');
+
+      if(images.length){
+
+        images.forEach((img,index)=>{
+
+          popupSlider.innerHTML += `
+            <div class="popup-slide">
+              <img src="${img}">
+            </div>
+          `;
+
+          popupDots.innerHTML += `
+            <div class="popup-dot ${index === 0 ? 'active' : ''}"></div>
+          `;
+
+        });
+
+      }
+
+      currentSlide = 0;
+
+      popupSlider.style.transform =
+        `translateX(0%)`;
+
+      /* POPUP SWATCHES */
+      const popupSwatches =
+        document.getElementById('popupSwatches');
+
+      popupSwatches.innerHTML = '';
+
+      const row =
+        this.closest('.buy-together-row');
+
+      const rowSwatches =
+        row.querySelectorAll('.walletSwatch');
+
+      if(rowSwatches.length){
+
+        rowSwatches.forEach((swatch)=>{
+
+          const popupBtn =
+            document.createElement('button');
+
+          popupBtn.className =
+            'popup-swatch ' +
+            (swatch.classList.contains('active')
+              ? 'active'
+              : '');
+
+          popupBtn.innerHTML =
+            `<img src="${swatch.dataset.image}">`;
+
+          popupBtn.dataset.id =
+            swatch.dataset.id;
+
+          popupBtn.dataset.title =
+            swatch.dataset.title;
+
+          popupBtn.dataset.price =
+            swatch.dataset.price;
+
+          popupBtn.dataset.url =
+            swatch.dataset.url;
+
+          popupBtn.dataset.images =
+            swatch.dataset.images;
+
+          popupBtn.addEventListener('click', function(){
+
+            document.querySelectorAll('.popup-swatch')
+              .forEach(item=>{
+                item.classList.remove('active');
+              });
+
+            this.classList.add('active');
+
+            document.getElementById('popupTitle').innerHTML =
+              this.dataset.title;
+
+            document.getElementById('popupPrice').innerHTML =
+              this.dataset.price;
+
+            document.getElementById('popupKnowMore').href =
+              this.dataset.url;
+
+            document.getElementById('popupAddBtn')
+              .dataset.id = this.dataset.id;
+
+            const newImages =
+              JSON.parse(this.dataset.images || '[]');
+
+            popupSlider.innerHTML = '';
+            popupDots.innerHTML = '';
+
+            newImages.forEach((img,index)=>{
+
+              popupSlider.innerHTML += `
+                <div class="popup-slide">
+                  <img src="${img}">
+                </div>
+              `;
+
+              popupDots.innerHTML += `
+                <div class="popup-dot ${index === 0 ? 'active' : ''}"></div>
+              `;
+
+            });
+
+            currentSlide = 0;
+
+            popupSlider.style.transform =
+              `translateX(0%)`;
+
+          });
+
+          popupSwatches.appendChild(popupBtn);
+
+        });
+
+      }
+
+    });
+
+  });
+
+  /* SLIDER */
+  function updateSlider(){
+
+    const slider =
+      document.getElementById('popupSlider');
+
+    const dots =
+      document.querySelectorAll('.popup-dot');
+
+    slider.style.transform =
+      `translateX(-${currentSlide * 100}%)`;
+
+    dots.forEach(dot=>{
+      dot.classList.remove('active');
+    });
+
+    if(dots[currentSlide]){
+      dots[currentSlide].classList.add('active');
+    }
+
+  }
+
+  document.getElementById('popupPrev').onclick = function(){
+
+    const slides =
+      document.querySelectorAll('.popup-slide');
+
+    if(!slides.length) return;
+
+    currentSlide =
+      (currentSlide - 1 + slides.length) %
+      slides.length;
+
+    updateSlider();
+
+  };
+
+  document.getElementById('popupNext').onclick = function(){
+
+    const slides =
+      document.querySelectorAll('.popup-slide');
+
+    if(!slides.length) return;
+
+    currentSlide =
+      (currentSlide + 1) %
+      slides.length;
+
+    updateSlider();
+
+  };
+
+  /* CLOSE */
+  document.getElementById('upsellClose').onclick = function(){
+
+    document.getElementById('upsellPopup')
+      .classList.remove('active');
+
+  };
+
+  /* FINAL ADD TO CART */
+  document.getElementById('popupAddBtn').onclick = function(){
+
+    const variantId = this.dataset.id;
+
+    fetch('/cart/add.js', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        id: variantId,
+        quantity:1
+      })
+    })
+    .then(response=>response.json())
+    .then(()=>{
+      location.reload();
+    });
+
+  };
+
+});
+</script>
+
+{% endif %}

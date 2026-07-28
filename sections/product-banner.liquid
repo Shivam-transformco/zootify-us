@@ -1,0 +1,582 @@
+{% comment %}
+  Product Banner - Desktop & Mobile metafield images with Native Slider
+{% endcomment %}
+
+
+
+{%- assign desktop_images = product.metafields.custom.desktop_banner.value -%}
+{%- assign mobile_images  = product.metafields.custom.mobile_banner.value  -%}
+
+{% if desktop_images.size > 0 or mobile_images.size > 0 %}
+
+<section class="product-banner-{{ section.id }}">
+
+  {% comment %} DESKTOP SLIDER {% endcomment %}
+  {% if desktop_images.size > 0 %}
+    <div class="banner-wrap banner-desktop">
+      <div class="banner-slider" id="banner-desktop-{{ section.id }}" data-autoplay="{{ section.settings.autoplay }}" data-speed="{{ section.settings.autoplay_speed }}">
+        <div class="banner-track">
+          {% for img in desktop_images %}
+            <div class="banner-slide">
+              <img
+                src="{{ img | image_url: width: 1800 }}"
+                srcset="
+                  {{ img | image_url: width: 800 }} 800w,
+                  {{ img | image_url: width: 1200 }} 1200w,
+                  {{ img | image_url: width: 1600 }} 1600w,
+                  {{ img | image_url: width: 1800 }} 1800w,
+                  {{ img | image_url: width: 2400 }} 2400w
+                "
+                sizes="100vw"
+                alt="{{ product.title | escape }} banner {{ forloop.index }}"
+                width="{{ img.width }}"
+                height="{{ img.height }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}"
+                decoding="async"
+                class="banner-img"
+              >
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if desktop_images.size > 1 %}
+          <button class="banner-arrow banner-prev" aria-label="Previous slide" type="button">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="banner-arrow banner-next" aria-label="Next slide" type="button">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div class="banner-dots">
+            {% for img in desktop_images %}
+              <button class="banner-dot{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}" type="button"></button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% comment %} MOBILE SLIDER {% endcomment %}
+  {% if mobile_images.size > 0 %}
+    <div class="banner-wrap banner-mobile">
+      <div class="banner-slider" id="banner-mobile-{{ section.id }}" data-autoplay="{{ section.settings.autoplay }}" data-speed="{{ section.settings.autoplay_speed }}">
+        <div class="banner-track">
+          {% for img in mobile_images %}
+            <div class="banner-slide">
+              <img
+                src="{{ img | image_url: width: 800 }}"
+                srcset="
+                  {{ img | image_url: width: 400 }} 400w,
+                  {{ img | image_url: width: 600 }} 600w,
+                  {{ img | image_url: width: 800 }} 800w,
+                  {{ img | image_url: width: 1000 }} 1000w
+                "
+                sizes="100vw"
+                alt="{{ product.title | escape }} mobile banner {{ forloop.index }}"
+                width="{{ img.width }}"
+                height="{{ img.height }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}"
+                decoding="async"
+                class="banner-img"
+              >
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if mobile_images.size > 1 %}
+          <div class="banner-dots">
+            {% for img in mobile_images %}
+              <button class="banner-dot{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}" type="button"></button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+</section>
+
+<style>
+  .product-banner-{{ section.id }} {
+    width: 100%;
+    margin: 0 auto;
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  .product-banner-{{ section.id }} .banner-slider {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .product-banner-{{ section.id }} .banner-track {
+    display: flex;
+    width: 100%;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+
+  .product-banner-{{ section.id }} .banner-slide {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+
+  .product-banner-{{ section.id }} .banner-img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ARROWS */
+  .product-banner-{{ section.id }} .banner-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    opacity: 0;
+    transition: opacity 0.3s ease, background 0.3s ease;
+    z-index: 2;
+  }
+
+  .product-banner-{{ section.id }} .banner-slider:hover .banner-arrow {
+    opacity: 1;
+  }
+
+  .product-banner-{{ section.id }} .banner-arrow:hover {
+    background: #fff;
+  }
+
+  .product-banner-{{ section.id }} .banner-arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .product-banner-{{ section.id }} .banner-prev { left: 16px; }
+  .product-banner-{{ section.id }} .banner-next { right: 16px; }
+
+  /* DOTS */
+  .product-banner-{{ section.id }} .banner-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 2;
+  }
+
+  .product-banner-{{ section.id }} .banner-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .product-banner-{{ section.id }} .banner-dot.is-active {
+    background: #fff;
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  /* DESKTOP / MOBILE TOGGLE */
+  .product-banner-{{ section.id }} .banner-desktop { display: block; }
+  .product-banner-{{ section.id }} .banner-mobile  { display: none; }
+
+  @media (max-width: 767px) {
+    .product-banner-{{ section.id }} .banner-desktop { display: none; }
+    .product-banner-{{ section.id }} .banner-mobile  { display: block; }
+
+    .product-banner-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    }
+
+    .product-banner-{{ section.id }} .banner-arrow {
+      display: none;
+    }
+
+    .product-banner-{{ section.id }} .banner-dots {
+      bottom: 12px;
+    }
+
+    .product-banner-{{ section.id }} .banner-dot {
+      width: 6px;
+      height: 6px;
+    }
+
+    .product-banner-{{ section.id }} .banner-dot.is-active {
+      width: 18px;
+    }
+  }
+
+  /* Fallbacks */
+  {% if desktop_images.size > 0 and mobile_images.size == 0 %}
+    @media (max-width: 767px) {
+      .product-banner-{{ section.id }} .banner-desktop { display: block; }
+    }
+  {% endif %}
+
+  {% if mobile_images.size > 0 and desktop_images.size == 0 %}
+    .product-banner-{{ section.id }} .banner-mobile { display: block; }
+  {% endif %}
+</style>
+
+<script>
+  (function () {
+    function initBannerSlider(sliderId) {
+      var slider = document.getElementById(sliderId);
+      if (!slider) return;
+
+      if (slider.dataset.initialized === 'true') return;
+      slider.dataset.initialized = 'true';
+
+      var track = slider.querySelector('.banner-track');
+      var originalSlides = Array.prototype.slice.call(slider.querySelectorAll('.banner-slide'));
+      var dots = slider.querySelectorAll('.banner-dot');
+      var prevBtn = slider.querySelector('.banner-prev');
+      var nextBtn = slider.querySelector('.banner-next');
+      var total = originalSlides.length;
+
+      if (total < 2) return;
+
+      /*
+        Infinite loop fix:
+        Add clone of last slide before first slide,
+        and clone of first slide after last slide.
+      */
+      var firstClone = originalSlides[0].cloneNode(true);
+      var lastClone = originalSlides[total - 1].cloneNode(true);
+
+      firstClone.classList.add('banner-slide-clone');
+      lastClone.classList.add('banner-slide-clone');
+
+      track.insertBefore(lastClone, originalSlides[0]);
+      track.appendChild(firstClone);
+
+      var current = 1;
+      var autoplay = slider.dataset.autoplay === 'true';
+      var speed = parseInt(slider.dataset.speed, 10) || 4000;
+      var autoplayTimer = null;
+      var isHovering = false;
+      var isAnimating = false;
+
+      // Touch/drag state
+      var startX = 0;
+      var currentX = 0;
+      var isDragging = false;
+      var dragOffset = 0;
+
+      function setPosition(withTransition) {
+        track.style.transition = withTransition
+          ? 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          : 'none';
+
+        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+      }
+
+      function getRealIndex() {
+        if (current === 0) return total - 1;
+        if (current === total + 1) return 0;
+        return current - 1;
+      }
+
+      function updateDots() {
+        var realIndex = getRealIndex();
+
+        dots.forEach(function (dot, i) {
+          if (i === realIndex) {
+            dot.classList.add('is-active');
+          } else {
+            dot.classList.remove('is-active');
+          }
+        });
+      }
+
+      function goTo(position) {
+        if (isAnimating) return;
+
+        isAnimating = true;
+        current = position;
+        setPosition(true);
+        updateDots();
+      }
+
+      function next() {
+        goTo(current + 1);
+      }
+
+      function prev() {
+        goTo(current - 1);
+      }
+
+      track.addEventListener('transitionend', function () {
+        isAnimating = false;
+
+        // If we reached cloned first slide, silently jump to real first slide
+        if (current === total + 1) {
+          current = 1;
+          setPosition(false);
+        }
+
+        // If we reached cloned last slide, silently jump to real last slide
+        if (current === 0) {
+          current = total;
+          setPosition(false);
+        }
+
+        updateDots();
+      });
+
+      function startAutoplay() {
+        if (!autoplay) return;
+        stopAutoplay();
+
+        autoplayTimer = setInterval(function () {
+          if (!isHovering && !isDragging) next();
+        }, speed);
+      }
+
+      function stopAutoplay() {
+        if (autoplayTimer) {
+          clearInterval(autoplayTimer);
+          autoplayTimer = null;
+        }
+      }
+
+      // Arrow controls
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+          nextBtn && nextBtn.blur();
+          prev();
+          startAutoplay();
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+          nextBtn.blur();
+          next();
+          startAutoplay();
+        });
+      }
+
+      // Dot controls
+      dots.forEach(function (dot) {
+        dot.addEventListener('click', function () {
+          var i = parseInt(this.dataset.index, 10);
+          goTo(i + 1);
+          startAutoplay();
+        });
+      });
+
+      // Pause on hover
+      slider.addEventListener('mouseenter', function () {
+        isHovering = true;
+      });
+
+      slider.addEventListener('mouseleave', function () {
+        isHovering = false;
+      });
+
+      // Touch / Drag
+      function onStart(e) {
+        if (isAnimating) return;
+
+        isDragging = true;
+        startX = e.touches ? e.touches[0].clientX : e.clientX;
+        track.style.transition = 'none';
+      }
+
+      function onMove(e) {
+        if (!isDragging) return;
+
+        currentX = e.touches ? e.touches[0].clientX : e.clientX;
+        dragOffset = currentX - startX;
+
+        var slideWidth = slider.offsetWidth;
+        var percentage = (dragOffset / slideWidth) * 100;
+
+        track.style.transform = 'translateX(calc(-' + (current * 100) + '% + ' + percentage + '%))';
+      }
+
+      function onEnd() {
+        if (!isDragging) return;
+
+        isDragging = false;
+        track.style.transition = '';
+
+        var threshold = slider.offsetWidth * 0.15;
+
+        if (dragOffset > threshold) {
+          prev();
+        } else if (dragOffset < -threshold) {
+          next();
+        } else {
+          current = current;
+          setPosition(true);
+        }
+
+        dragOffset = 0;
+      }
+
+      track.addEventListener('touchstart', onStart, { passive: true });
+      track.addEventListener('touchmove', onMove, { passive: true });
+      track.addEventListener('touchend', onEnd);
+
+      track.addEventListener('mousedown', function (e) {
+        e.preventDefault();
+        onStart(e);
+      });
+
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onEnd);
+
+      // Prevent image drag
+      originalSlides.forEach(function (slide) {
+        var img = slide.querySelector('img');
+        if (img) {
+          img.addEventListener('dragstart', function (e) {
+            e.preventDefault();
+          });
+        }
+      });
+
+      // Pause when tab not visible
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+          stopAutoplay();
+        } else {
+          startAutoplay();
+        }
+      });
+
+      // Start from the real first slide, because cloned last slide is now at position 0
+      setPosition(false);
+      updateDots();
+      startAutoplay();
+    }
+
+    function ready(fn) {
+      if (document.readyState !== 'loading') fn();
+      else document.addEventListener('DOMContentLoaded', fn);
+    }
+
+    ready(function () {
+      initBannerSlider('banner-desktop-{{ section.id }}');
+      initBannerSlider('banner-mobile-{{ section.id }}');
+    });
+  })();
+</script>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product Banner",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Add images via Product → Metafields → 'Desktop Banner' and 'Mobile Banner'."
+    },
+    {
+      "type": "header",
+      "content": "Slider Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay speed",
+      "min": 2000,
+      "max": 5000,
+      "step": 500,
+      "unit": "ms",
+      "default": 4000
+    },
+    {
+      "type": "header",
+      "content": "Desktop Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top padding (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Banner",
+      "category": "Product"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  }
+}
+{% endschema %}

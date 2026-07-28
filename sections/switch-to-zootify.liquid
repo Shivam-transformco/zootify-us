@@ -1,0 +1,253 @@
+{%- style -%}
+  .zootify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_mb }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mb }}px;
+    max-width: 100%;
+    margin: 0 auto;
+    
+   
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+  }
+
+  .zootify-section-{{ section.id }} * {
+    box-sizing: border-box;
+  }
+
+  .zootify-section-{{ section.id }} .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: #000000;
+    letter-spacing: 0.5px;
+  }
+
+  /* Mobile Layout - Stacks elements */
+  .zootify-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .zootify-images-container {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .zootify-image-wrapper {
+    flex: 1;
+    position: relative;
+  }
+
+  .zootify-image-wrapper img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+    aspect-ratio: 1 / 1;
+  }
+
+  .zootify-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .zootify-content h3 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: #000000;
+  }
+
+  .zootify-content p {
+    font-size: 15px;
+    line-height: 1.5;
+    color: #555555;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  /* Desktop Responsive Styles matching Screenshot 2026-05-31 131033_2.jpg */
+  @media screen and (min-width: 769px) {
+    .zootify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_dt }}px;
+      padding-bottom: {{ section.settings.padding_bottom_dt }}px;
+      max-width: {{ section.settings.max_width }}px;
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+
+    .zootify-section-{{ section.id }} .section-title {
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
+
+    /* Creates a strict 3-column structural layout */
+    .zootify-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr; 
+      gap: 40px;
+      align-items: center;
+    }
+
+    .zootify-images-container {
+      gap: 20px;
+    }
+
+    .zootify-image-wrapper img {
+      aspect-ratio: 4 / 5; /* Matches the vertical orientation of desktop assets */
+    }
+
+    .zootify-content {
+      padding-right: 20px;
+      justify-content: center;
+    }
+
+    .zootify-content h3 {
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+
+    .zootify-content p {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #666666;
+    }
+  }
+{%- endstyle -%}
+
+<div class="zootify-section-{{ section.id }}">
+  {%- if section.settings.main_heading != blank -%}
+    <h2 class="section-title">{{ section.settings.main_heading }}</h2>
+  {%- endif -%}
+
+  <div class="zootify-grid">
+    <!-- Desktop Left/Center Split Content Area -->
+    <div class="zootify-images-container">
+      <div class="zootify-image-wrapper">
+        {%- if section.settings.image_1 != blank -%}
+          {{ section.settings.image_1 | image_url: width: 1000 | image_tag: loading: 'lazy', sizes: '(min-width: 769px) 35vw, 50vw' }}
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+      <div class="zootify-image-wrapper">
+        {%- if section.settings.image_2 != blank -%}
+          {{ section.settings.image_2 | image_url: width: 1000 | image_tag: loading: 'lazy', sizes: '(min-width: 769px) 35vw, 50vw' }}
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Desktop Right Content Area -->
+    <div class="zootify-content">
+      {%- if section.settings.block_heading != blank -%}
+        <h3>{{ section.settings.block_heading }}</h3>
+      {%- endif -%}
+      {%- if section.settings.block_text != blank -%}
+        <p>{{ section.settings.block_text }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Zootify Switch Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "main_heading",
+      "label": "Main Section Heading",
+      "default": "SWITCH TO ZOOTIFY"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "First Image (Left)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Second Image (Right)"
+    },
+    {
+      "type": "text",
+      "id": "block_heading",
+      "label": "Block Heading",
+      "default": "Work Ready"
+    },
+    {
+      "type": "textarea",
+      "id": "block_text",
+      "label": "Block Description",
+      "default": "We create and bring accessories that empower modern professionals to work with style and confidence."
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum Section Width",
+      "default": 1350
+    },
+    {
+      "type": "range",
+      "id": "padding_top_dt",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop Padding Top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_dt",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop Padding Bottom",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mb",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile Padding Top",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mb",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile Padding Bottom",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zootify Switch Section"
+    }
+  ]
+}
+{% endschema %}

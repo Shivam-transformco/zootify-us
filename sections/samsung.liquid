@@ -1,0 +1,80 @@
+{% schema %}
+{
+  "name": "Samsung Models Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Choose Your Samsung Model"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "model",
+      "name": "Samsung Model",
+      "settings": [
+        {
+          "type": "text",
+          "id": "model_name",
+          "label": "Model Name",
+          "default": "iPhone 16"
+        },
+        {
+          "type": "url",
+          "id": "model_link",
+          "label": "Model Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Samsung Models Section",
+      "blocks": []
+    }
+  ]
+}
+{% endschema %}
+
+<div class="iphone-models-wrapper">
+  <h2>{{ section.settings.heading }}</h2>
+  <hr>
+  <p>Choose Model</p>
+  <ul class="model-list">
+    {% for block in section.blocks %}
+      <li>
+        <a href="{{ block.settings.model_link }}" class="model-link">
+          {{ block.settings.model_name }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<style>
+  .iphone-models-wrapper {
+    padding: 30px;
+    font-family: Arial, sans-serif;
+  }
+  .model-list {
+    list-style: none;
+    padding: 0;
+  }
+  .model-list li {
+    margin: 8px 0;
+  }
+  .model-link {
+    display: inline-block;
+    padding: 10px 14px;
+    background-color: #f4f4f4;
+    color: #000;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+  .model-link:hover {
+    background-color: #e0e0e0;
+  }
+</style>

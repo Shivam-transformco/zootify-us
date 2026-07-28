@@ -1,0 +1,118 @@
+<div class="circular-filters-wrapper">
+  <div class="circular-filters">
+    {% for block in section.blocks %}
+      {% assign filter_tag = block.settings.tag | handleize %}
+
+      <a href="{{ collection.url }}/{{ filter_tag }}" class="filter-circle">
+
+        {% if block.settings.image %}
+          <img
+            src="{{ block.settings.image | image_url: width: 200 }}"
+            alt="{{ block.settings.title }}"
+          >
+        {% endif %}
+
+        <span>{{ block.settings.title }}</span>
+
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+.circular-filters-wrapper{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+/* Desktop */
+.circular-filters{
+  display:flex;
+  gap:14px;
+  padding:10px 0;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+/* Mobile slider */
+@media (max-width: 768px){
+  .circular-filters{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    justify-content:flex-start;
+    -webkit-overflow-scrolling: touch;
+    padding-left:12px;
+  }
+
+  /* Hide scrollbar */
+  .circular-filters::-webkit-scrollbar{
+    display:none;
+  }
+  .circular-filters{
+    -ms-overflow-style:none;
+    scrollbar-width:none;
+  }
+}
+
+
+.filter-circle{
+  text-align:center;
+  min-width:80px;
+  text-decoration:none;
+  color:inherit;
+}
+
+.filter-circle img{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  margin:0 auto 6px;
+}
+
+.filter-circle span{
+  font-size:12px;
+  display:block;
+}
+
+.filter-circle img{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
+  margin:0 auto 6px;
+  padding:3px;
+  background:#fff;
+  transition: all 0.25s ease;
+}
+
+.filter-circle:hover img{
+  box-shadow: 0 0 0 2px #6ac857;
+}
+
+
+</style>
+
+{% schema %}
+{
+  "name": "Circular Filters",
+  "templates": ["collection"],
+  "blocks": [
+    {
+      "type": "filter",
+      "name": "Filter Item",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "tag", "label": "Product Tag" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Circular Filters" }
+  ]
+}
+{% endschema %}

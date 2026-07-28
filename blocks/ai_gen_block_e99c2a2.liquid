@@ -1,0 +1,289 @@
+{% doc %}
+  @prompt
+    Create a sticky announcement bar fixed to the very top of the viewport using position: fixed, top: 0, and a high z-index (e.g. 1000) so it always stays above the header while scrolling. Include customizable text, background color, text color, optional link, and a dismiss button. Also add padding-top to the body equal to the bar height so content is not hidden behind it.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-announcement-bar-{{ ai_gen_id }} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    color: {{ block.settings.text_color }};
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.padding_vertical }}px {{ block.settings.padding_horizontal }}px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-announcement-bar-{{ ai_gen_id }}.ai-announcement-bar-hidden-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-announcement-bar-content-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .ai-announcement-bar-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.font_size }}px;
+    margin: 0;
+  }
+
+  .ai-announcement-bar-link-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  .ai-announcement-bar-link-{{ ai_gen_id }}:hover {
+    opacity: 0.8;
+  }
+
+  .ai-announcement-bar-close-{{ ai_gen_id }} {
+    position: absolute;
+    right: {{ block.settings.padding_horizontal }}px;
+    background: none;
+    border: none;
+    color: {{ block.settings.text_color }};
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+
+  .ai-announcement-bar-close-{{ ai_gen_id }}:hover {
+    opacity: 1;
+  }
+
+  .ai-announcement-bar-close-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  body.ai-announcement-bar-active-{{ ai_gen_id }} {
+    padding-top: var(--ai-announcement-bar-height-{{ ai_gen_id }}, 0px);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-announcement-bar-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_vertical | times: 0.8 }}px {{ block.settings.padding_horizontal | times: 0.8 }}px;
+    }
+
+    .ai-announcement-bar-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size | times: 0.9 }}px;
+    }
+
+    .ai-announcement-bar-close-{{ ai_gen_id }} {
+      right: {{ block.settings.padding_horizontal | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<announcement-bar-{{ ai_gen_id }}
+  class="ai-announcement-bar-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+  data-bar-id="{{ ai_gen_id }}"
+>
+  <div class="ai-announcement-bar-content-{{ ai_gen_id }}">
+    {% if block.settings.announcement_text != blank %}
+      <p class="ai-announcement-bar-text-{{ ai_gen_id }}">
+        {{ block.settings.announcement_text }}
+        {% if block.settings.link_url != blank and block.settings.link_text != blank %}
+          <a href="{{ block.settings.link_url }}" class="ai-announcement-bar-link-{{ ai_gen_id }}">
+            {{ block.settings.link_text }}
+          </a>
+        {% endif %}
+      </p>
+    {% endif %}
+  </div>
+
+  {% if block.settings.show_dismiss_button %}
+    <button
+      class="ai-announcement-bar-close-{{ ai_gen_id }}"
+      aria-label="Close announcement"
+      type="button"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  {% endif %}
+</announcement-bar-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnnouncementBar{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.barId = this.dataset.barId;
+        this.storageKey = `announcement-bar-dismissed-${this.barId}`;
+      }
+
+      connectedCallback() {
+        if (this.isDismissed()) {
+          this.hide();
+          return;
+        }
+
+        this.setupCloseButton();
+        this.updateBodyPadding();
+        document.body.classList.add(`ai-announcement-bar-active-${this.barId}`);
+
+        window.addEventListener('resize', () => this.updateBodyPadding());
+      }
+
+      disconnectedCallback() {
+        document.body.classList.remove(`ai-announcement-bar-active-${this.barId}`);
+        document.body.style.removeProperty(`--ai-announcement-bar-height-${this.barId}`);
+      }
+
+      setupCloseButton() {
+        const closeButton = this.querySelector('.ai-announcement-bar-close-{{ ai_gen_id }}');
+        if (closeButton) {
+          closeButton.addEventListener('click', () => this.dismiss());
+        }
+      }
+
+      updateBodyPadding() {
+        const height = this.offsetHeight;
+        document.body.style.setProperty(`--ai-announcement-bar-height-${this.barId}`, `${height}px`);
+      }
+
+      dismiss() {
+        this.saveDismissed();
+        this.hide();
+        document.body.classList.remove(`ai-announcement-bar-active-${this.barId}`);
+        document.body.style.removeProperty(`--ai-announcement-bar-height-${this.barId}`);
+      }
+
+      hide() {
+        this.classList.add('ai-announcement-bar-hidden-{{ ai_gen_id }}');
+      }
+
+      saveDismissed() {
+        try {
+          localStorage.setItem(this.storageKey, 'true');
+        } catch (e) {
+          console.warn('Could not save announcement bar state');
+        }
+      }
+
+      isDismissed() {
+        try {
+          return localStorage.getItem(this.storageKey) === 'true';
+        } catch (e) {
+          return false;
+        }
+      }
+    }
+
+    customElements.define('announcement-bar-{{ ai_gen_id }}', AnnouncementBar{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Sticky announcement bar",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "default": "Free shipping on orders over ₹999"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link text"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dismiss_button",
+      "label": "Show dismiss button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky announcement bar"
+    }
+  ]
+}
+{% endschema %}

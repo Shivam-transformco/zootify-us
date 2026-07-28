@@ -1,0 +1,297 @@
+{% comment %}
+Airport Showcase Section
+Improved spacing + padding fixes
+{% endcomment %}
+
+{% style %}
+
+/* ===== TOP ===== */
+
+.top-wrapper {
+  padding: 25px 0;
+}
+
+.top-header {
+  /* margin-top:25px;
+  margin-bottom: 24px; */
+}
+
+.top-header h2 {
+  font-weight:bold;
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.top-header p {
+  font-size: 15px;
+  color: #666;
+  max-width: 520px;
+}
+
+/* MEDIA GRID */
+.top-media {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.9fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.top-media img {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* CONTENT BOX */
+.top-content-box {
+  padding: 12px;
+}
+
+.top-content-box h3 {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.top-content-box p {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* CTA */
+.explore-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #6ac857;
+  text-decoration: none;
+}
+
+.explore-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: #6ac857;
+  transition: width 0.3s ease;
+}
+
+.explore-link:hover::after {
+  width: 100%;
+}
+
+.explore-arrow {
+  transition: transform 0.25s ease;
+}
+
+.explore-link:hover .explore-arrow {
+  transform: translateX(4px);
+}
+
+/* ===== BOTTOM ===== */
+
+.bottom-wrapper {
+border-radius:4px;
+  background: #0d0d0d;
+  color: #fff;
+  padding: 80px 0;
+}
+
+.bottom-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+/* LEFT TEXT SPACING */
+.bottom-left {
+  max-width: 520px;
+  margin-left: 10px; /* space from left */
+}
+
+.bottom-left span {
+  color: #6ac857;
+  font-size: 12px;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.bottom-left h2 {
+  font-size: 32px;
+  margin: 12px 0;
+}
+
+.bottom-left p {
+  font-size: 14px;
+  color: #bbb;
+  line-height: 1.6;
+}
+
+/* GRID */
+.airport-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-right: 10px; /* space from right edge */
+  margin-left:10px;
+}
+
+.airport-box {
+  border: 1px solid #2a2a2a;
+  padding: 18px 20px;
+  font-size: 14px;
+  color: #ddd;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 768px) {
+
+  .top-header h2 {
+    font-size: 26px;
+  }
+
+  .top-media {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .top-media img {
+    height: 200px;
+  }
+
+  .top-content-box {
+    grid-column: 1 / -1;
+    padding: 10px 0;
+  }
+
+  .bottom-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .bottom-left {
+    margin-left: 10px;
+  }
+
+  .airport-grid {
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+
+  .bottom-left h2 {
+    font-size: 24px;
+  }
+}
+
+{% endstyle %}
+
+<section class="section">
+
+  <!-- TOP -->
+  <div class="top-wrapper">
+    <div class="page-width">
+
+      <div class="top-header">
+        <h2>{{ section.settings.main_heading }}</h2>
+        <p>{{ section.settings.main_subtext }}</p>
+      </div>
+
+      <div class="top-media">
+
+        {% if section.settings.image_left != blank %}
+          <img
+            src="{{ section.settings.image_left | image_url: width: 2000 }}"
+            alt=""
+            loading="lazy">
+        {% endif %}
+
+        {% if section.settings.image_right != blank %}
+          <img
+            src="{{ section.settings.image_right | image_url: width: 2000 }}"
+            alt=""
+            loading="lazy">
+        {% endif %}
+
+        <div class="top-content-box">
+          <h3>{{ section.settings.box_heading }}</h3>
+          <p>{{ section.settings.box_text }}</p>
+
+          {% if section.settings.box_button_link != blank %}
+            <a href="{{ section.settings.box_button_link }}" class="explore-link">
+              {{ section.settings.box_button_text }}
+              <span class="explore-arrow">→</span>
+            </a>
+          {% endif %}
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom-wrapper">
+    <div class="page-width">
+
+      <div class="bottom-inner">
+
+        <div class="bottom-left">
+          <span>{{ section.settings.bottom_tag }}</span>
+          <h2>{{ section.settings.bottom_heading }}</h2>
+          <p>{{ section.settings.bottom_text }}</p>
+        </div>
+
+        <div class="airport-grid">
+          {% for block in section.blocks %}
+            <div class="airport-box" {{ block.shopify_attributes }}>
+              {{ block.settings.airport_name }}
+            </div>
+          {% endfor %}
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+{
+  "name": "Airport Showcase",
+  "settings": [
+    { "type": "text", "id": "main_heading", "label": "Top Heading", "default": "Built for Everyday Movement" },
+    { "type": "textarea", "id": "main_subtext", "label": "Top Subtext" },
+    { "type": "image_picker", "id": "image_left", "label": "Left Image" },
+    { "type": "image_picker", "id": "image_right", "label": "Right Image" },
+    { "type": "text", "id": "box_heading", "label": "Content Box Heading", "default": "Airport Ready" },
+    { "type": "textarea", "id": "box_text", "label": "Content Box Text" },
+    { "type": "text", "id": "box_button_text", "label": "Button Text", "default": "EXPLORE PRODUCTS" },
+    { "type": "url", "id": "box_button_link", "label": "Button Link" },
+    { "type": "text", "id": "bottom_tag", "label": "Bottom Tag", "default": "AVAILABLE NATIONWIDE" },
+    { "type": "text", "id": "bottom_heading", "label": "Bottom Heading", "default": "Find us at India's major airports" },
+    { "type": "textarea", "id": "bottom_text", "label": "Bottom Description" }
+  ],
+  "blocks": [
+    {
+      "type": "airport",
+      "name": "Airport",
+      "settings": [
+        { "type": "text", "id": "airport_name", "label": "Airport Name", "default": "Delhi (DEL)" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Airport Showcase" }
+  ]
+}
+{% endschema %}

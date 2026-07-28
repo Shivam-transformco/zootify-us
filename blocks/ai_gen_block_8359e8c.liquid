@@ -1,0 +1,665 @@
+{% doc %}
+  @prompt
+    add SELECT DEVICE option in phone vover product page only
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-device-selector-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    margin-bottom: 20px;
+  }
+
+  .ai-device-selector__label-{{ ai_gen_id }} {
+    display: block;
+    font-family: var(--font-subheading-family);
+    font-size: {{ block.settings.label_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.label_color }};
+    margin-bottom: 12px;
+    text-transform: {{ block.settings.label_case }};
+  }
+
+  .ai-device-selector__dropdown-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+  }
+
+  .ai-device-selector__select-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.input_padding }}px;
+    font-family: var(--font-body-family);
+    font-size: {{ block.settings.input_text_size }}px;
+    color: {{ block.settings.input_text_color }};
+    background-color: {{ block.settings.input_background }};
+    border: {{ block.settings.input_border_width }}px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    cursor: pointer;
+    appearance: none;
+    transition: all 0.2s ease;
+  }
+
+  .ai-device-selector__select-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.input_hover_background }};
+    border-color: {{ block.settings.input_hover_border_color }};
+  }
+
+  .ai-device-selector__select-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.input_focus_color }};
+    outline-offset: 2px;
+    border-color: {{ block.settings.input_focus_color }};
+  }
+
+  .ai-device-selector__icon-{{ ai_gen_id }} {
+    position: absolute;
+    right: {{ block.settings.input_padding }}px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: {{ block.settings.input_text_color }};
+    width: 20px;
+    height: 20px;
+  }
+
+  .ai-device-selector__options-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .ai-device-selector__option-{{ ai_gen_id }} {
+    padding: 10px 16px;
+    font-family: var(--font-body-family);
+    font-size: {{ block.settings.option_text_size }}px;
+    color: {{ block.settings.option_text_color }};
+    background-color: {{ block.settings.option_background }};
+    border: {{ block.settings.option_border_width }}px solid {{ block.settings.option_border_color }};
+    border-radius: {{ block.settings.option_border_radius }}px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .ai-device-selector__option-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.option_hover_background }};
+    border-color: {{ block.settings.option_hover_border_color }};
+    color: {{ block.settings.option_hover_text_color }};
+  }
+
+  .ai-device-selector__option-{{ ai_gen_id }}.selected {
+    background-color: {{ block.settings.option_selected_background }};
+    border-color: {{ block.settings.option_selected_border_color }};
+    color: {{ block.settings.option_selected_text_color }};
+  }
+
+  .ai-device-selector__option-{{ ai_gen_id }}.selected:hover {
+    background-color: {{ block.settings.option_selected_hover_background }};
+    border-color: {{ block.settings.option_selected_hover_border_color }};
+    color: {{ block.settings.option_selected_hover_text_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-device-selector-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<device-selector-{{ ai_gen_id }} class="ai-device-selector-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <label for="device-select-{{ ai_gen_id }}" class="ai-device-selector__label-{{ ai_gen_id }}">
+    {{ block.settings.label_text }}
+  </label>
+
+  {% if block.settings.display_style == 'dropdown' %}
+    <div class="ai-device-selector__dropdown-wrapper-{{ ai_gen_id }}">
+      <select
+        id="device-select-{{ ai_gen_id }}"
+        class="ai-device-selector__select-{{ ai_gen_id }}"
+        aria-label="{{ block.settings.label_text }}"
+      >
+        <option value="">{{ block.settings.placeholder_text }}</option>
+        {% if block.settings.device_1 != blank %}
+          <option value="{{ block.settings.device_1 }}">{{ block.settings.device_1 }}</option>
+        {% endif %}
+        {% if block.settings.device_2 != blank %}
+          <option value="{{ block.settings.device_2 }}">{{ block.settings.device_2 }}</option>
+        {% endif %}
+        {% if block.settings.device_3 != blank %}
+          <option value="{{ block.settings.device_3 }}">{{ block.settings.device_3 }}</option>
+        {% endif %}
+        {% if block.settings.device_4 != blank %}
+          <option value="{{ block.settings.device_4 }}">{{ block.settings.device_4 }}</option>
+        {% endif %}
+        {% if block.settings.device_5 != blank %}
+          <option value="{{ block.settings.device_5 }}">{{ block.settings.device_5 }}</option>
+        {% endif %}
+        {% if block.settings.device_6 != blank %}
+          <option value="{{ block.settings.device_6 }}">{{ block.settings.device_6 }}</option>
+        {% endif %}
+        {% if block.settings.device_7 != blank %}
+          <option value="{{ block.settings.device_7 }}">{{ block.settings.device_7 }}</option>
+        {% endif %}
+        {% if block.settings.device_8 != blank %}
+          <option value="{{ block.settings.device_8 }}">{{ block.settings.device_8 }}</option>
+        {% endif %}
+        {% if block.settings.device_9 != blank %}
+          <option value="{{ block.settings.device_9 }}">{{ block.settings.device_9 }}</option>
+        {% endif %}
+        {% if block.settings.device_10 != blank %}
+          <option value="{{ block.settings.device_10 }}">{{ block.settings.device_10 }}</option>
+        {% endif %}
+      </select>
+      <svg class="ai-device-selector__icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+  {% else %}
+    <div class="ai-device-selector__options-{{ ai_gen_id }}" role="radiogroup" aria-label="{{ block.settings.label_text }}">
+      {% if block.settings.device_1 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_1 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_1 }}
+        </button>
+      {% endif %}
+      {% if block.settings.device_2 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_2 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_2 }}
+        </button>
+      {% endif %}
+      {% if block.settings.device_3 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_3 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_3 }}
+        </button>
+      {% endif %}
+      {% if block.settings.device_4 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_4 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_4 }}
+        </button>
+      {% endif %}
+      {% if block.settings.device_5 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_5 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_5 }}
+        </button>
+      {% endif %}
+      {% if block.settings.device_6 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_6 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_6 }}
+        </button>
+      {% endif %}
+      {% if block.settings.device_7 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_7 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_7 }}
+        </button>
+      {% endif %}
+      {% if block.settings.device_8 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_8 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_8 }}
+        </button>
+      {% endif %}
+      {% if block.settings.device_9 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_9 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_9 }}
+        </button>
+      {% endif %}
+      {% if block.settings.device_10 != blank %}
+        <button
+          type="button"
+          class="ai-device-selector__option-{{ ai_gen_id }}"
+          data-device="{{ block.settings.device_10 }}"
+          role="radio"
+          aria-checked="false"
+        >
+          {{ block.settings.device_10 }}
+        </button>
+      {% endif %}
+    </div>
+  {% endif %}
+</device-selector-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class DeviceSelector{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.selectedDevice = null;
+      }
+
+      connectedCallback() {
+        this.displayStyle = '{{ block.settings.display_style }}';
+        
+        if (this.displayStyle === 'dropdown') {
+          this.select = this.querySelector('.ai-device-selector__select-{{ ai_gen_id }}');
+          this.select.addEventListener('change', this.handleDropdownChange.bind(this));
+        } else {
+          this.options = this.querySelectorAll('.ai-device-selector__option-{{ ai_gen_id }}');
+          this.options.forEach(option => {
+            option.addEventListener('click', this.handleOptionClick.bind(this));
+          });
+        }
+      }
+
+      handleDropdownChange(event) {
+        this.selectedDevice = event.target.value;
+        this.dispatchDeviceChangeEvent();
+      }
+
+      handleOptionClick(event) {
+        const clickedOption = event.currentTarget;
+        const device = clickedOption.dataset.device;
+
+        this.options.forEach(option => {
+          option.classList.remove('selected');
+          option.setAttribute('aria-checked', 'false');
+        });
+
+        clickedOption.classList.add('selected');
+        clickedOption.setAttribute('aria-checked', 'true');
+        this.selectedDevice = device;
+        this.dispatchDeviceChangeEvent();
+      }
+
+      dispatchDeviceChangeEvent() {
+        const event = new CustomEvent('device-selected', {
+          detail: { device: this.selectedDevice },
+          bubbles: true
+        });
+        this.dispatchEvent(event);
+      }
+    }
+
+    customElements.define('device-selector-{{ ai_gen_id }}', DeviceSelector{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Device selector",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "text",
+      "id": "label_text",
+      "label": "Label text",
+      "default": "Select device"
+    },
+    {
+      "type": "select",
+      "id": "display_style",
+      "label": "Display style",
+      "options": [
+        {
+          "value": "dropdown",
+          "label": "Dropdown"
+        },
+        {
+          "value": "buttons",
+          "label": "Buttons"
+        }
+      ],
+      "default": "dropdown"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_text",
+      "label": "Placeholder text",
+      "default": "Choose your device"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Device options"
+    },
+    {
+      "type": "text",
+      "id": "device_1",
+      "label": "Device 1",
+      "default": "iPhone 17 Pro Max"
+    },
+    {
+      "type": "text",
+      "id": "device_2",
+      "label": "Device 2",
+      "default": "iPhone 17 Pro"
+    },
+    {
+      "type": "text",
+      "id": "device_3",
+      "label": "Device 3",
+      "default": "iPhone 17"
+    },
+    {
+      "type": "text",
+      "id": "device_4",
+      "label": "Device 4",
+      "default": "iPhone 16 Pro Max"
+    },
+    {
+      "type": "text",
+      "id": "device_5",
+      "label": "Device 5",
+      "default": "iPhone 16 Pro"
+    },
+    {
+      "type": "text",
+      "id": "device_6",
+      "label": "Device 6"
+    },
+    {
+      "type": "text",
+      "id": "device_7",
+      "label": "Device 7"
+    },
+    {
+      "type": "text",
+      "id": "device_8",
+      "label": "Device 8"
+    },
+    {
+      "type": "text",
+      "id": "device_9",
+      "label": "Device 9"
+    },
+    {
+      "type": "text",
+      "id": "device_10",
+      "label": "Device 10"
+    },
+    {
+      "type": "header",
+      "content": "Label style"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Label size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "label_case",
+      "label": "Label case",
+      "options": [
+        {
+          "value": "none",
+          "label": "Default"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Dropdown style"
+    },
+    {
+      "type": "range",
+      "id": "input_padding",
+      "label": "Padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "input_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "input_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "input_hover_background",
+      "label": "Hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "input_hover_border_color",
+      "label": "Hover border color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_color",
+      "label": "Focus color",
+      "default": "#6ac857"
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "range",
+      "id": "option_text_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "option_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "option_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "option_border_color",
+      "label": "Border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "range",
+      "id": "option_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "option_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "option_hover_background",
+      "label": "Hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "option_hover_text_color",
+      "label": "Hover text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "option_hover_border_color",
+      "label": "Hover border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "option_selected_background",
+      "label": "Selected background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "option_selected_text_color",
+      "label": "Selected text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "option_selected_border_color",
+      "label": "Selected border color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "option_selected_hover_background",
+      "label": "Selected hover background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "option_selected_hover_text_color",
+      "label": "Selected hover text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "option_selected_hover_border_color",
+      "label": "Selected hover border color",
+      "default": "#1a1a1a"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Device selector"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,431 @@
+{% comment %}
+  Product Image with Text - Auto 3 Blocks from Metafields
+  Renders set 1, 2, 3 automatically. Each block hides if its metafields are empty.
+{% endcomment %}
+
+{%- assign sets = '1,2,3' | split: ',' -%}
+
+{%- comment -%} Pre-check: do we have ANY data across all 3 sets? {%- endcomment -%}
+{%- assign has_any = false -%}
+{%- for n in sets -%}
+  {%- assign img_key = 'image_with_text_image_' | append: n -%}
+  {%- assign head_key = 'image_with_text_heading_' | append: n -%}
+  {%- assign desc_key = 'image_with_text_sub_heading_' | append: n -%}
+
+  {%- assign img = product.metafields.custom[img_key].value -%}
+  {%- assign head_html = product.metafields.custom[head_key] | metafield_tag -%}
+  {%- assign desc_html = product.metafields.custom[desc_key] | metafield_tag -%}
+
+  {%- assign head_check = head_html | strip_html | strip -%}
+  {%- assign desc_check = desc_html | strip_html | strip -%}
+
+  {% if img != blank or head_check != blank or desc_check != blank %}
+    {%- assign has_any = true -%}
+  {% endif %}
+{%- endfor -%}
+
+{% if has_any %}
+
+<div class="iwt-wrapper-{{ section.id }}">
+
+  {%- for n in sets -%}
+    {%- assign img_key = 'image_with_text_image_' | append: n -%}
+    {%- assign head_key = 'image_with_text_heading_' | append: n -%}
+    {%- assign desc_key = 'image_with_text_sub_heading_' | append: n -%}
+
+    {%- assign meta_image = product.metafields.custom[img_key].value -%}
+    {%- assign meta_heading = product.metafields.custom[head_key] | metafield_tag -%}
+    {%- assign meta_description = product.metafields.custom[desc_key] | metafield_tag -%}
+
+    {%- assign heading_check = meta_heading | strip_html | strip -%}
+    {%- assign desc_check = meta_description | strip_html | strip -%}
+
+    {%- comment -%} Auto alternate layout: odd = image left, even = image right {%- endcomment -%}
+    {%- assign mod = forloop.index | modulo: 2 -%}
+    {%- if section.settings.alternate_layout -%}
+      {%- if mod == 0 -%}
+        {%- assign block_layout = 'image_right' -%}
+      {%- else -%}
+        {%- assign block_layout = 'image_left' -%}
+      {%- endif -%}
+    {%- else -%}
+      {%- assign block_layout = section.settings.layout -%}
+    {%- endif -%}
+
+    {% if meta_image != blank or heading_check != blank or desc_check != blank %}
+
+      <section class="iwt-{{ section.id }} iwt-block iwt-layout--{{ block_layout }}">
+        <div class="iwt-wrap">
+
+          {% if meta_image != blank %}
+            <div class="iwt-media">
+              <img
+                src="{{ meta_image | image_url: width: 1200 }}"
+                srcset="
+                  {{ meta_image | image_url: width: 400 }} 400w,
+                  {{ meta_image | image_url: width: 600 }} 600w,
+                  {{ meta_image | image_url: width: 800 }} 800w,
+                  {{ meta_image | image_url: width: 1200 }} 1200w,
+                  {{ meta_image | image_url: width: 1600 }} 1600w
+                "
+                sizes="(max-width: 767px) 100vw, 50vw"
+                alt="{{ heading_check | default: product.title | escape }}"
+                width="{{ meta_image.width }}"
+                height="{{ meta_image.height }}"
+                loading="lazy"
+                decoding="async"
+                class="iwt-img"
+              >
+            </div>
+          {% endif %}
+
+          {% if heading_check != blank or desc_check != blank %}
+            <div class="iwt-content">
+              {% if heading_check != blank %}
+                <h2 class="iwt-heading">{{ meta_heading }}</h2>
+              {% endif %}
+
+              {% if desc_check != blank %}
+                <div class="iwt-desc">{{ meta_description }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+
+        </div>
+      </section>
+
+    {% endif %}
+  {%- endfor -%}
+
+</div>
+
+<style>
+  .iwt-wrapper-{{ section.id }} {
+    background: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  .iwt-wrapper-{{ section.id }} .iwt-{{ section.id }} {
+    width: 100%;
+    padding-left: {{ section.settings.padding_x }}px;
+    padding-right: {{ section.settings.padding_x }}px;
+    box-sizing: border-box;
+    margin-bottom: {{ section.settings.block_gap }}px;
+  }
+
+  .iwt-wrapper-{{ section.id }} .iwt-{{ section.id }}:last-child {
+    margin-bottom: 0;
+  }
+
+  .iwt-wrapper-{{ section.id }} .iwt-wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ section.settings.gap }}px;
+    align-items: center;
+  }
+
+  .iwt-wrapper-{{ section.id }} .iwt-layout--image_right .iwt-media { order: 2; }
+  .iwt-wrapper-{{ section.id }} .iwt-layout--image_right .iwt-content { order: 1; }
+
+  .iwt-wrapper-{{ section.id }} .iwt-media {
+    width: 100%;
+    overflow: hidden;
+    border-radius: {{ section.settings.image_radius }}px;
+  }
+
+  .iwt-wrapper-{{ section.id }} .iwt-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .iwt-wrapper-{{ section.id }} .iwt-content {
+    color: {{ section.settings.text_color }};
+  }
+
+  .iwt-wrapper-{{ section.id }} .iwt-heading {
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .iwt-wrapper-{{ section.id }} .iwt-heading p { margin: 0; }
+
+  .iwt-wrapper-{{ section.id }} .iwt-desc {
+    font-size: {{ section.settings.desc_size }}px;
+    line-height: 1.6;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  .iwt-wrapper-{{ section.id }} .iwt-desc p { margin: 0 0 12px; }
+  .iwt-wrapper-{{ section.id }} .iwt-desc p:last-child { margin-bottom: 0; }
+
+  @media (max-width: 767px) {
+    .iwt-wrapper-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    }
+
+    .iwt-wrapper-{{ section.id }} .iwt-{{ section.id }} {
+      padding-left: {{ section.settings.padding_x_mobile }}px;
+      padding-right: {{ section.settings.padding_x_mobile }}px;
+      margin-bottom: {{ section.settings.block_gap_mobile }}px;
+    }
+
+    .iwt-wrapper-{{ section.id }} .iwt-wrap {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.gap_mobile }}px;
+    }
+
+    .iwt-wrapper-{{ section.id }} .iwt-layout--image_right .iwt-media,
+    .iwt-wrapper-{{ section.id }} .iwt-layout--image_left .iwt-media {
+      order: {% if section.settings.mobile_image_first %}1{% else %}2{% endif %};
+    }
+    .iwt-wrapper-{{ section.id }} .iwt-layout--image_right .iwt-content,
+    .iwt-wrapper-{{ section.id }} .iwt-layout--image_left .iwt-content {
+      order: {% if section.settings.mobile_image_first %}2{% else %}1{% endif %};
+    }
+
+    .iwt-wrapper-{{ section.id }} .iwt-heading {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+
+    .iwt-wrapper-{{ section.id }} .iwt-desc {
+      font-size: {{ section.settings.desc_size_mobile }}px;
+    }
+  }
+</style>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product Image with Text",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Auto-renders 3 image+text blocks from product metafields. Empty blocks auto-hide. Section hides completely if no data."
+    },
+
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "alternate_layout",
+      "label": "Alternate layout (image left, right, left...)",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Default layout (if alternate is OFF)",
+      "options": [
+        { "value": "image_left",  "label": "Image left, text right" },
+        { "value": "image_right", "label": "Image right, text left" }
+      ],
+      "default": "image_left"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_image_first",
+      "label": "Image first on mobile",
+      "default": true
+    },
+
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Image corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size (desktop)",
+      "min": 18,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size (mobile)",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "desc_size",
+      "label": "Description size (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desc_size_mobile",
+      "label": "Description size (mobile)",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+
+    {
+      "type": "header",
+      "content": "Spacing — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Section top padding",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Section bottom padding",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_x",
+      "label": "Left/Right padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between image & text",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "block_gap",
+      "label": "Gap between blocks",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+
+    {
+      "type": "header",
+      "content": "Spacing — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Section top padding (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Section bottom padding (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_x_mobile",
+      "label": "Left/Right padding (mobile)",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Gap between image & text (mobile)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "block_gap_mobile",
+      "label": "Gap between blocks (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Image with Text",
+      "category": "Product"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  }
+}
+{% endschema %}

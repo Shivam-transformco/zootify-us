@@ -1,0 +1,213 @@
+{% assign option_text = 'Colour' %}
+
+{% if product.metafields.custom.select_screenguard != blank %}
+  {% assign option_text = 'Select Screenguard' %}
+{% endif %}
+
+{% if product.tags contains 'mojito' %}
+  <style>
+    .productotheroptions.pp {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .otherproductscolors img{
+      width:50px;
+    }
+
+    .othercolorproducttitle {  
+      display:block;
+      margin-bottom:15px;
+      font-weight:bold;
+      font-size:16px;
+      color:#01161E;
+    } 
+
+    .otherproductscolors {
+      display:flex;
+      flex-wrap:wrap;
+      gap:15px;
+      margin-top:10px;
+    }
+
+    .otherproductscolors a {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-decoration:none;
+      color:#333;
+    }
+
+    .color-name {
+      margin-top:8px;
+      font-size:14px;
+      text-align:center;
+    }
+  </style>
+
+  <div class="productotheroptions pp">
+    <span class="othercolorproducttitle">{{ option_text }}</span>
+
+    <div class="otherproductscolors">
+      {% for color in product.metafields.custom.new_custom_color_variant.value %}
+        <a href="{{ color.url }}" title="{{ color.name }}">
+          <img src="{{ color.featured_image | img_url:'master' }}">
+          <div class="color-name">{{ color.metafields.custom.select_screenguard }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+{% else %}
+
+{% if product.metafields.custom.new_custom_color_variant != blank %}
+
+<style>
+
+/* wrapper */
+.new-custom-color-box{
+  margin-top:-20px;
+}
+
+
+/* CHANGE: reduced gap between Colour heading and colour circles */
+
+/* title */
+.othercolorproducttitle{
+  font-weight:700;
+  font-size:18px;
+  margin-bottom:6px;
+  margin-top:6px;
+  color:#01161E;
+  letter-spacing:1px;
+}
+@media screen and (max-width: 749px) {
+  .othercolorproducttitle {
+    font-size: 16px !important;
+  }
+}
+
+/* row */
+.new-custom-color{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+}
+
+/* item */
+.color-swatch-link{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  color:#222;
+}
+
+/* circle */
+.color-swatch{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:2px solid #e2e2e2;
+  position:relative;
+  transition:0.25s ease;
+}
+
+/* hover */
+.color-swatch:hover{
+  transform:scale(1.08);
+}
+
+/* active ring */
+.color-swatch-link.active .color-swatch::after{
+  content:"";
+  position:absolute;
+  inset:-3px;
+  border:2px solid #111;
+  border-radius:50%;
+}
+
+/* label */
+.color-label{
+  margin-top:8px;
+  font-size:14px;
+  text-align:center;
+}
+
+/* default fallback */
+.color-swatch:not([class*="-color"]){
+  background:#ccc;
+}
+
+/* existing color classes */
+.red-color{ background:#ff0000; }
+.blue-color{ background:#1D2951; }
+.green-color{ background:#008000; }
+.black-color{ background:#000000; }
+.white-color{ background:#ffffff; border:2px solid #cccccc; }
+.navy-color{ background:#000080; }
+.grey-color{ background:#808080; }
+.pink-color{ background:#ffc0cb; }
+.purple-color{ background:#800080; }
+.yellow-color{ background:#ffff00; }
+.orange-color{ background:#F0653E; }
+.dessert-color{ background:#7D5439; }
+.beige-color{ background:#f5f5dc; }
+.maroon-color{ background:#800000; }
+.teal-color{ background:#008080; }
+.cyan-color{ background:#00ffff; }
+.magenta-color{ background:#ff00ff; }
+.lavender-color{ background:#e6e6fa; }
+.coral-color{ background:#ff7f50; }
+.olive-color{ background:#808000; }
+.silver-color{ background:#DFDFDF; }
+.gold-color{ background:#ffd700; }
+.grey-gold-color{ background:#D4CEB2; }
+.sky-blue-color{ background:#B1D5DD; }
+.biege-color{ background:#F0DAB6; }
+.dark-blue-color{ background:#556488; }
+.titanium-grey-color{ background:#999997; }
+.gray-color{ background:#808080; }
+.brown-color{ background:#895D4B; }
+.smoky-grey-color{ background:#3E3E3E; }
+
+</style>
+
+
+<div class="new-custom-color-box tt">
+
+  <div class="othercolorproducttitle">
+    {{ option_text }}
+  </div>
+
+  <div class="new-custom-color">
+
+    {% for data in product.metafields.custom.new_custom_color_variant.value %}
+
+      <a href="{{ data.url }}"
+         title="{{ data.metafields.custom.color_name }}"
+         class="color-swatch-link {% if data.handle == product.handle %}active{% endif %}">
+
+       {% assign custom_color = data.metafields.custom.color_code %}
+
+<div
+  class="color-swatch {% if custom_color == blank %}{{ data.metafields.custom.color_name | handleize }}-color{% endif %}"
+  {% if custom_color != blank %}
+    style="background:{{ custom_color }};"
+  {% endif %}
+></div>
+
+        <div class="color-label">
+          {{ data.metafields.custom.color_name }}
+        </div>
+
+      </a>
+
+    {% endfor %}
+
+  </div>
+</div>
+
+{% endif %}
+{% endif %}

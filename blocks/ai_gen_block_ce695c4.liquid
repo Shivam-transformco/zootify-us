@@ -1,0 +1,229 @@
+{% doc %}
+  @prompt
+    Create a custom block for the Hero – Dynamic section that includes a heading and a description/subtitle field, with customizable font size (small/medium/large/xl options) for both heading and description, bold toggle for both, text alignment options (left/center/right), and text color picker. The block should overlay on the hero banner and be styled to look premium and modern.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-text-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 90%;
+    max-width: 1200px;
+    text-align: {{ block.settings.text_alignment }};
+    display: block;
+  }
+
+  .ai-hero-text-overlay__heading-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+    {% if block.settings.heading_bold %}
+      font-weight: 700;
+    {% else %}
+      font-weight: 400;
+    {% endif %}
+    {% if block.settings.heading_size == 'small' %}
+      font-size: 24px;
+    {% elsif block.settings.heading_size == 'medium' %}
+      font-size: 40px;
+    {% elsif block.settings.heading_size == 'large' %}
+      font-size: 56px;
+    {% else %}
+      font-size: 72px;
+    {% endif %}
+  }
+
+  .ai-hero-text-overlay__description-{{ ai_gen_id }} {
+    color: {{ block.settings.description_color }};
+    margin: 0;
+    line-height: 1.5;
+    {% if block.settings.description_bold %}
+      font-weight: 600;
+    {% else %}
+      font-weight: 400;
+    {% endif %}
+    {% if block.settings.description_size == 'small' %}
+      font-size: 14px;
+    {% elsif block.settings.description_size == 'medium' %}
+      font-size: 18px;
+    {% elsif block.settings.description_size == 'large' %}
+      font-size: 24px;
+    {% else %}
+      font-size: 32px;
+    {% endif %}
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-text-overlay__heading-{{ ai_gen_id }} {
+      {% if block.settings.heading_size == 'small' %}
+        font-size: 20px;
+      {% elsif block.settings.heading_size == 'medium' %}
+        font-size: 28px;
+      {% elsif block.settings.heading_size == 'large' %}
+        font-size: 36px;
+      {% else %}
+        font-size: 48px;
+      {% endif %}
+    }
+
+    .ai-hero-text-overlay__description-{{ ai_gen_id }} {
+      {% if block.settings.description_size == 'small' %}
+        font-size: 12px;
+      {% elsif block.settings.description_size == 'medium' %}
+        font-size: 16px;
+      {% elsif block.settings.description_size == 'large' %}
+        font-size: 20px;
+      {% else %}
+        font-size: 24px;
+      {% endif %}
+    }
+  }
+{% endstyle %}
+
+<div class="ai-hero-text-overlay-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.heading != blank %}
+    <h1 class="ai-hero-text-overlay__heading-{{ ai_gen_id }}">
+      {{ block.settings.heading }}
+    </h1>
+  {% endif %}
+
+  {% if block.settings.description != blank %}
+    <p class="ai-hero-text-overlay__description-{{ ai_gen_id }}">
+      {{ block.settings.description }}
+    </p>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Hero text overlay",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading text",
+      "default": "Premium Phone Accessories"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        },
+        {
+          "value": "xl",
+          "label": "Extra large"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_bold",
+      "label": "Bold",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Description"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description text",
+      "default": "Discover our collection of modern, premium MagSafe cases"
+    },
+    {
+      "type": "select",
+      "id": "description_size",
+      "label": "Size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        },
+        {
+          "value": "xl",
+          "label": "Extra large"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "description_bold",
+      "label": "Bold",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero text overlay"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

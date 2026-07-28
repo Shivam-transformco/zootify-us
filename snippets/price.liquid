@@ -1,0 +1,187 @@
+{%- doc -%}
+  This snippet is used to render a product card.
+  It is used in the product block, featured product block, and the product card block.
+
+  @param {product} product_resource - The product to render
+  @param {boolean} [show_unit_price] - Whether to show the unit price
+  @param {boolean} [show_sale_price_first] - Whether to show the sale price first
+{%- enddoc -%}
+
+{%- if template.name == 'product' -%}
+<style>
+  .product-page-price.price-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .product-page-price .price {
+    font-size: 24px;
+    font-weight: 500;
+    color: #111;
+    white-space: nowrap;
+  }
+
+  .product-page-price .compare-at-price {
+    font-size: 14px;
+    color: #343434;
+    text-decoration: line-through;
+    white-space: nowrap;
+  }
+
+  .product-page-price .price-discount {
+    font-size: 20px;
+    font-weight: 600;
+    color: #6ac857;
+    white-space: nowrap;
+  }
+
+  .product-page-price .price-range {
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  .product-page-price .volume-pricing-note {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    color: #666;
+  }
+
+  @media screen and (max-width: 749px) {
+   .product-page-price .price{
+    font-size: 18px !important;
+  }
+  .product-page-price .price-discount {
+    font-size: 16px !important;
+  }
+   .product-page-price .compare-at-price{
+    font-size: 14px !important;
+  }
+}
+
+  @media screen and (max-width: 749px) {
+  .tax-note {
+    font-size: 16px !important;
+  }
+}
+</style>
+{%- endif -%}
+
+{%- liquid
+  assign show_unit_price = show_unit_price | default: false
+  assign show_sale_price_first = show_sale_price_first | default: false
+
+  assign selected_variant = product_resource.selected_or_first_available_variant
+  assign price_raw = selected_variant.price
+  assign compare_at_price_raw = selected_variant.compare_at_price
+
+  assign show_compare_price = false
+  if compare_at_price_raw > price_raw
+    assign show_compare_price = true
+  endif
+
+  # Discount calculation
+  assign discount_percent = 0
+  if show_compare_price
+    assign discount_amount = compare_at_price_raw | minus: price_raw
+    assign discount_percent = discount_amount | times: 100 | divided_by: compare_at_price_raw
+  endif
+
+  # Product-page-only flags
+  assign is_product_page = false
+  if template.name == 'product'
+    assign is_product_page = true
+  endif
+
+  # Volume pricing
+  assign has_volume_pricing = false
+  assign price_min = nil
+  assign price_max = nil
+
+  if is_product_page == false
+    if product_resource.quantity_price_breaks_configured?
+      assign has_volume_pricing = true
+      assign price_min = product_resource.price_min
+      assign price_max = product_resource.price_max
+    endif
+  else
+    if selected_variant.quantity_price_breaks.size > 0
+      assign has_volume_pricing = true
+      assign price_min = selected_variant.quantity_price_breaks.last.price
+      assign price_max = selected_variant.price
+    endif
+  endif
+
+  # Currency rules
+  assign use_currency = false
+  if is_product_page
+    if settings.currency_code_enabled_product_pages
+      assign use_currency = true
+    endif
+  elsif settings.currency_code_enabled_product_cards
+    assign use_currency = true
+  endif
+
+  # Format prices
+  if use_currency
+    assign price = price_raw | money_with_currency
+    assign compare_at_price = compare_at_price_raw | money_with_currency
+    assign price_min = price_min | money_with_currency
+    assign price_max = price_max | money_with_currency
+  else
+    assign price = price_raw | money
+    assign compare_at_price = compare_at_price_raw | money
+    assign price_min = price_min | money
+    assign price_max = price_max | money
+  endif
+-%}
+
+<div
+  class="
+    price-container
+    {% if is_product_page %}product-page-price{% endif %}
+  "
+  ref="priceContainer"
+>
+  {% if has_volume_pricing %}
+    {% if show_compare_price %}
+      <span class="compare-at-price">{{ compare_at_price }}</span>
+    {% endif %}
+    <span class="price price-range">
+      {{ price_min }} – {{ price_max }}
+    </span>
+  {% else %}
+    {% if show_compare_price %}
+      <span class="price">{{ price }}</span>
+      <span class="compare-at-price">{{ compare_at_price }}</span>
+
+      {% if is_product_page %}
+        <span class="price-discount">{{ discount_percent | round }}% OFF</span>
+      {% endif %}
+    {% else %}
+      <span class="price">{{ price }}</span>
+    {% endif %}
+  {% endif %}
+
+  {% if selected_variant.unit_price and show_unit_price %}
+    {%- liquid
+      if use_currency
+        assign unit_price = selected_variant.unit_price | money_with_currency
+      else
+        assign unit_price = selected_variant.unit_price | money
+      endif
+    -%}
+    {% render 'unit-price',
+      price: unit_price,
+      measurement: selected_variant.unit_price_measurement
+    %}
+  {% endif %}
+</div>
+
+{% if has_volume_pricing %}
+  <small class="volume-pricing-note">
+    {{ 'content.volume_pricing_available' | t }}
+  </small>
+{% endif %}

@@ -1,0 +1,131 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "page-content"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "gap": 0,
+        "color_scheme": "",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "model_section_XnJVWB": {
+      "type": "model-section",
+      "blocks": {
+        "model_bUA9c9": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Covers",
+            "model_link": "shopify://collections/iphone-17_"
+          }
+        },
+        "model_8HYgGF": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Air Covers",
+            "model_link": "shopify://collections/iphone-17-air"
+          }
+        },
+        "model_nprCX7": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Pro Covers",
+            "model_link": "shopify://collections/iphone-17-pro"
+          }
+        },
+        "model_WEMByD": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Pro Max Covers",
+            "model_link": "shopify://collections/iphone-17-pro-max"
+          }
+        },
+        "model_bBFYqp": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 16 Covers",
+            "model_link": "shopify://collections/apple-iphone-16-covers"
+          }
+        },
+        "model_KDUcQW": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 16 Pro Covers",
+            "model_link": "shopify://collections/iphone-16-pro"
+          }
+        },
+        "model_qFyJLM": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 16 Pro Max Covers",
+            "model_link": "shopify://collections/16-pro-max"
+          }
+        },
+        "model_e89Lky": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 15 Covers",
+            "model_link": "shopify://collections/iphone-15"
+          }
+        },
+        "model_qbY44Y": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 15 Pro Covers",
+            "model_link": "shopify://collections/iphone-15-pro"
+          }
+        },
+        "model_dYUM6U": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 15 Pro Max Covers",
+            "model_link": "shopify://collections/iphone-15-pro-max"
+          }
+        }
+      },
+      "block_order": [
+        "model_bUA9c9",
+        "model_8HYgGF",
+        "model_nprCX7",
+        "model_WEMByD",
+        "model_bBFYqp",
+        "model_KDUcQW",
+        "model_qFyJLM",
+        "model_e89Lky",
+        "model_qbY44Y",
+        "model_dYUM6U"
+      ],
+      "custom_css": [
+        "h2 {font-size: 25px;}"
+      ],
+      "name": "iPhone Models Section",
+      "settings": {
+        "heading": "iPhone Covers"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "model_section_XnJVWB"
+  ]
+}

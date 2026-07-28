@@ -1,0 +1,96 @@
+{% liquid
+  assign product = closest.product
+
+  if product.compare_at_price > product.price
+    assign discount = product.compare_at_price | minus: product.price
+    assign discount_percent = discount | times: 100 | divided_by: product.compare_at_price | round
+  endif
+-%}
+
+<div class="product-card-wrapper">
+
+  {% if discount_percent %}
+    <div class="discount-badge">
+      {{ discount_percent }}% OFF
+    </div>
+  {% endif %}
+
+  {% capture children %}
+    {% content_for 'blocks', closest.product: product %}
+  {% endcapture %}
+
+  {% render 'product-card', children: children, product: product %}
+
+</div>
+
+<style>
+.product-card-wrapper{
+  position: relative;
+}
+
+/* DESKTOP BADGE */ 
+.discount-badge{
+   position: absolute;
+    top: 10px; left: 10px; 
+    background: #0A84B5;
+     color: #fff; 
+     font-size: 10px;
+      font-weight: 600;
+       padding: 5px 12px;
+        border-radius: 2px; 
+        z-index: 4;
+         letter-spacing: 0.5px; }
+
+          /* MOBILE PERFECT FIT */
+           @media (max-width: 768px){
+             .discount-badge{
+               font-size: 8px; 
+               padding: 3px 5px;
+                top: 8px;
+                 left: 5px;
+                  border-radius: 2px; 
+                  letter-spacing: 0.2px;
+                 } }
+</style>
+
+{% schema %}
+{
+  "name": "t:names.product_card",
+  "blocks": [
+    { "type": "_product-card-group" },
+    { "type": "text" },
+    { "type": "image" },
+    { "type": "buy-buttons" },
+    { "type": "price" },
+    { "type": "review" },
+    { "type": "sku" },
+    { "type": "swatches" },
+    { "type": "_product-card-gallery" },
+    { "type": "product-title" },
+    { "type": "custom-liquid" },
+    { "type": "@app" }
+  ],
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.resource_reference_product_card"
+    },
+    {
+      "type": "range",
+      "id": "product_card_gap",
+      "label": "t:settings.vertical_gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Card"
+    }
+  ]
+}
+{% endschema %}

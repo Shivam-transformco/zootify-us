@@ -1,0 +1,289 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "Title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "h2",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "page-content"
+      ],
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 15,
+        "color_scheme": "",
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+    "mini_collection_cEGe76": {
+      "type": "mini-collection",
+      "blocks": {
+        "category_hxPd9z": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_lulwtalulwtalulw.png",
+            "title": "Apple",
+            "link": "shopify://pages/iphone-models-1"
+          }
+        },
+        "category_4WVRXC": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp_Image_2025-09-01_at_7.14.32_PM.jpg",
+            "title": "Samsung",
+            "link": "shopify://pages/samsung-models"
+          }
+        },
+        "category_GNkiCV": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/WhatsApp_Image_2025-09-01_at_7.14.32_PM_1.jpg",
+            "title": "Warranty Claim",
+            "link": "https://zootify.com/collections/warranty-claim"
+          }
+        }
+      },
+      "block_order": [
+        "category_hxPd9z",
+        "category_4WVRXC",
+        "category_GNkiCV"
+      ],
+      "disabled": true,
+      "name": "Minimal Collection Grid",
+      "settings": {
+        "heading": ""
+      }
+    },
+    "model_section_wN6iFb": {
+      "type": "model-section",
+      "blocks": {
+        "model_DyyDwx": {
+          "type": "model",
+          "settings": {
+            "model_name": "Apple",
+            "model_link": "shopify://pages/iphone-models-1"
+          }
+        },
+        "model_jk6Wtt": {
+          "type": "model",
+          "settings": {
+            "model_name": "Samsung",
+            "model_link": "shopify://pages/samsung-models"
+          }
+        },
+        "model_wwAxyM": {
+          "type": "model",
+          "settings": {
+            "model_name": "Warranty Claim",
+            "model_link": "https://zootify.com/collections/warranty-claim"
+          }
+        }
+      },
+      "block_order": [
+        "model_DyyDwx",
+        "model_jk6Wtt",
+        "model_wwAxyM"
+      ],
+      "name": "iPhone Models Section",
+      "settings": {
+        "heading": "Screenguard Models"
+      }
+    },
+    "model_section_XnJVWB": {
+      "type": "model-section",
+      "blocks": {
+        "model_NRaxgq": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 13",
+            "model_link": "shopify://collections/iphone-13-screenguard"
+          }
+        },
+        "model_fzXmnC": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 13 Pro",
+            "model_link": "shopify://collections/iphone-13-pro-screenguard"
+          }
+        },
+        "model_tire3L": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 13 Pro Max",
+            "model_link": "shopify://collections/iphone-13-pro-max-screenguards"
+          }
+        },
+        "model_GUaiLC": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 14",
+            "model_link": "shopify://collections/iphone-14"
+          }
+        },
+        "model_XKWEHW": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 14 plus",
+            "model_link": "shopify://collections/iphone-14-plus-screenguards"
+          }
+        },
+        "model_8Cqa89": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 14 Pro",
+            "model_link": "shopify://collections/iphone-14-pro-screenguards"
+          }
+        },
+        "model_x8AEdm": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 14 Pro Max",
+            "model_link": "shopify://collections/iphone-14-pro-max-screenguards"
+          }
+        },
+        "model_e89Lky": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 15",
+            "model_link": "shopify://collections/iphone-15-screenguards"
+          }
+        },
+        "model_qbY44Y": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 15 Pro",
+            "model_link": "shopify://collections/iphone-15-pro-screenguards"
+          }
+        },
+        "model_dYUM6U": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 15 Pro Max",
+            "model_link": "shopify://collections/iphone-15-pro-max-screenguards"
+          }
+        },
+        "model_bBFYqp": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 16",
+            "model_link": "shopify://collections/iphone-16-screenguards"
+          }
+        },
+        "model_KDUcQW": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 16 Pro",
+            "model_link": "shopify://collections/iphone-16-pro-screenguards"
+          }
+        },
+        "model_qFyJLM": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 16 Pro Max",
+            "model_link": "shopify://collections/iphone-16-pro-max-screenguards"
+          }
+        },
+        "model_bUA9c9": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17",
+            "model_link": "shopify://collections/iphone-17-screenguards"
+          }
+        },
+        "model_8HYgGF": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Air",
+            "model_link": "shopify://collections/iphone-17-air-screenguards"
+          }
+        },
+        "model_nprCX7": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Pro",
+            "model_link": "shopify://collections/iphone-17-pro-screenguards"
+          }
+        },
+        "model_WEMByD": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Pro Max",
+            "model_link": "shopify://collections/iphone-17-pro-max-screenguards"
+          }
+        }
+      },
+      "block_order": [
+        "model_NRaxgq",
+        "model_fzXmnC",
+        "model_tire3L",
+        "model_GUaiLC",
+        "model_XKWEHW",
+        "model_8Cqa89",
+        "model_x8AEdm",
+        "model_e89Lky",
+        "model_qbY44Y",
+        "model_dYUM6U",
+        "model_bBFYqp",
+        "model_KDUcQW",
+        "model_qFyJLM",
+        "model_bUA9c9",
+        "model_8HYgGF",
+        "model_nprCX7",
+        "model_WEMByD"
+      ],
+      "disabled": true,
+      "name": "iPhone Models Section",
+      "settings": {
+        "heading": "Choose Your iPhone Model"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "mini_collection_cEGe76",
+    "model_section_wN6iFb",
+    "model_section_XnJVWB"
+  ]
+}

@@ -1,0 +1,284 @@
+{% liquid
+  assign sid = section.id
+%}
+
+<style>
+
+/* SECTION vertical spacing only */
+.section-{{ sid }} {
+  padding-top:50px;
+  padding-bottom:50px;
+}
+
+/* TITLE */
+.section-{{ sid }} .videos-title {
+  text-align: {{ section.settings.heading_alignment }};
+  margin-bottom: 24px;
+}
+
+/* SLIDER OUTER */
+.section-{{ sid }} .slider-outer {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.section-{{ sid }} .slider-outer::-webkit-scrollbar {
+  display: none;
+}
+
+/* SLIDER TRACK */
+.section-{{ sid }} .slider-track {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: {{ section.settings.video_gap }}px;
+}
+
+/* DESKTOP: 4 videos with peek */
+.section-{{ sid }} .slide {
+  flex: 0 0 calc(23% - {{ section.settings.video_gap }}px);
+  max-width: 320px;
+  scroll-snap-align: start;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.section-{{ sid }} .slide video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+/* POPUP */
+.section-{{ sid }} .video-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.section-{{ sid }} .video-popup.active {
+  display: flex;
+}
+
+.section-{{ sid }} .popup-inner {
+  position: relative;
+  width: 320px;
+  max-width: 90vw;
+  aspect-ratio: 9 / 16;
+}
+
+.section-{{ sid }} .popup-inner video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #000;
+}
+
+.section-{{ sid }} .popup-close {
+  position: absolute;
+  top: -36px;
+  right: 0;
+  background: #fff;
+  border: none;
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+  .section-{{ sid }} .videos-title {
+    text-align: center;
+    font-size: 20px;
+  }
+
+  .section-{{ sid }} .slide {
+    flex: 0 0 75vw;
+    max-width: 280px;
+  }
+}
+
+</style>
+
+<section class="section-{{ sid }} section">
+  <div class="page-width">
+
+    {% if section.settings.title != blank %}
+      <h2 class="videos-title {{ section.settings.heading_size }}">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+
+    {% if section.blocks.size > 0 %}
+      <div class="slider-outer">
+        <div class="slider-track">
+          {% for block in section.blocks %}
+            <div class="slide" {{ block.shopify_attributes }}>
+              {% if block.settings.video != blank %}
+                <video 
+                  muted 
+                  loop 
+                  autoplay 
+                  playsinline
+                  data-video-src="{{ block.settings.video.sources[0].url }}">
+                  <source src="{{ block.settings.video.sources[0].url }}" type="video/mp4">
+                </video>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <!-- POPUP -->
+  <div class="video-popup" id="videoPopup-{{ sid }}">
+    <div class="popup-inner">
+      <button class="popup-close" aria-label="Close">&times;</button>
+      <video id="popupVideo-{{ sid }}" controls playsinline></video>
+    </div>
+  </div>
+
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  const section = document.querySelector(".section-{{ sid }}");
+  if (!section) return;
+
+  const popup = section.querySelector("#videoPopup-{{ sid }}");
+  const popupVideo = section.querySelector("#popupVideo-{{ sid }}");
+  const closeBtn = section.querySelector(".popup-close");
+
+  section.querySelectorAll(".slide video").forEach(video => {
+    video.addEventListener("click", function(e) {
+      e.preventDefault();
+      popup.classList.add("active");
+      popupVideo.src = this.dataset.videoSrc;
+      popupVideo.play();
+    });
+  });
+
+  function closePopup() {
+    popup.classList.remove("active");
+    popupVideo.pause();
+    popupVideo.src = "";
+  }
+
+  closeBtn.addEventListener("click", closePopup);
+
+  popup.addEventListener("click", function(e) {
+    if (e.target === popup) closePopup();
+  });
+
+});
+</script>
+
+{% schema %}
+{
+  "name": "Videos Slider",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Heading",
+      "default": "Video Slider"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "video_gap",
+      "label": "Gap between videos",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Select video"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Videos Slider",
+      "blocks": [
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" }
+      ]
+    }
+  ]
+}
+{% endschema %}
