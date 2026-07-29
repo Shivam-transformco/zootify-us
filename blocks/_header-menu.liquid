@@ -587,6 +587,7 @@
     grid-template-columns: repeat(var(--menu-columns-tablet), minmax(0, 1fr));
     gap: var(--menu-vertical-gap) var(--menu-horizontal-gap);
     width: 100%;
+    padding: 0px !important;
 
     @media screen and (min-width: 990px) {
       grid-template-columns: repeat(var(--menu-columns-desktop), minmax(0, 1fr));
@@ -710,7 +711,7 @@
     right: auto;
     padding-inline: var(--padding-md, 1rem);
     top: 100%;
-    margin-top: 0 !important;
+    margin-top: 4px !important;
   }
 
   .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu .mega-menu__link {
