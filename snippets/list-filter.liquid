@@ -201,6 +201,9 @@
           >
             {%- for value in filter.values -%}
               {% liquid
+                if value.label == 'Out of stock'
+                  continue
+                endif
                 assign input_id = 'Filter-' | append: filter.param_name | escape | append: '-' | append: forloop.index | replace: '.', '-' | append: '-' | append: filter_style | append: '-' | append: in_drawer
                 assign is_disabled = false
                 if value.count == 0 and value.active == false
