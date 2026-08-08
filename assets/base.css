@@ -1422,6 +1422,23 @@ button.shopify-payment-button__button--unbranded {
   border-radius:4px;
 }
 
+/* ZOOTIFY primary CTA interaction only.
+   Excludes secondary, unstyled, and slideshow navigation controls. */
+.button:not(.button-secondary, .button-unstyled, .slideshow-control) {
+  transition: color 220ms ease, background-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.button:not(.button-secondary, .button-unstyled, .slideshow-control):hover:not([aria-disabled='true']):not(:disabled) {
+  color: #01151E;
+  background-color: #7DC762;
+  --button-border-color: #7DC762;
+  transform: translateY(-1px);
+}
+
+.button:not(.button-secondary, .button-unstyled, .slideshow-control):active:not([aria-disabled='true']):not(:disabled) {
+  transform: scale(0.98);
+}
+
 .button:not(.button-secondary, .button-unstyled) {
   outline-color: var(--button-background-color);
 }
@@ -4655,9 +4672,18 @@ product-recommendations .section-resource-list__content > *:first-child {
   gap: 8px;
 }
 
+.facets .checkbox__label {
+  flex-direction: row-reverse !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
 .facets .checkbox__label-text {
   font-size: 12px !important;
   color: #555 !important;
+  padding-inline-start: 0 !important;
+  padding-inline-end: var(--checkbox-label-padding);
 }
 
 .facets .checkbox__input {

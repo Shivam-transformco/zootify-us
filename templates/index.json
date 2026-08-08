@@ -12,52 +12,80 @@
     "hero_banner_KdECd7": {
       "type": "hero-banner",
       "blocks": {
-        "slide_mjYDLQ": {
+        "slide_jafzRT": {
           "type": "slide",
           "settings": {
-            "heading": "Carry things worth carrying",
-            "subtext": "Frostand Magsafe Case, Protection with a kick",
+            "heading": "CARRY THINGS WORTH <br> CARRYING",
+            "subtext": "Frostand - Essentials Combined with Elegance.",
             "content_alignment": "left",
-            "heading_color": "#6c6975",
-            "subtext_color": "#323232",
-            "heading_size_desktop": 42,
-            "heading_size_mobile": 28,
+            "heading_color": "#2c2c2c",
+            "subtext_color": "#2c2c2c",
+            "heading_size_desktop": 35,
+            "heading_size_mobile": 26,
             "subtext_size_desktop": 16,
-            "subtext_size_mobile": 14,
+            "subtext_size_mobile": 18,
             "heading_font_weight": 700,
-            "subtext_font_weight": 500,
-            "heading_subtext_spacing": 4,
+            "subtext_font_weight": 400,
+            "heading_subtext_spacing": 12,
             "desktop_layout": "full",
             "desktop_left_type": "image",
-            "desktop_left_image": "shopify://shop_images/Gemini_Generated_Image_2cplqb2cplqb2cpl_1_3270bd7d-9180-43f7-93b7-25b758674844.webp",
             "desktop_right_type": "image",
-            "desktop_right_image": "shopify://shop_images/Gemini_Generated_Image_n0wxwan0wxwan0wx_1_47b16fef-b070-4bbd-b570-4999e6c78aa4.webp",
             "desktop_full_type": "image",
-            "desktop_full_image": "shopify://shop_images/Gemini_Generated_Image_ntain6ntain6ntai_copy.png",
+            "desktop_full_image": "shopify://shop_images/Gemini_Generated_Image_bxvwr5bxvwr5bxvw_copy_2.png",
             "mobile_layout": "full",
             "mobile_top_type": "image",
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
-            "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_6vwwdb6vwwdb6vww_copy.png",
+            "mobile_full_image": "shopify://shop_images/Group4101cop.jpg",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/frostand-blue-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-air"
+            "button_link": "shopify://products/frostand-purple-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-pro-max-copy"
+          }
+        },
+        "slide_RUGfKG": {
+          "type": "slide",
+          "settings": {
+            "heading": "LEATHERITE ELEGANCE",
+            "subtext": "Ridge - Premium Textured Leatherite Fusion",
+            "content_alignment": "left",
+            "heading_color": "#393939",
+            "subtext_color": "#393939",
+            "heading_size_desktop": 35,
+            "heading_size_mobile": 26,
+            "subtext_size_desktop": 16,
+            "subtext_size_mobile": 18,
+            "heading_font_weight": 700,
+            "subtext_font_weight": 400,
+            "heading_subtext_spacing": 12,
+            "desktop_layout": "full",
+            "desktop_left_type": "image",
+            "desktop_right_type": "image",
+            "desktop_full_type": "image",
+            "desktop_full_image": "shopify://shop_images/Gemini_Generated_Image_pl7klmpl7klmpl7k_copy.png",
+            "mobile_layout": "full",
+            "mobile_top_type": "image",
+            "mobile_bottom_type": "image",
+            "mobile_full_type": "image",
+            "mobile_full_image": "shopify://shop_images/banner_ridge_leather.png",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://products/frostand-orange-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-pro-max"
           }
         },
         "slide_nML68w": {
           "type": "slide",
+          "disabled": true,
           "settings": {
-            "heading": "Make your everyday carry more intentional",
-            "subtext": "RIdge leather-finish case built for everyday elegance",
+            "heading": "THE RIDGE CASE",
+            "subtext": "Ridge leather-finish case built for everyday elegance",
             "content_alignment": "left",
             "heading_color": "#323232",
             "subtext_color": "#323232",
-            "heading_size_desktop": 42,
-            "heading_size_mobile": 25,
+            "heading_size_desktop": 35,
+            "heading_size_mobile": 26,
             "subtext_size_desktop": 16,
-            "subtext_size_mobile": 14,
+            "subtext_size_mobile": 18,
             "heading_font_weight": 700,
             "subtext_font_weight": 400,
-            "heading_subtext_spacing": 4,
+            "heading_subtext_spacing": 12,
             "desktop_layout": "full",
             "desktop_left_type": "image",
             "desktop_right_type": "image",
@@ -69,11 +97,12 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_dc2er0dc2er0dc2e_copy.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/primo-orange-leather-premium-magsafe-case-cover-for-iphone-17-pro-max"
+            "button_link": "shopify://products/ridge-silver-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro-max"
           }
         },
         "slide_MmmeK8": {
           "type": "slide",
+          "disabled": true,
           "settings": {
             "heading": "Ironclad Case",
             "subtext": "Magnetic Protection, Elevated",
@@ -90,15 +119,48 @@
             "desktop_layout": "full",
             "desktop_left_type": "image",
             "desktop_right_type": "image",
+            "desktop_right_image": "shopify://shop_images/shoot1_1.png",
             "desktop_full_type": "image",
-            "desktop_full_image": "shopify://shop_images/BANNER_2_F_US.png",
+            "desktop_full_image": "shopify://shop_images/shoot3_1.png",
             "mobile_layout": "full",
             "mobile_top_type": "image",
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
-            "mobile_full_image": "shopify://shop_images/BANNER.png",
+            "mobile_full_image": "shopify://shop_images/shoot3_1.png",
             "button_label": "SHOP NOW",
             "button_link": "shopify://products/ironclad-transparent-orange-magsafe-case-cover-for-iphone-17-pro"
+          }
+        },
+        "slide_mjYDLQ": {
+          "type": "slide",
+          "disabled": true,
+          "settings": {
+            "heading": "Carry things worth carrying",
+            "subtext": "Frostand Magsafe Case, Protection with a kick",
+            "content_alignment": "left",
+            "heading_color": "#373636",
+            "subtext_color": "#323232",
+            "heading_size_desktop": 35,
+            "heading_size_mobile": 28,
+            "subtext_size_desktop": 16,
+            "subtext_size_mobile": 14,
+            "heading_font_weight": 700,
+            "subtext_font_weight": 500,
+            "heading_subtext_spacing": 4,
+            "desktop_layout": "full",
+            "desktop_left_type": "image",
+            "desktop_left_image": "shopify://shop_images/Gemini_Generated_Image_5knlxt5knlxt5knl_copy.png",
+            "desktop_right_type": "image",
+            "desktop_right_image": "shopify://shop_images/Gemini_Generated_Image_7vsnhw7vsnhw7vsn_1_copy.png",
+            "desktop_full_type": "image",
+            "desktop_full_image": "shopify://shop_images/Gemini_Generated_Image_bprs0hbprs0hbprs_copy.png",
+            "mobile_layout": "full",
+            "mobile_top_type": "image",
+            "mobile_bottom_type": "image",
+            "mobile_full_type": "image",
+            "mobile_full_image": "shopify://shop_images/shoot3_1.png",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://products/frostand-blue-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-air"
           }
         },
         "slide_GA8zC4": {
@@ -243,9 +305,11 @@
         }
       },
       "block_order": [
-        "slide_mjYDLQ",
+        "slide_jafzRT",
+        "slide_RUGfKG",
         "slide_nML68w",
         "slide_MmmeK8",
+        "slide_mjYDLQ",
         "slide_GA8zC4",
         "slide_WaQFdL",
         "slide_BeNqzx",
@@ -255,7 +319,7 @@
       "custom_css": [],
       "name": "Hero – Dynamic",
       "settings": {
-        "interval": 5500,
+        "interval": 4000,
         "mobile_banner_height": 80
       }
     },
@@ -265,7 +329,7 @@
         "category_WdNmMF": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_vfo4ewvfo4ewvfo4.png",
+            "image": "shopify://shop_images/Gemini_Generated_Image_j45ofij45ofij45o_copy.png",
             "title": "iPhone 17",
             "link": "shopify://collections/iphone-17"
           }
@@ -273,7 +337,7 @@
         "category_dqXL6q": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_1ou4fe1ou4fe1ou4.png",
+            "image": "shopify://shop_images/Gemini_Generated_Image_e620lne620lne620.png",
             "title": "iPhone 17 Pro Max",
             "link": "shopify://collections/iphone-17-pro-max"
           }
@@ -281,7 +345,7 @@
         "category_qUADQD": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_qxei04qxei04qxei_copy.png",
+            "image": "shopify://shop_images/Gemini_Generated_Image_mv7zc1mv7zc1mv7z_copy.png",
             "title": "iPhone 17 Pro",
             "link": "shopify://collections/iphone-17-pro-covers"
           }
@@ -289,7 +353,7 @@
         "category_xbzzd6": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_sw67plsw67plsw67.png",
+            "image": "shopify://shop_images/thumbnail_air.png",
             "title": "iPhone 17 Air",
             "link": "shopify://collections/iphone-17-air"
           }
@@ -313,8 +377,238 @@
         "padding_right": 0,
         "padding_top_mobile": 30,
         "padding_bottom_mobile": 30,
-        "padding_left_mobile": 16,
+        "padding_left_mobile": 4,
         "padding_right_mobile": 16
+      }
+    },
+    "zootify_best_sellers_text_prV8xc": {
+      "type": "zootify-best-sellers-text",
+      "name": "Best sellers text",
+      "settings": {
+        "show_eyebrow": true,
+        "eyebrow": "ZOOTIFY iPHONE CASES",
+        "heading": "OUR BEST SELLER",
+        "heading_tag": "p",
+        "description": "<p>Frostand is a combination of all the Essential Functions with Elegance. Carry it anywhere and you would never go wrong with your choice.</p>",
+        "show_supporting_text": true,
+        "supporting_text": "DESIGNED FOR THE WAY YOU MOVE",
+        "full_width": false,
+        "content_width": 1400,
+        "text_width": 820,
+        "description_width": 680,
+        "alignment_desktop": "center",
+        "alignment_mobile": "center",
+        "show_side_lines": true,
+        "show_accent_line": true,
+        "accent_line_width": 64,
+        "accent_line_height": 3,
+        "show_top_border": false,
+        "show_bottom_border": false,
+        "heading_size_desktop": 40,
+        "heading_size_mobile": 28,
+        "heading_weight": "700",
+        "heading_case": "uppercase",
+        "heading_line_height": 100,
+        "heading_letter_spacing": -2,
+        "eyebrow_size": 11,
+        "text_size_desktop": 20,
+        "text_size_mobile": 17,
+        "text_weight": "400",
+        "text_line_height": 150,
+        "text_letter_spacing": 0,
+        "background_color": "#ffffff",
+        "heading_color": "#01151e",
+        "text_color": "#3d474b",
+        "accent_color": "#7dc762",
+        "border_color": "#e5e9e7",
+        "padding_top_desktop": 20,
+        "padding_bottom_desktop": 20,
+        "padding_top_mobile": 16,
+        "padding_bottom_mobile": 16,
+        "animation": "fade-up"
+      }
+    },
+    "frostand_section_4wMLwq": {
+      "type": "frostand-section",
+      "blocks": {
+        "card_UBEg6r": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/download (4).mp4",
+            "mobile_video": "shopify://files/videos/download (4).mp4",
+            "heading": "Frosted. Refined. Protected",
+            "body": "A clean translucent back keeps your iPhone visible.",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#ffffff",
+            "card_gradient_end": "#f5f5f3",
+            "media_background": "#ffffff"
+          }
+        },
+        "card_94ipm4": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/download (2).mp4",
+            "mobile_video": "shopify://files/videos/download (2).mp4",
+            "heading": "MagSafe Compatible",
+            "body": "Snap on chargers and accessories.",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#ffffff",
+            "card_gradient_end": "#f5f5f3",
+            "media_background": "#ffffff"
+          }
+        },
+        "card_9UfLyd": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/download (3).mp4",
+            "mobile_video": "shopify://files/videos/download (3).mp4",
+            "heading": "Stand when you need it.",
+            "body": "Flip out the kickstand for hands-free viewing.",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#ffffff",
+            "card_gradient_end": "#f5f5f3",
+            "media_background": "#ffffff"
+          }
+        },
+        "card_LTxKcK": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/download (5).mp4",
+            "mobile_video": "shopify://files/videos/download (5).mp4",
+            "heading": "Built for everyday impact.",
+            "body": "A rigid PC back and flexible TPU edges.",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#ffffff",
+            "card_gradient_end": "#f5f5f3",
+            "media_background": "#ffffff"
+          }
+        },
+        "feature_nbkFw4": {
+          "type": "feature",
+          "settings": {
+            "icon": "frost",
+            "title": "Frosted PC Back",
+            "body": "Clean, translucent finish"
+          }
+        },
+        "feature_nnb9gQ": {
+          "type": "feature",
+          "settings": {
+            "icon": "grip",
+            "title": "Premium Textured Edges",
+            "body": "Secure, comfortable grip"
+          }
+        },
+        "feature_V68G3P": {
+          "type": "feature",
+          "settings": {
+            "icon": "magsafe",
+            "title": "MagSafe Ready",
+            "body": "Charge and attach effortlessly"
+          }
+        },
+        "feature_Dim4P4": {
+          "type": "feature",
+          "settings": {
+            "icon": "stand",
+            "title": "Built-in Kickstand",
+            "body": "Hands-free viewing anywhere"
+          }
+        }
+      },
+      "block_order": [
+        "card_UBEg6r",
+        "card_94ipm4",
+        "card_9UfLyd",
+        "card_LTxKcK",
+        "feature_nbkFw4",
+        "feature_nnb9gQ",
+        "feature_V68G3P",
+        "feature_Dim4P4"
+      ],
+      "name": "Frostand Features",
+      "settings": {
+        "max_width": 1800,
+        "cards_max_width": 1200,
+        "background_color": "#ffffff",
+        "text_color": "#171714",
+        "muted_color": "#66645f",
+        "side_padding": 100,
+        "side_padding_mobile": 20,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "padding_top_mobile": 28,
+        "padding_bottom_mobile": 40,
+        "cards_per_row": 4,
+        "card_gap": 12,
+        "card_gap_mobile": 12,
+        "card_height": 515,
+        "card_height_mobile": 480,
+        "media_height": 75,
+        "mobile_media_height": 75,
+        "card_radius": 5,
+        "border_width": 1,
+        "border_color": "#cecdc9",
+        "card_background": "#ffffff",
+        "enable_card_gradient": false,
+        "card_gradient_end": "#ffffff",
+        "soft_gradient_enable": false,
+        "soft_gradient_color": "#000000",
+        "soft_gradient_opacity": 6,
+        "soft_gradient_start": 58,
+        "media_fit": "cover",
+        "mobile_layout": "scroll",
+        "mobile_card_width": 88,
+        "show_progress": true,
+        "heading_font": "montserrat_n4",
+        "body_font": "montserrat_n4",
+        "use_individual_fonts": false,
+        "card_title_font": "montserrat_n4",
+        "card_body_font": "montserrat_n4",
+        "eyebrow_font": "montserrat_n4",
+        "discover_heading_font": "montserrat_n4",
+        "discover_body_font": "montserrat_n4",
+        "feature_title_font": "montserrat_n4",
+        "feature_body_font": "montserrat_n4",
+        "card_title_size": 18,
+        "card_title_size_mobile": 18,
+        "card_title_weight": "500",
+        "card_body_size": 13,
+        "card_body_size_mobile": 13,
+        "eyebrow_size": 12,
+        "eyebrow_size_mobile": 10,
+        "feature_title_size": 15,
+        "feature_title_size_mobile": 16,
+        "feature_body_size": 14,
+        "feature_body_size_mobile": 13,
+        "show_discover": true,
+        "discover_eyebrow": "FROSTED FINISH. MAGNETIC. MOVIE-READY.",
+        "discover_heading": "Discover Frostand",
+        "discover_body": "A clean frosted finish meets everyday utility. Designed for professionals and minimalists, Frostand combines MagSafe support, textured edges and a built-in stand without hiding the look of your iPhone.",
+        "discover_max_width": 520,
+        "discover_gap": 72,
+        "discover_gap_mobile": 68,
+        "discover_heading_size": 34,
+        "disc_heading_size_mobile": 30,
+        "discover_body_size": 15,
+        "discover_body_size_mobile": 14,
+        "feature_icon_size": 50
       }
     },
     "hero_banner_qCNr7E": {
@@ -323,11 +617,11 @@
         "slide_DW4AAE": {
           "type": "slide",
           "settings": {
-            "heading": "CARRY SMART, STAND EASY.",
-            "subtext": "Premium cases made for grip, protection,\nand hands-free moments.",
+            "heading": "RIDGE LEATHER CASE",
+            "subtext": "Leather and metallic finish.",
             "content_alignment": "left",
-            "heading_color": "#2c3241",
-            "subtext_color": "#2c3241",
+            "heading_color": "#ffffff",
+            "subtext_color": "#ffffff",
             "heading_size_desktop": 30,
             "heading_size_mobile": 20,
             "subtext_size_desktop": 16,
@@ -335,29 +629,32 @@
             "heading_font_weight": 700,
             "subtext_font_weight": 400,
             "heading_subtext_spacing": 12,
-            "desktop_layout": "full",
+            "desktop_layout": "split",
             "desktop_left_type": "image",
+            "desktop_left_image": "shopify://shop_images/Gemini_Generated_Image_xfg9fvxfg9fvxfg9_copy.png",
             "desktop_right_type": "image",
+            "desktop_right_image": "shopify://shop_images/Gemini_Generated_Image_718xem718xem718x_copy_32f0d405-f860-496b-a083-46cd1f4047a8.png",
             "desktop_full_type": "image",
-            "desktop_full_image": "shopify://shop_images/banner_2_us_fin.png",
+            "desktop_full_image": "shopify://shop_images/Group_4097.png",
             "mobile_layout": "full",
             "mobile_top_type": "image",
+            "mobile_top_image": "shopify://shop_images/Gemini_Generated_Image_409ynx409ynx409y.png",
             "mobile_bottom_type": "image",
+            "mobile_bottom_image": "shopify://shop_images/Gemini_Generated_Image_7vsnhw7vsnhw7vsn_1_copy_d11ee27c-2799-40df-bae3-942b8d329250.png",
             "mobile_full_type": "image",
-            "mobile_full_image": "shopify://shop_images/banner_mob_fin.png",
-            "button_label": "Shop Now",
-            "button_link": "shopify://collections/phone-covers"
+            "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_718xem718xem718x_copy_9dfd206e-a1c1-4548-bba2-3c435a04dd0a.png",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://products/ridge-orange-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro"
           }
         },
         "slide_YeQUye": {
           "type": "slide",
-          "disabled": true,
           "settings": {
-            "heading": "YOUR PHONE'S EVERYDAY  ARMOUR.",
-            "subtext": "Strong protection, smart functionality,\nand a <br> design that fits your lifestyle.",
+            "heading": "FROSTAND COLLECTION",
+            "subtext": "Strong protection, smart functionality.",
             "content_alignment": "left",
-            "heading_color": "#0f0f0f",
-            "subtext_color": "#433f39",
+            "heading_color": "#ffffff",
+            "subtext_color": "#ffffff",
             "heading_size_desktop": 30,
             "heading_size_mobile": 20,
             "subtext_size_desktop": 16,
@@ -365,86 +662,32 @@
             "heading_font_weight": 700,
             "subtext_font_weight": 400,
             "heading_subtext_spacing": 12,
-            "desktop_layout": "full",
+            "desktop_layout": "split",
             "desktop_left_type": "image",
+            "desktop_left_image": "shopify://shop_images/Gemini_Generated_Image_wdffwcwdffwcwdff.png",
             "desktop_right_type": "image",
+            "desktop_right_image": "shopify://shop_images/Gemini_Generated_Image_lhks2ilhks2ilhks.png",
             "desktop_full_type": "image",
-            "desktop_full_image": "shopify://shop_images/banner_2.png",
+            "desktop_full_image": "shopify://shop_images/banner_option2.png",
             "mobile_layout": "full",
             "mobile_top_type": "image",
+            "mobile_top_image": "shopify://shop_images/Gemini_Generated_Image_lhks2ilhks2ilhks.png",
             "mobile_bottom_type": "image",
+            "mobile_bottom_image": "shopify://shop_images/Gemini_Generated_Image_eg1l8ceg1l8ceg1l.png",
             "mobile_full_type": "image",
-            "mobile_full_image": "shopify://shop_images/Group_4089_copy.png",
+            "mobile_full_image": "shopify://shop_images/frostandkickstandmagsafe.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/phone-covers"
-          }
-        },
-        "slide_yLKG7L": {
-          "type": "slide",
-          "disabled": true,
-          "settings": {
-            "heading": "",
-            "subtext": "",
-            "content_alignment": "left",
-            "heading_color": "#000000",
-            "subtext_color": "#ffffff",
-            "heading_size_desktop": 48,
-            "heading_size_mobile": 28,
-            "subtext_size_desktop": 16,
-            "subtext_size_mobile": 14,
-            "heading_font_weight": 700,
-            "subtext_font_weight": 400,
-            "heading_subtext_spacing": 12,
-            "desktop_layout": "full",
-            "desktop_left_type": "image",
-            "desktop_right_type": "image",
-            "desktop_full_type": "image",
-            "mobile_layout": "full",
-            "mobile_top_type": "image",
-            "mobile_bottom_type": "image",
-            "mobile_full_type": "image",
-            "button_label": "SHOP NOW",
-            "button_link": "shopify://pages/iphone-variants"
-          }
-        },
-        "slide_J8tijz": {
-          "type": "slide",
-          "disabled": true,
-          "settings": {
-            "heading": "",
-            "subtext": "",
-            "content_alignment": "left",
-            "heading_color": "#ffffff",
-            "subtext_color": "#ffffff",
-            "heading_size_desktop": 48,
-            "heading_size_mobile": 28,
-            "subtext_size_desktop": 16,
-            "subtext_size_mobile": 14,
-            "heading_font_weight": 700,
-            "subtext_font_weight": 400,
-            "heading_subtext_spacing": 12,
-            "desktop_layout": "full",
-            "desktop_left_type": "image",
-            "desktop_right_type": "image",
-            "desktop_full_type": "image",
-            "mobile_layout": "full",
-            "mobile_top_type": "image",
-            "mobile_bottom_type": "image",
-            "mobile_full_type": "image",
-            "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/back-covers"
+            "button_link": "shopify://products/frostand-purple-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-pro-max-copy-1"
           }
         }
       },
       "block_order": [
         "slide_DW4AAE",
-        "slide_YeQUye",
-        "slide_yLKG7L",
-        "slide_J8tijz"
+        "slide_YeQUye"
       ],
       "name": "Hero – Dynamic",
       "settings": {
-        "interval": 4000,
+        "interval": 5000,
         "mobile_banner_height": 80
       }
     },
@@ -493,7 +736,7 @@
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "h4",
+                "type_preset": "h5",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
@@ -632,6 +875,118 @@
         "padding-block-end": 48
       }
     },
+    "about_us_B4kgWw": {
+      "type": "about-us",
+      "blocks": {
+        "slide_Pqe4cW": {
+          "type": "slide",
+          "settings": {
+            "desktop_image": "shopify://shop_images/banner_option2.png",
+            "mobile_image": "shopify://shop_images/Gemini_Generated_Image_qewo9sqewo9sqewo.png",
+            "media_alt": "",
+            "desktop_focal_x": 50,
+            "desktop_focal_y": 50,
+            "mobile_focal_x": 50,
+            "mobile_focal_y": 50,
+            "show_eyebrow": true,
+            "eyebrow": "EST. 2026",
+            "show_heading": true,
+            "heading": "ZOOTIFY",
+            "show_subheading": true,
+            "subheading": "<p>USA</p>",
+            "show_button": true,
+            "button_label": "OUR STORY",
+            "button_link": "shopify://pages/about-us",
+            "button_new_tab": false
+          }
+        }
+      },
+      "block_order": [
+        "slide_Pqe4cW"
+      ],
+      "name": "Premium Media Hero",
+      "settings": {
+        "aria_label": "Featured media",
+        "desktop_height_unit": "px",
+        "desktop_height_px": 720,
+        "desktop_height_vh": 72,
+        "mobile_height_unit": "vh",
+        "mobile_height_px": 640,
+        "mobile_height_vh": 80,
+        "desktop_horizontal": "center",
+        "desktop_vertical": "center",
+        "mobile_horizontal": "center",
+        "mobile_vertical": "center",
+        "desktop_text_align": "center",
+        "mobile_text_align": "center",
+        "content_max_width": 680,
+        "desktop_content_gap": 16,
+        "mobile_content_gap": 14,
+        "desktop_padding_x": 48,
+        "desktop_padding_y": 48,
+        "mobile_padding_x": 24,
+        "mobile_padding_y": 32,
+        "overlay_color": "#000000",
+        "overlay_opacity": 15,
+        "autoplay": true,
+        "interval": 6,
+        "transition": "fade",
+        "transition_duration": 600,
+        "show_arrows": true,
+        "show_dots": true,
+        "control_background": "#FFFFFF",
+        "control_icon": "#111111",
+        "dot_color": "#FFFFFF",
+        "active_dot_color": "#FFFFFF",
+        "eyebrow_font": "sans_serif_n4",
+        "eyebrow_color": "#FFFFFF",
+        "eyebrow_size_desktop": 14,
+        "eyebrow_size_mobile": 12,
+        "eyebrow_weight_desktop": "500",
+        "eyebrow_weight_mobile": "500",
+        "eyebrow_lh_desktop": 1.2,
+        "eyebrow_lh_mobile": 1.2,
+        "eyebrow_letter_desktop": 2,
+        "eyebrow_letter_mobile": 1.6,
+        "heading_font": "sans_serif_n4",
+        "heading_color": "#FFFFFF",
+        "heading_size_desktop": 56,
+        "heading_size_mobile": 42,
+        "heading_weight_desktop": "600",
+        "heading_weight_mobile": "600",
+        "heading_lh_desktop": 1.1,
+        "heading_lh_mobile": 1.1,
+        "heading_letter_desktop": 0,
+        "heading_letter_mobile": 0,
+        "subheading_font": "sans_serif_n4",
+        "subheading_color": "#FFFFFF",
+        "subheading_size_desktop": 20,
+        "subheading_size_mobile": 17,
+        "subheading_weight_desktop": "400",
+        "subheading_weight_mobile": "400",
+        "subheading_lh_desktop": 1.4,
+        "subheading_lh_mobile": 1.5,
+        "subheading_letter_desktop": 0,
+        "subheading_letter_mobile": 0,
+        "button_font": "sans_serif_n4",
+        "button_background": "#FFFFFF",
+        "button_text": "#111111",
+        "button_border": "#FFFFFF",
+        "button_hover_background": "#111111",
+        "button_hover_text": "#FFFFFF",
+        "button_hover_border": "#111111",
+        "button_size_desktop": 18,
+        "button_size_mobile": 17,
+        "button_weight_desktop": "500",
+        "button_weight_mobile": "500",
+        "button_padding_y_desktop": 14,
+        "button_padding_x_desktop": 36,
+        "button_padding_y_mobile": 13,
+        "button_padding_x_mobile": 32,
+        "button_border_width": 1,
+        "button_radius": 100
+      }
+    },
     "offer_carousal_ti3KTi": {
       "type": "offer-carousal",
       "blocks": {
@@ -719,7 +1074,7 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 0,
+        "padding-block-start": 28,
         "padding-block-end": 0
       }
     },
@@ -730,7 +1085,7 @@
           "type": "image",
           "name": "t:names.image",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_kch7nvkch7nvkch7.png",
+            "image": "shopify://shop_images/Gemini_Generated_Image_jhf20wjhf20wjhf2_1_copy.png",
             "link": "",
             "image_ratio": "portrait",
             "width": "custom",
@@ -753,7 +1108,7 @@
           "type": "image",
           "name": "t:names.image",
           "settings": {
-            "image": "shopify://shop_images/4.png",
+            "image": "shopify://shop_images/Gemini_Generated_Image_zed7eyzed7eyzed7_copy.png",
             "link": "",
             "image_ratio": "portrait",
             "width": "custom",
@@ -1200,8 +1555,11 @@
   "order": [
     "hero_banner_KdECd7",
     "shop_by_category_MGfVXR",
+    "zootify_best_sellers_text_prV8xc",
+    "frostand_section_4wMLwq",
     "hero_banner_qCNr7E",
     "product_list_qz8xwq",
+    "about_us_B4kgWw",
     "offer_carousal_ti3KTi",
     "blocks_pNbrnU",
     "177529975949e11fc1",

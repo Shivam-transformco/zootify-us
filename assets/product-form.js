@@ -68,6 +68,15 @@ export class AddToCartComponent extends Component {
    * @param {MouseEvent & {target: HTMLElement}} event - The click event.
    */
   handleClick(event) {
+    const { addToCartButton } = this.refs;
+
+    // If the selected variant is already in the cart, use the same button to open the cart.
+    if (addToCartButton.dataset.goToCart === 'true') {
+      event.preventDefault();
+      window.location.href = Theme.routes.cart_url || '/cart';
+      return;
+    }
+
     const form = this.closest('form');
     if (!form?.checkValidity()) return;
 
@@ -205,6 +214,12 @@ class ProductFormComponent extends Component {
 
     // Listen for cart updates to sync data-cart-quantity
     document.addEventListener(ThemeEvents.cartUpdate, this.#onCartUpdate, { signal });
+
+    // Sync the initial button state in case the selected variant is already in the cart.
+    // Waiting one microtask ensures the product-form child refs are available after initial parsing.
+    queueMicrotask(() => {
+      void this.#fetchAndUpdateCartQuantity();
+    });
   }
 
   disconnectedCallback() {
@@ -234,7 +249,51 @@ class ProductFormComponent extends Component {
     // Update quantity label if it exists
     this.#updateQuantityLabel(cartQty);
 
+    // Keep the main purchase button in sync with the selected variant's cart state.
+    this.#updateAddToCartButtonState(cartQty);
+
     return cartQty;
+  }
+
+  /**
+   * Changes only the button text/action when the selected variant is already in the cart.
+   * The existing button styling and success animation remain untouched.
+   * @param {number} cartQty - Quantity of the currently selected variant in the cart.
+   */
+  #updateAddToCartButtonState(cartQty) {
+    const container = this.refs.addToCartButtonContainer;
+    const button = container?.refs.addToCartButton;
+    if (!button) return;
+
+    // Scope this UX change to the main product-page add-to-cart button only.
+    // Quick-add and other purchase buttons keep their existing behavior.
+    if (!button.matches('[data-testid="standalone-add-to-cart"]')) return;
+
+    const label = button.querySelector('.add-to-cart-text__content > span > span');
+    if (!(label instanceof HTMLElement)) return;
+
+    const currentText = label.textContent?.trim() || '';
+
+    // Whenever Shopify renders the normal variant state, remember that exact text
+    // so it can be restored if the item is later removed from the cart.
+    if (currentText && currentText !== 'GO TO CART') {
+      button.dataset.defaultAddToCartText = currentText;
+    }
+
+    if (cartQty > 0) {
+      button.dataset.goToCart = 'true';
+      label.textContent = 'GO TO CART';
+
+      // Even if quantity rules would otherwise disable adding more, navigation to cart must remain available.
+      button.disabled = false;
+      return;
+    }
+
+    button.removeAttribute('data-go-to-cart');
+
+    if (button.dataset.defaultAddToCartText) {
+      label.textContent = button.dataset.defaultAddToCartText;
+    }
   }
 
   /**
@@ -616,12 +675,8 @@ class ProductFormComponent extends Component {
     const newVolumePricing = event.detail.data.html.querySelector('volume-pricing');
     this.#morphOrUpdateElement(currentVolumePricing, newVolumePricing, this.refs.productFormButtons);
 
-    const hasB2BFeatures =
-      quantityRules || newQuantityRules || pricePerItem || newPricePerItem || currentVolumePricing || newVolumePricing;
-
-    if (!hasB2BFeatures) return;
-
-    // Fetch and update cart quantity for the new variant
+    // Always check the newly selected variant against the cart so the button can switch
+    // between ADD TO CART and GO TO CART correctly.
     await this.#fetchAndUpdateCartQuantity();
   };
 

@@ -1,0 +1,651 @@
+{% liquid
+  assign section_label = section.settings.eyebrow | strip
+  assign heading_text = section.settings.heading | strip
+  assign description_text = section.settings.description | strip
+  assign supporting_text = section.settings.supporting_text | strip
+%}
+
+<section
+  id="ZootifyBestSellersText-{{ section.id }}"
+  class="zbst zbst--{{ section.settings.animation }}"
+  style="
+    --zbst-bg: {{ section.settings.background_color }};
+    --zbst-heading: {{ section.settings.heading_color }};
+    --zbst-copy: {{ section.settings.text_color }};
+    --zbst-accent: {{ section.settings.accent_color }};
+    --zbst-border: {{ section.settings.border_color }};
+    --zbst-max-width: {{ section.settings.content_width }}px;
+    --zbst-text-width: {{ section.settings.text_width }}px;
+    --zbst-heading-desktop: {{ section.settings.heading_size_desktop }}px;
+    --zbst-heading-mobile: {{ section.settings.heading_size_mobile }}px;
+    --zbst-copy-desktop: {{ section.settings.text_size_desktop }}px;
+    --zbst-copy-mobile: {{ section.settings.text_size_mobile }}px;
+    --zbst-eyebrow-size: {{ section.settings.eyebrow_size }}px;
+    --zbst-heading-weight: {{ section.settings.heading_weight }};
+    --zbst-heading-spacing: {{ section.settings.heading_letter_spacing | divided_by: 100.0 }}em;
+    --zbst-line-width: {{ section.settings.accent_line_width }}px;
+    --zbst-line-height: {{ section.settings.accent_line_height }}px;
+    --zbst-pad-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --zbst-pad-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --zbst-pad-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --zbst-pad-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --zbst-align-desktop: {{ section.settings.alignment_desktop }};
+    --zbst-align-mobile: {{ section.settings.alignment_mobile }};
+  "
+>
+  <div class="zbst__shell{% if section.settings.full_width %} zbst__shell--full{% endif %}">
+    <div class="zbst__content">
+      {% if section.settings.show_eyebrow and section_label != blank %}
+        <div class="zbst__eyebrow-row">
+          {% if section.settings.show_side_lines %}<span class="zbst__side-line" aria-hidden="true"></span>{% endif %}
+          <p class="zbst__eyebrow">{{ section_label | escape }}</p>
+          {% if section.settings.show_side_lines %}<span class="zbst__side-line" aria-hidden="true"></span>{% endif %}
+        </div>
+      {% endif %}
+
+      {% if heading_text != blank %}
+        <{{ section.settings.heading_tag }} class="zbst__heading">
+          {{ heading_text | escape }}
+        </{{ section.settings.heading_tag }}>
+      {% endif %}
+
+      {% if section.settings.show_accent_line %}
+        <span class="zbst__accent-line" aria-hidden="true"></span>
+      {% endif %}
+
+      {% if description_text != blank %}
+        <div class="zbst__description rte">{{ section.settings.description }}</div>
+      {% endif %}
+
+      {% if section.settings.show_supporting_text and supporting_text != blank %}
+        <p class="zbst__supporting">{{ supporting_text | escape }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% style %}
+  #ZootifyBestSellersText-{{ section.id }} {
+    position: relative;
+    overflow: hidden;
+    background: var(--zbst-bg);
+    color: var(--zbst-heading);
+    border-top: {% if section.settings.show_top_border %}1px{% else %}0{% endif %} solid var(--zbst-border);
+    border-bottom: {% if section.settings.show_bottom_border %}1px{% else %}0{% endif %} solid var(--zbst-border);
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__shell {
+    width: min(100%, var(--zbst-max-width));
+    margin-inline: auto;
+    padding: var(--zbst-pad-top-desktop) 24px var(--zbst-pad-bottom-desktop);
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__shell--full {
+    width: 100%;
+    max-width: none;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__content {
+    width: min(100%, var(--zbst-text-width));
+    margin-inline: {% if section.settings.alignment_desktop == 'center' %}auto{% elsif section.settings.alignment_desktop == 'right' %}auto 0{% else %}0 auto{% endif %};
+    text-align: var(--zbst-align-desktop);
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__eyebrow-row {
+    display: flex;
+    align-items: center;
+    justify-content: {% if section.settings.alignment_desktop == 'center' %}center{% elsif section.settings.alignment_desktop == 'right' %}flex-end{% else %}flex-start{% endif %};
+    gap: 12px;
+    margin: 0 0 15px;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__eyebrow {
+    margin: 0;
+    color: var(--zbst-accent);
+    font-family: var(--font-body-family, inherit);
+    font-size: var(--zbst-eyebrow-size);
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__side-line {
+    width: 30px;
+    height: 1px;
+    flex: 0 0 auto;
+    background: var(--zbst-accent);
+    opacity: 0.72;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__heading {
+    max-width: 100%;
+    margin: 0;
+    color: var(--zbst-heading);
+    font-family: var(--font-heading-family, var(--font-body-family, inherit));
+    font-size: var(--zbst-heading-desktop);
+    font-style: normal;
+    font-weight: var(--zbst-heading-weight);
+    line-height: {{ section.settings.heading_line_height | divided_by: 100.0 }};
+    letter-spacing: var(--zbst-heading-spacing);
+    text-transform: {{ section.settings.heading_case }};
+    text-wrap: balance;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__accent-line {
+    display: block;
+    width: var(--zbst-line-width);
+    height: var(--zbst-line-height);
+    margin-top: 18px;
+    margin-right: {% if section.settings.alignment_desktop == 'right' %}0{% else %}auto{% endif %};
+    margin-left: {% if section.settings.alignment_desktop == 'left' %}0{% else %}auto{% endif %};
+    border-radius: 999px;
+    background: var(--zbst-accent);
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__description {
+    max-width: {{ section.settings.description_width }}px;
+    margin-top: 22px;
+    margin-right: {% if section.settings.alignment_desktop == 'right' %}0{% else %}auto{% endif %};
+    margin-left: {% if section.settings.alignment_desktop == 'left' %}0{% else %}auto{% endif %};
+    color: var(--zbst-copy);
+    font-family: var(--font-body-family, inherit);
+    font-size: var(--zbst-copy-desktop);
+    font-weight: {{ section.settings.text_weight }};
+    line-height: {{ section.settings.text_line_height | divided_by: 100.0 }};
+    letter-spacing: {{ section.settings.text_letter_spacing | divided_by: 100.0 }}em;
+    text-wrap: balance;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__description > * {
+    margin: 0;
+    color: inherit;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__description a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }} .zbst__supporting {
+    margin: 14px 0 0;
+    color: var(--zbst-accent);
+    font-family: var(--font-body-family, inherit);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__eyebrow-row,
+  #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__heading,
+  #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__accent-line,
+  #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__description,
+  #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__supporting {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: zbst-fade-up-{{ section.id }} 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__heading { animation-delay: 0.06s; }
+  #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__accent-line { animation-delay: 0.12s; }
+  #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__description { animation-delay: 0.18s; }
+  #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__supporting { animation-delay: 0.24s; }
+
+  @keyframes zbst-fade-up-{{ section.id }} {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #ZootifyBestSellersText-{{ section.id }} .zbst__shell {
+      padding: var(--zbst-pad-top-mobile) 18px var(--zbst-pad-bottom-mobile);
+    }
+
+    #ZootifyBestSellersText-{{ section.id }} .zbst__content {
+      margin-inline: {% if section.settings.alignment_mobile == 'center' %}auto{% elsif section.settings.alignment_mobile == 'right' %}auto 0{% else %}0 auto{% endif %};
+      text-align: var(--zbst-align-mobile);
+    }
+
+    #ZootifyBestSellersText-{{ section.id }} .zbst__eyebrow-row {
+      justify-content: {% if section.settings.alignment_mobile == 'center' %}center{% elsif section.settings.alignment_mobile == 'right' %}flex-end{% else %}flex-start{% endif %};
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    #ZootifyBestSellersText-{{ section.id }} .zbst__side-line {
+      width: 22px;
+    }
+
+    #ZootifyBestSellersText-{{ section.id }} .zbst__heading {
+      font-size: var(--zbst-heading-mobile);
+    }
+
+    #ZootifyBestSellersText-{{ section.id }} .zbst__accent-line {
+      margin-top: 15px;
+      margin-right: {% if section.settings.alignment_mobile == 'right' %}0{% else %}auto{% endif %};
+      margin-left: {% if section.settings.alignment_mobile == 'left' %}0{% else %}auto{% endif %};
+    }
+
+    #ZootifyBestSellersText-{{ section.id }} .zbst__description {
+      margin-top: 18px;
+      margin-right: {% if section.settings.alignment_mobile == 'right' %}0{% else %}auto{% endif %};
+      margin-left: {% if section.settings.alignment_mobile == 'left' %}0{% else %}auto{% endif %};
+      font-size: var(--zbst-copy-mobile);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__eyebrow-row,
+    #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__heading,
+    #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__accent-line,
+    #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__description,
+    #ZootifyBestSellersText-{{ section.id }}.zbst--fade-up .zbst__supporting {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Best sellers text",
+  "tag": "section",
+  "class": "section-zootify-best-sellers-text",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_eyebrow",
+      "label": "Show eyebrow",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "ZOOTIFY ESSENTIALS"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "OUR BEST SELLERS"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "p", "label": "Paragraph" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>The ZOOTIFY essentials customers keep choosing—clean protection, smart functionality, and design worth carrying every day.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_supporting_text",
+      "label": "Show supporting text",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "supporting_text",
+      "label": "Supporting text",
+      "default": "DESIGNED FOR THE WAY YOU MOVE"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Use full width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 900,
+      "max": 1800,
+      "step": 50,
+      "unit": "px",
+      "label": "Section content width",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "text_width",
+      "min": 320,
+      "max": 1100,
+      "step": 20,
+      "unit": "px",
+      "label": "Text area width",
+      "default": 820
+    },
+    {
+      "type": "range",
+      "id": "description_width",
+      "min": 280,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Description width",
+      "default": 680
+    },
+    {
+      "type": "select",
+      "id": "alignment_desktop",
+      "label": "Desktop alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "alignment_mobile",
+      "label": "Mobile alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Decorative details"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_side_lines",
+      "label": "Show eyebrow side lines",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_accent_line",
+      "label": "Show accent line",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "accent_line_width",
+      "min": 24,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Accent line width",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "accent_line_height",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Accent line thickness",
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_border",
+      "label": "Show top border",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_border",
+      "label": "Show bottom border",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "min": 28,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — desktop",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size — mobile",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "heading_case",
+      "label": "Heading letter case",
+      "options": [
+        { "value": "none", "label": "As typed" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "min": 85,
+      "max": 140,
+      "step": 1,
+      "unit": "%",
+      "label": "Heading line height",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "min": -5,
+      "max": 20,
+      "step": 1,
+      "unit": "%",
+      "label": "Heading letter spacing",
+      "default": -2
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow size",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size — desktop",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "min": 13,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size — mobile",
+      "default": 17
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Text weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "min": 110,
+      "max": 190,
+      "step": 5,
+      "unit": "%",
+      "label": "Text line height",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "text_letter_spacing",
+      "min": -3,
+      "max": 10,
+      "step": 1,
+      "unit": "%",
+      "label": "Text letter spacing",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#01151E"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Description",
+      "default": "#3D474B"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#7DC762"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#E5E9E7"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 20,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — desktop",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 20,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — desktop",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 16,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding — mobile",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 16,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding — mobile",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Motion"
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "Entrance animation",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "fade-up", "label": "Fade up" }
+      ],
+      "default": "fade-up"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Best sellers text"
+    }
+  ]
+}
+{% endschema %}

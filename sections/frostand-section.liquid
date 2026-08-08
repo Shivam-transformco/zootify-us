@@ -1,0 +1,1557 @@
+{% comment %}
+V9: preserves the original working mobile carousel exactly.
+Fixes desktop alignment and removes hard-coded Arc overrides so every visible size control works.
+Cards, progress and Discover content share one centered desktop alignment width.
+{% endcomment %}
+{% liquid
+  assign heading_font = section.settings.heading_font
+  assign body_font = section.settings.body_font
+  assign card_title_font = section.settings.card_title_font
+  assign card_body_font = section.settings.card_body_font
+  assign eyebrow_font = section.settings.eyebrow_font
+  assign discover_heading_font = section.settings.discover_heading_font
+  assign discover_body_font = section.settings.discover_body_font
+  assign feature_title_font = section.settings.feature_title_font
+  assign feature_body_font = section.settings.feature_body_font
+  assign soft_gradient_alpha = section.settings.soft_gradient_opacity | times: 0.01
+  assign soft_gradient_color = section.settings.soft_gradient_color | color_modify: 'alpha', soft_gradient_alpha
+%}
+
+{% style %}
+  {{ heading_font | font_face: font_display: 'swap' }}
+  {{ body_font | font_face: font_display: 'swap' }}
+  {{ card_title_font | font_face: font_display: 'swap' }}
+  {{ card_body_font | font_face: font_display: 'swap' }}
+  {{ eyebrow_font | font_face: font_display: 'swap' }}
+  {{ discover_heading_font | font_face: font_display: 'swap' }}
+  {{ discover_body_font | font_face: font_display: 'swap' }}
+  {{ feature_title_font | font_face: font_display: 'swap' }}
+  {{ feature_body_font | font_face: font_display: 'swap' }}
+
+  #FrostandFeature-{{ section.id }} {
+    --fz-max-width: {{ section.settings.max_width }}px;
+    --fz-cards-max-width: {{ section.settings.cards_max_width }}px;
+    --fz-bg: {{ section.settings.background_color }};
+    --fz-text: {{ section.settings.text_color }};
+    --fz-muted: {{ section.settings.muted_color }};
+    --fz-card-bg: {{ section.settings.card_background }};
+    --fz-card-bg-end: {{ section.settings.card_gradient_end }};
+    --fz-border: {{ section.settings.border_color }};
+    --fz-border-width: {{ section.settings.border_width }}px;
+    --fz-radius: {{ section.settings.card_radius }}px;
+    --fz-gap: {{ section.settings.card_gap }}px;
+    --fz-card-height: {{ section.settings.card_height }}px;
+    --fz-gap-mobile: {{ section.settings.card_gap_mobile }}px;
+    --fz-card-height-mobile: {{ section.settings.card_height_mobile }}px;
+    --fz-media-height: {{ section.settings.media_height }}%;
+    --fz-media-height-mobile: {{ section.settings.mobile_media_height }}%;
+    --fz-side-padding: {{ section.settings.side_padding }}px;
+    --fz-side-padding-mobile: {{ section.settings.side_padding_mobile }}px;
+    --fz-heading-font: {{ heading_font.family | json }}, {{ heading_font.fallback_families }};
+    --fz-body-font: {{ body_font.family | json }}, {{ body_font.fallback_families }};
+    {% if section.settings.use_individual_fonts %}
+      --fz-card-title-font: {{ card_title_font.family | json }}, {{ card_title_font.fallback_families }};
+      --fz-card-body-font: {{ card_body_font.family | json }}, {{ card_body_font.fallback_families }};
+      --fz-eyebrow-font: {{ eyebrow_font.family | json }}, {{ eyebrow_font.fallback_families }};
+      --fz-discover-heading-font: {{ discover_heading_font.family | json }}, {{ discover_heading_font.fallback_families }};
+      --fz-discover-body-font: {{ discover_body_font.family | json }}, {{ discover_body_font.fallback_families }};
+      --fz-feature-title-font: {{ feature_title_font.family | json }}, {{ feature_title_font.fallback_families }};
+      --fz-feature-body-font: {{ feature_body_font.family | json }}, {{ feature_body_font.fallback_families }};
+    {% else %}
+      --fz-card-title-font: var(--fz-heading-font);
+      --fz-card-body-font: var(--fz-body-font);
+      --fz-eyebrow-font: var(--fz-body-font);
+      --fz-discover-heading-font: var(--fz-heading-font);
+      --fz-discover-body-font: var(--fz-body-font);
+      --fz-feature-title-font: var(--fz-heading-font);
+      --fz-feature-body-font: var(--fz-body-font);
+    {% endif %}
+    --fz-card-title-size: {{ section.settings.card_title_size }}px;
+    --fz-card-title-size-mobile: {{ section.settings.card_title_size_mobile }}px;
+    --fz-card-title-weight: {{ section.settings.card_title_weight }};
+    --fz-card-body-size: {{ section.settings.card_body_size }}px;
+    --fz-card-body-size-mobile: {{ section.settings.card_body_size_mobile }}px;
+    --fz-eyebrow-size: {{ section.settings.eyebrow_size }}px;
+    --fz-eyebrow-size-mobile: {{ section.settings.eyebrow_size_mobile }}px;
+    --fz-discover-heading-size: {{ section.settings.discover_heading_size }}px;
+    --fz-discover-heading-size-mobile: {{ section.settings.disc_heading_size_mobile }}px;
+    --fz-discover-body-size: {{ section.settings.discover_body_size }}px;
+    --fz-discover-body-size-mobile: {{ section.settings.discover_body_size_mobile }}px;
+    --fz-feature-title-size: {{ section.settings.feature_title_size }}px;
+    --fz-feature-title-size-mobile: {{ section.settings.feature_title_size_mobile }}px;
+    --fz-feature-body-size: {{ section.settings.feature_body_size }}px;
+    --fz-feature-body-size-mobile: {{ section.settings.feature_body_size_mobile }}px;
+    --fz-feature-icon-size: {{ section.settings.feature_icon_size }}px;
+    --fz-discover-gap: {{ section.settings.discover_gap }}px;
+    --fz-discover-gap-mobile: {{ section.settings.discover_gap_mobile }}px;
+    --fz-soft-gradient-start: {{ section.settings.soft_gradient_start }}%;
+    --fz-soft-gradient-color: {{ soft_gradient_color }};
+    color: var(--fz-text);
+    background: var(--fz-bg);
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    overflow: hidden;
+  }
+
+  #FrostandFeature-{{ section.id }} * {
+    box-sizing: border-box;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-shell {
+    width: min(100%, calc(var(--fz-max-width) + (var(--fz-side-padding) * 2)));
+    margin-inline: auto;
+    padding-inline: var(--fz-side-padding);
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-cards {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.cards_per_row }}, minmax(0, 1fr));
+    width: 100%;
+    max-width: var(--fz-cards-max-width);
+    margin-inline: auto;
+    gap: var(--fz-gap);
+    align-items: stretch;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-card {
+    --fz-card-bg-local: var(--fz-card-bg);
+    --fz-card-bg-end-local: var(--fz-card-bg-end);
+    --fz-media-bg-local: transparent;
+    position: relative;
+    display: flex;
+    min-width: 0;
+    height: var(--fz-card-height);
+    flex-direction: column;
+    overflow: hidden;
+    border: var(--fz-border-width) solid var(--fz-border);
+    border-radius: var(--fz-radius);
+    background:
+      {% if section.settings.enable_card_gradient %}
+        linear-gradient(180deg, var(--fz-card-bg-local) 60%, var(--fz-card-bg-end-local) 100%)
+      {% else %}
+        var(--fz-card-bg-local)
+      {% endif %};
+    isolation: isolate;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: {% if section.settings.soft_gradient_enable %}block{% else %}none{% endif %};
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      transparent var(--fz-soft-gradient-start),
+      var(--fz-soft-gradient-color) 100%
+    );
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-media,
+  #FrostandFeature-{{ section.id }} .fz-card-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-media {
+    position: relative;
+    width: 100%;
+    height: var(--fz-media-height);
+    flex: 0 0 var(--fz-media-height);
+    overflow: hidden;
+    background: var(--fz-media-bg-local);
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-media--mobile {
+    display: none;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-media img,
+  #FrostandFeature-{{ section.id }} .fz-media video,
+  #FrostandFeature-{{ section.id }} .fz-media svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-media img,
+  #FrostandFeature-{{ section.id }} .fz-media video {
+    object-fit: {{ section.settings.media_fit }};
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-media--desktop img,
+  #FrostandFeature-{{ section.id }} .fz-media--desktop video {
+    object-position: var(--fz-focal-x-d) var(--fz-focal-y-d);
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-media--mobile img,
+  #FrostandFeature-{{ section.id }} .fz-media--mobile video {
+    object-position: var(--fz-focal-x-m) var(--fz-focal-y-m);
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-placeholder {
+    color: #C8C7C3;
+    background: #F3F3F1;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-card-content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 0;
+    padding: 22px 22px 24px;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-card-title {
+    max-width: 14ch;
+    margin: 0;
+    color: var(--fz-text);
+    font-family: var(--fz-card-title-font);
+    font-size: var(--fz-card-title-size);
+    font-style: normal;
+    font-weight: var(--fz-card-title-weight);
+    letter-spacing: -0.035em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-card-body {
+    max-width: 29ch;
+    margin: 14px 0 0;
+    color: var(--fz-muted);
+    font-family: var(--fz-card-body-font);
+    font-size: var(--fz-card-body-size);
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: -0.018em;
+    line-height: 1.28;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-progress {
+    display: none;
+    width: 100%;
+    max-width: var(--fz-cards-max-width);
+    margin-inline: auto;
+    height: 2px;
+    margin-top: 18px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #E2E1DE;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-progress-bar {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--fz-text);
+    transform: scaleX(0.25);
+    transform-origin: left center;
+    will-change: transform;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-discover {
+    display: {% if section.settings.show_discover %}block{% else %}none{% endif %};
+    width: 100%;
+    max-width: var(--fz-cards-max-width);
+    margin-top: var(--fz-discover-gap);
+    margin-inline: auto;
+    text-align: left;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-discover-copy {
+    max-width: {{ section.settings.discover_max_width }}px;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-discover-eyebrow {
+    margin: 0 0 14px;
+    color: var(--fz-muted);
+    font-family: var(--fz-eyebrow-font);
+    font-size: var(--fz-eyebrow-size);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-discover-heading {
+    margin: 0;
+    color: var(--fz-text);
+    font-family: var(--fz-discover-heading-font);
+    font-size: var(--fz-discover-heading-size);
+    font-weight: 400;
+    letter-spacing: -0.045em;
+    line-height: 1.03;
+    text-wrap: balance;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-discover-body {
+    max-width: 34ch;
+    margin: 18px 0 0;
+    color: var(--fz-muted);
+    font-family: var(--fz-discover-body-font);
+    font-size: var(--fz-discover-body-size);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-features {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px;
+    max-width: 1080px;
+    margin-top: 42px;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-feature {
+    display: flex;
+    min-width: 0;
+    align-items: flex-start;
+    gap: 17px;
+    text-align: left;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-feature-icon {
+    width: var(--fz-feature-icon-size);
+    height: var(--fz-feature-icon-size);
+    flex: 0 0 var(--fz-feature-icon-size);
+    color: var(--fz-text);
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-feature-icon img,
+  #FrostandFeature-{{ section.id }} .fz-feature-icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-feature-title {
+    margin: 0;
+    color: var(--fz-text);
+    font-family: var(--fz-feature-title-font);
+    font-size: var(--fz-feature-title-size);
+    font-weight: 400;
+    letter-spacing: -0.028em;
+    line-height: 1.15;
+  }
+
+  #FrostandFeature-{{ section.id }} .fz-feature-body {
+    margin: 5px 0 0;
+    color: var(--fz-muted);
+    font-family: var(--fz-feature-body-font);
+    font-size: var(--fz-feature-body-size);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.28;
+  }
+
+  @media screen and (max-width: 1099px) {
+    #FrostandFeature-{{ section.id }} .fz-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-features {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #FrostandFeature-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mobile }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-shell {
+      width: 100%;
+      padding-inline: var(--fz-side-padding-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-cards {
+      gap: var(--fz-gap-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }}.fz--mobile-scroll .fz-cards {
+      display: flex;
+      width: auto;
+      margin-inline: calc(var(--fz-side-padding-mobile) * -1);
+      padding-inline: var(--fz-side-padding-mobile);
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-padding-inline: var(--fz-side-padding-mobile);
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #FrostandFeature-{{ section.id }}.fz--mobile-scroll .fz-cards::-webkit-scrollbar {
+      display: none;
+    }
+
+    #FrostandFeature-{{ section.id }}.fz--mobile-scroll .fz-card {
+      width: {{ section.settings.mobile_card_width }}%;
+      min-width: {{ section.settings.mobile_card_width }}%;
+      scroll-snap-align: start;
+    }
+
+    #FrostandFeature-{{ section.id }}.fz--mobile-stack .fz-cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-card {
+      height: var(--fz-card-height-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-media {
+      height: var(--fz-media-height-mobile);
+      flex-basis: var(--fz-media-height-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-card.has-mobile-media .fz-media--desktop {
+      display: none;
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-card.has-mobile-media .fz-media--mobile {
+      display: block;
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-card-content {
+      padding: 20px 20px 22px;
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-card-title {
+      font-size: var(--fz-card-title-size-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-card-body {
+      margin-top: 11px;
+      font-size: var(--fz-card-body-size-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }}.fz--mobile-scroll .fz-progress {
+      display: {% if section.settings.show_progress %}block{% else %}none{% endif %};
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-discover {
+      margin-top: var(--fz-discover-gap-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-discover-eyebrow {
+      font-size: var(--fz-eyebrow-size-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-discover-heading {
+      font-size: var(--fz-discover-heading-size-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-discover-body {
+      margin-top: 14px;
+      font-size: var(--fz-discover-body-size-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-features {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px 16px;
+      margin-top: 34px;
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-feature {
+      gap: 13px;
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-feature-title {
+      font-size: var(--fz-feature-title-size-mobile);
+    }
+
+    #FrostandFeature-{{ section.id }} .fz-feature-body {
+      font-size: var(--fz-feature-body-size-mobile);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #FrostandFeature-{{ section.id }} .fz-progress-bar {
+      transition: none;
+    }
+  }
+{% endstyle %}
+
+<section
+  id="FrostandFeature-{{ section.id }}"
+  class="fz-section fz--mobile-{{ section.settings.mobile_layout }}"
+  aria-label="Frostand product features"
+>
+  <div class="fz-shell">
+    <div class="fz-cards" data-fz-track>
+      {% for block in section.blocks %}
+        {% if block.type == 'card' %}
+          {% liquid
+            assign has_mobile_media = false
+            if block.settings.mobile_video != blank or block.settings.mobile_image != blank
+              assign has_mobile_media = true
+            endif
+          %}
+          <article
+            class="fz-card{% if has_mobile_media %} has-mobile-media{% endif %}"
+            style="
+              --fz-focal-x-d: {{ block.settings.focal_x_desktop }}%;
+              --fz-focal-y-d: {{ block.settings.focal_y_desktop }}%;
+              --fz-focal-x-m: {{ block.settings.focal_x_mobile }}%;
+              --fz-focal-y-m: {{ block.settings.focal_y_mobile }}%;
+              {% if block.settings.use_custom_colors %}
+                --fz-card-bg-local: {{ block.settings.card_background }};
+                --fz-card-bg-end-local: {{ block.settings.card_gradient_end }};
+                --fz-media-bg-local: {{ block.settings.media_background }};
+              {% endif %}
+            "
+            data-fz-card
+            {{ block.shopify_attributes }}
+          >
+            <div class="fz-media fz-media--desktop" aria-hidden="true">
+              {% if block.settings.video != blank %}
+                {{ block.settings.video | video_tag: image_size: '1400x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'fz-media-video' }}
+              {% elsif block.settings.image != blank %}
+                {{
+                  block.settings.image
+                  | image_url: width: 1600
+                  | image_tag:
+                    widths: '420, 640, 900, 1200, 1600',
+                    sizes: '(min-width: 1100px) 25vw, (min-width: 750px) 50vw, 90vw',
+                    loading: 'lazy',
+                    alt: block.settings.heading
+                }}
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag: 'fz-placeholder' }}
+              {% endif %}
+            </div>
+
+            {% if has_mobile_media %}
+              <div class="fz-media fz-media--mobile" aria-hidden="true">
+                {% if block.settings.mobile_video != blank %}
+                  {{ block.settings.mobile_video | video_tag: image_size: '1000x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'fz-media-video' }}
+                {% elsif block.settings.mobile_image != blank %}
+                  {{
+                    block.settings.mobile_image
+                    | image_url: width: 1200
+                    | image_tag:
+                      widths: '360, 540, 750, 1000, 1200',
+                      sizes: '90vw',
+                      loading: 'lazy',
+                      alt: block.settings.heading
+                  }}
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <div class="fz-card-content">
+              {% if block.settings.heading != blank %}
+                <h3 class="fz-card-title">{{ block.settings.heading | escape }}</h3>
+              {% endif %}
+              {% if block.settings.body != blank %}
+                <p class="fz-card-body">{{ block.settings.body | escape | newline_to_br }}</p>
+              {% endif %}
+            </div>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="fz-progress" aria-hidden="true" data-fz-progress>
+      <span class="fz-progress-bar" data-fz-progress-bar></span>
+    </div>
+
+    {% if section.settings.show_discover %}
+      <div class="fz-discover">
+        <div class="fz-discover-copy">
+          {% if section.settings.discover_eyebrow != blank %}
+            <p class="fz-discover-eyebrow">{{ section.settings.discover_eyebrow | escape }}</p>
+          {% endif %}
+          {% if section.settings.discover_heading != blank %}
+            <h2 class="fz-discover-heading">{{ section.settings.discover_heading | escape }}</h2>
+          {% endif %}
+          {% if section.settings.discover_body != blank %}
+            <p class="fz-discover-body">{{ section.settings.discover_body | escape | newline_to_br }}</p>
+          {% endif %}
+        </div>
+
+        <div class="fz-features">
+          {% for block in section.blocks %}
+            {% if block.type == 'feature' %}
+              <div class="fz-feature" {{ block.shopify_attributes }}>
+                <div class="fz-feature-icon" aria-hidden="true">
+                  {% if block.settings.custom_icon != blank %}
+                    {{
+                      block.settings.custom_icon
+                      | image_url: width: 240
+                      | image_tag:
+                        widths: '60, 90, 120, 180, 240',
+                        sizes: '64px',
+                        loading: 'lazy',
+                        alt: ''
+                    }}
+                  {% else %}
+                    {% case block.settings.icon %}
+                      {% when 'frost' %}
+                        <svg viewBox="0 0 64 64" fill="none">
+                          <rect x="9" y="9" width="46" height="46" rx="12" stroke="currentColor" stroke-width="2"/>
+                          <path d="M32 18v28M18 32h28M22.1 22.1l19.8 19.8M41.9 22.1 22.1 41.9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                          <circle cx="32" cy="32" r="5" fill="var(--fz-bg)" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                      {% when 'grip' %}
+                        <svg viewBox="0 0 64 64" fill="none">
+                          <rect x="20" y="8" width="26" height="48" rx="8" stroke="currentColor" stroke-width="2"/>
+                          <path d="M16 18h4M14 24h6M14 30h6M14 36h6M16 42h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                          <path d="M29 14h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                      {% when 'magsafe' %}
+                        <svg viewBox="0 0 64 64" fill="none">
+                          <circle cx="32" cy="28" r="16" stroke="currentColor" stroke-width="2.3"/>
+                          <path d="M32 44v11M25 55h14" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+                        </svg>
+                      {% when 'stand' %}
+                        <svg viewBox="0 0 64 64" fill="none">
+                          <rect x="13" y="10" width="29" height="44" rx="7" transform="rotate(-8 13 10)" stroke="currentColor" stroke-width="2"/>
+                          <path d="m38 39 12 13M31 53h24" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% when 'shield' %}
+                        <svg viewBox="0 0 64 64" fill="none">
+                          <path d="M32 7 51 14v15c0 13-7.8 22.8-19 28-11.2-5.2-19-15-19-28V14l19-7Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="m23 31 6 6 12-13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% else %}
+                        <svg viewBox="0 0 64 64" fill="none">
+                          <circle cx="32" cy="32" r="22" stroke="currentColor" stroke-width="2"/>
+                          <path d="M32 20v24M20 32h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    {% endcase %}
+                  {% endif %}
+                </div>
+                <div>
+                  {% if block.settings.title != blank %}
+                    <h3 class="fz-feature-title">{{ block.settings.title | escape }}</h3>
+                  {% endif %}
+                  {% if block.settings.body != blank %}
+                    <p class="fz-feature-body">{{ block.settings.body | escape | newline_to_br }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+  (() => {
+    const root = document.getElementById('FrostandFeature-{{ section.id }}');
+    if (!root || root.dataset.fzReady === 'true') return;
+    root.dataset.fzReady = 'true';
+
+    const track = root.querySelector('[data-fz-track]');
+    const progress = root.querySelector('[data-fz-progress]');
+    const progressBar = root.querySelector('[data-fz-progress-bar]');
+    const videos = Array.from(root.querySelectorAll('video'));
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const updateProgress = () => {
+      if (!track || !progress || !progressBar) return;
+      const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+      const visibleRatio = Math.min(1, track.clientWidth / Math.max(track.scrollWidth, 1));
+      const travelRatio = maxScroll > 0 ? track.scrollLeft / maxScroll : 0;
+      const scale = Math.max(visibleRatio, 0.12);
+      progress.hidden = maxScroll < 2;
+      progressBar.style.transform =
+        `translateX(${travelRatio * ((1 - scale) / scale) * 100}%) scaleX(${scale})`;
+    };
+
+    let progressFrame = null;
+    const requestProgress = () => {
+      if (progressFrame) cancelAnimationFrame(progressFrame);
+      progressFrame = requestAnimationFrame(updateProgress);
+    };
+
+    track?.addEventListener('scroll', requestProgress, { passive: true });
+    window.addEventListener('resize', requestProgress);
+    requestProgress();
+
+    if (reducedMotion) {
+      videos.forEach((video) => {
+        video.pause();
+        video.removeAttribute('autoplay');
+      });
+    } else if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target;
+            if (entry.isIntersecting && entry.intersectionRatio > 0.25) {
+              const playPromise = video.play();
+              if (playPromise?.catch) playPromise.catch(() => {});
+            } else {
+              video.pause();
+            }
+          });
+        },
+        { threshold: [0, 0.25, 0.6] }
+      );
+      videos.forEach((video) => observer.observe(video));
+    }
+
+    document.addEventListener('shopify:block:select', (event) => {
+      if (!root.contains(event.target)) return;
+      const card = event.target.closest('[data-fz-card]');
+      card?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest', inline: 'center' });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Frostand Arc Features",
+  "tag": "section",
+  "class": "section-frostand-arc-features",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Content maximum width",
+      "min": 1000,
+      "max": 1900,
+      "step": 20,
+      "default": 1800,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "cards_max_width",
+      "label": "Cards and Discover alignment width",
+      "min": 900,
+      "max": 1500,
+      "step": 10,
+      "default": 1200,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Primary text",
+      "default": "#171714"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Secondary text",
+      "default": "#66645F"
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Desktop side padding",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "side_padding_mobile",
+      "label": "Mobile side padding",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 180,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "default": 92,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Feature cards"
+    },
+    {
+      "type": "range",
+      "id": "cards_per_row",
+      "label": "Cards per row on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Desktop card gap",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_gap_mobile",
+      "label": "Mobile card gap",
+      "min": 6,
+      "max": 28,
+      "step": 1,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_height",
+      "label": "Desktop card height",
+      "min": 300,
+      "max": 800,
+      "step": 5,
+      "default": 425,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_height_mobile",
+      "label": "Mobile card height",
+      "min": 400,
+      "max": 680,
+      "step": 10,
+      "default": 510,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "media_height",
+      "label": "Desktop media height",
+      "min": 45,
+      "max": 75,
+      "step": 1,
+      "default": 61,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "mobile_media_height",
+      "label": "Mobile media height",
+      "min": 35,
+      "max": 80,
+      "step": 1,
+      "default": 61,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card corner radius",
+      "min": 0,
+      "max": 36,
+      "step": 1,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Card border width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Card border",
+      "default": "#CECDC9"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_card_gradient",
+      "label": "Enable subtle card gradient",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "card_gradient_end",
+      "label": "Card gradient bottom",
+      "default": "#F5F5F3"
+    },
+    {
+      "type": "header",
+      "content": "Arc soft black gradient"
+    },
+    {
+      "type": "checkbox",
+      "id": "soft_gradient_enable",
+      "label": "Show soft black gradient",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "soft_gradient_color",
+      "label": "Gradient colour",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "soft_gradient_opacity",
+      "label": "Gradient strength",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 6,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "soft_gradient_start",
+      "label": "Gradient starting position",
+      "min": 35,
+      "max": 90,
+      "step": 1,
+      "default": 58,
+      "unit": "%"
+    },
+    {
+      "type": "select",
+      "id": "media_fit",
+      "label": "Media fit",
+      "default": "cover",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile card layout",
+      "default": "scroll",
+      "options": [
+        {
+          "value": "scroll",
+          "label": "Horizontal scroll"
+        },
+        {
+          "value": "stack",
+          "label": "Stacked cards"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_width",
+      "label": "Mobile card width",
+      "min": 76,
+      "max": 96,
+      "step": 1,
+      "default": 88,
+      "unit": "%"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress",
+      "label": "Show mobile scroll progress",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Body font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_individual_fonts",
+      "label": "Use separate font for every text type",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "card_title_font",
+      "label": "Card heading font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "font_picker",
+      "id": "card_body_font",
+      "label": "Card description font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "font_picker",
+      "id": "eyebrow_font",
+      "label": "Discover eyebrow font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "font_picker",
+      "id": "discover_heading_font",
+      "label": "Discover heading font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "font_picker",
+      "id": "discover_body_font",
+      "label": "Discover description font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "font_picker",
+      "id": "feature_title_font",
+      "label": "Icon feature heading font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "font_picker",
+      "id": "feature_body_font",
+      "label": "Icon feature description font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Card title size — desktop",
+      "min": 18,
+      "max": 42,
+      "step": 1,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size_mobile",
+      "label": "Card title size — mobile",
+      "min": 18,
+      "max": 36,
+      "step": 1,
+      "default": 26,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "card_title_weight",
+      "label": "Card title weight",
+      "default": "400",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "card_body_size",
+      "label": "Card body size — desktop",
+      "min": 13,
+      "max": 25,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "card_body_size_mobile",
+      "label": "Card body size — mobile",
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "default": 17,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "label": "Discover eyebrow size — desktop",
+      "min": 9,
+      "max": 20,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size_mobile",
+      "label": "Discover eyebrow size — mobile",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "feature_title_size",
+      "label": "Icon feature heading size — desktop",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "feature_title_size_mobile",
+      "label": "Icon feature heading size — mobile",
+      "min": 11,
+      "max": 26,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "feature_body_size",
+      "label": "Icon feature description size — desktop",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "feature_body_size_mobile",
+      "label": "Icon feature description size — mobile",
+      "min": 9,
+      "max": 20,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Discover Frostand"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discover",
+      "label": "Show discover content",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "discover_eyebrow",
+      "label": "Eyebrow",
+      "default": "FROSTED FINISH. MAGNETIC. MOVIE-READY."
+    },
+    {
+      "type": "text",
+      "id": "discover_heading",
+      "label": "Heading",
+      "default": "Discover Frostand"
+    },
+    {
+      "type": "textarea",
+      "id": "discover_body",
+      "label": "Description",
+      "default": "A clean frosted finish meets everyday utility. Designed for professionals and minimalists, Frostand combines MagSafe support, textured edges and a built-in stand—without hiding the look of your iPhone."
+    },
+    {
+      "type": "range",
+      "id": "discover_max_width",
+      "label": "Discover copy width",
+      "min": 320,
+      "max": 760,
+      "step": 10,
+      "default": 520,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "discover_gap",
+      "label": "Gap above discover — desktop",
+      "min": 40,
+      "max": 180,
+      "step": 4,
+      "default": 84,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "discover_gap_mobile",
+      "label": "Gap above discover — mobile",
+      "min": 36,
+      "max": 140,
+      "step": 4,
+      "default": 68,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "discover_heading_size",
+      "label": "Discover heading size — desktop",
+      "min": 28,
+      "max": 68,
+      "step": 1,
+      "default": 44,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "disc_heading_size_mobile",
+      "label": "Discover heading size — mobile",
+      "min": 26,
+      "max": 48,
+      "step": 1,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "discover_body_size",
+      "label": "Discover body size — desktop",
+      "min": 15,
+      "max": 28,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "discover_body_size_mobile",
+      "label": "Discover body size — mobile",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "feature_icon_size",
+      "label": "Feature icon size",
+      "min": 38,
+      "max": 78,
+      "step": 2,
+      "default": 54,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Media feature card",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Desktop video"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Desktop image fallback"
+        },
+        {
+          "type": "video",
+          "id": "mobile_video",
+          "label": "Mobile video"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile image fallback"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Feature heading"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Description",
+          "default": "Write a concise benefit-focused description."
+        },
+        {
+          "type": "header",
+          "content": "Media position"
+        },
+        {
+          "type": "range",
+          "id": "focal_x_desktop",
+          "label": "Desktop focal point X",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 50,
+          "unit": "%"
+        },
+        {
+          "type": "range",
+          "id": "focal_y_desktop",
+          "label": "Desktop focal point Y",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 50,
+          "unit": "%"
+        },
+        {
+          "type": "range",
+          "id": "focal_x_mobile",
+          "label": "Mobile focal point X",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 50,
+          "unit": "%"
+        },
+        {
+          "type": "range",
+          "id": "focal_y_mobile",
+          "label": "Mobile focal point Y",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 50,
+          "unit": "%"
+        },
+        {
+          "type": "header",
+          "content": "Optional card colours"
+        },
+        {
+          "type": "checkbox",
+          "id": "use_custom_colors",
+          "label": "Use custom colours for this card",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "card_background",
+          "label": "Card top background",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "card_gradient_end",
+          "label": "Card bottom background",
+          "default": "#F5F5F3"
+        },
+        {
+          "type": "color",
+          "id": "media_background",
+          "label": "Media background",
+          "default": "#FFFFFF"
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Icon feature",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom icon"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Built-in icon",
+          "default": "frost",
+          "options": [
+            {
+              "value": "frost",
+              "label": "Frosted finish"
+            },
+            {
+              "value": "grip",
+              "label": "Textured grip"
+            },
+            {
+              "value": "magsafe",
+              "label": "MagSafe"
+            },
+            {
+              "value": "stand",
+              "label": "Kickstand"
+            },
+            {
+              "value": "shield",
+              "label": "Protection"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Feature title"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Description",
+          "default": "Short supporting detail"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Frostand Arc Features",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "heading": "Frosted. Refined.",
+            "body": "A clean translucent back keeps your iPhone visible while helping resist everyday scratches."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "heading": "MagSafe. Right on cue.",
+            "body": "Snap on chargers and accessories with smooth, precise magnetic alignment."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "heading": "Stand when you need it.",
+            "body": "Flip out the integrated kickstand for effortless hands-free viewing wherever the day takes you."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "heading": "Built for everyday impact.",
+            "body": "A rigid PC back and flexible TPU edges help guard against daily drops, bumps and scratches."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "frost",
+            "title": "Frosted PC Back",
+            "body": "Clean, translucent finish"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "grip",
+            "title": "Premium Textured Edges",
+            "body": "Secure, comfortable grip"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "magsafe",
+            "title": "MagSafe Ready",
+            "body": "Charge and attach effortlessly"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "stand",
+            "title": "Built-in Kickstand",
+            "body": "Hands-free viewing anywhere"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

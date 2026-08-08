@@ -1,81 +1,132 @@
 {% comment %}
-  Product Image with Text - Auto 3 Blocks from Metafields
-  Renders set 1, 2, 3 automatically. Each block hides if its metafields are empty.
+  Product Image with Text - SAFE EXTENSION VERSION
+
+  IMPORTANT:
+  - Keeps the original 3 product metafield sets untouched and renders them first.
+  - Adds unlimited extra image/video feature items from:
+      product.metafields.custom.feature_media_blocks
+  - Existing product metafield data does NOT need to be migrated.
+  - Do not delete, rename, or change the type of the existing metafield definitions.
+
+  New repeatable metaobject expected fields:
+  - media      (File: image or video)
+  - heading    (Single line text)
+  - subheading (Multi-line text or rich text)
 {% endcomment %}
 
 {%- assign sets = '1,2,3' | split: ',' -%}
-
-{%- comment -%} Pre-check: do we have ANY data across all 3 sets? {%- endcomment -%}
+{%- assign repeatable_items = product.metafields.custom.feature_media_blocks.value -%}
 {%- assign has_any = false -%}
+
+{%- comment -%} Check the original 3 metafield sets without changing them. {%- endcomment -%}
 {%- for n in sets -%}
-  {%- assign img_key = 'image_with_text_image_' | append: n -%}
+  {%- assign media_key = 'image_with_text_image_' | append: n -%}
   {%- assign head_key = 'image_with_text_heading_' | append: n -%}
   {%- assign desc_key = 'image_with_text_sub_heading_' | append: n -%}
 
-  {%- assign img = product.metafields.custom[img_key].value -%}
-  {%- assign head_html = product.metafields.custom[head_key] | metafield_tag -%}
-  {%- assign desc_html = product.metafields.custom[desc_key] | metafield_tag -%}
+  {%- assign legacy_media = product.metafields.custom[media_key].value -%}
+  {%- assign legacy_heading = product.metafields.custom[head_key] | metafield_tag -%}
+  {%- assign legacy_description = product.metafields.custom[desc_key] | metafield_tag -%}
 
-  {%- assign head_check = head_html | strip_html | strip -%}
-  {%- assign desc_check = desc_html | strip_html | strip -%}
+  {%- assign legacy_heading_check = legacy_heading | strip_html | strip -%}
+  {%- assign legacy_desc_check = legacy_description | strip_html | strip -%}
 
-  {% if img != blank or head_check != blank or desc_check != blank %}
+  {%- if legacy_media != blank or legacy_heading_check != blank or legacy_desc_check != blank -%}
     {%- assign has_any = true -%}
-  {% endif %}
+    {%- break -%}
+  {%- endif -%}
 {%- endfor -%}
+
+{%- comment -%} Also check the new repeatable extras. {%- endcomment -%}
+{%- unless has_any -%}
+  {%- if repeatable_items != blank -%}
+    {%- for item in repeatable_items -%}
+      {%- assign feature_media = item.media.value -%}
+      {%- assign feature_heading = item.heading.value | default: '' | strip -%}
+      {%- assign feature_desc_html = item.subheading | metafield_tag -%}
+      {%- assign feature_desc_check = feature_desc_html | strip_html | strip -%}
+
+      {%- if feature_media != blank or feature_heading != blank or feature_desc_check != blank -%}
+        {%- assign has_any = true -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endunless -%}
 
 {% if has_any %}
 
 <div class="iwt-wrapper-{{ section.id }}">
 
+  {%- assign render_index = 0 -%}
+
+  {%- comment -%}
+    FIRST: render the original 3 metafield sets.
+    This preserves all existing product content exactly where it already lives.
+  {%- endcomment -%}
   {%- for n in sets -%}
-    {%- assign img_key = 'image_with_text_image_' | append: n -%}
+    {%- assign media_key = 'image_with_text_image_' | append: n -%}
     {%- assign head_key = 'image_with_text_heading_' | append: n -%}
     {%- assign desc_key = 'image_with_text_sub_heading_' | append: n -%}
 
-    {%- assign meta_image = product.metafields.custom[img_key].value -%}
+    {%- assign meta_media = product.metafields.custom[media_key].value -%}
     {%- assign meta_heading = product.metafields.custom[head_key] | metafield_tag -%}
     {%- assign meta_description = product.metafields.custom[desc_key] | metafield_tag -%}
 
     {%- assign heading_check = meta_heading | strip_html | strip -%}
     {%- assign desc_check = meta_description | strip_html | strip -%}
 
-    {%- comment -%} Auto alternate layout: odd = image left, even = image right {%- endcomment -%}
-    {%- assign mod = forloop.index | modulo: 2 -%}
-    {%- if section.settings.alternate_layout -%}
-      {%- if mod == 0 -%}
-        {%- assign block_layout = 'image_right' -%}
-      {%- else -%}
-        {%- assign block_layout = 'image_left' -%}
-      {%- endif -%}
-    {%- else -%}
-      {%- assign block_layout = section.settings.layout -%}
-    {%- endif -%}
+    {% if meta_media != blank or heading_check != blank or desc_check != blank %}
+      {%- assign render_index = render_index | plus: 1 -%}
+      {%- assign mod = render_index | modulo: 2 -%}
 
-    {% if meta_image != blank or heading_check != blank or desc_check != blank %}
+      {%- if section.settings.alternate_layout -%}
+        {%- if mod == 0 -%}
+          {%- assign block_layout = 'image_right' -%}
+        {%- else -%}
+          {%- assign block_layout = 'image_left' -%}
+        {%- endif -%}
+      {%- else -%}
+        {%- assign block_layout = section.settings.layout -%}
+      {%- endif -%}
 
       <section class="iwt-{{ section.id }} iwt-block iwt-layout--{{ block_layout }}">
         <div class="iwt-wrap">
 
-          {% if meta_image != blank %}
+          {% if meta_media != blank %}
             <div class="iwt-media">
-              <img
-                src="{{ meta_image | image_url: width: 1200 }}"
-                srcset="
-                  {{ meta_image | image_url: width: 400 }} 400w,
-                  {{ meta_image | image_url: width: 600 }} 600w,
-                  {{ meta_image | image_url: width: 800 }} 800w,
-                  {{ meta_image | image_url: width: 1200 }} 1200w,
-                  {{ meta_image | image_url: width: 1600 }} 1600w
-                "
-                sizes="(max-width: 767px) 100vw, 50vw"
-                alt="{{ heading_check | default: product.title | escape }}"
-                width="{{ meta_image.width }}"
-                height="{{ meta_image.height }}"
-                loading="lazy"
-                decoding="async"
-                class="iwt-img"
-              >
+              {% case meta_media.media_type %}
+                {% when 'video' %}
+                  {{
+                    meta_media
+                    | video_tag:
+                      autoplay: true,
+                      loop: true,
+                      muted: true,
+                      controls: false,
+                      playsinline: true,
+                      preload: 'metadata',
+                      class: 'iwt-img'
+                  }}
+                {% else %}
+                  <img
+                    src="{{ meta_media | image_url: width: 1200 }}"
+                    srcset="
+                      {{ meta_media | image_url: width: 400 }} 400w,
+                      {{ meta_media | image_url: width: 600 }} 600w,
+                      {{ meta_media | image_url: width: 800 }} 800w,
+                      {{ meta_media | image_url: width: 1200 }} 1200w,
+                      {{ meta_media | image_url: width: 1600 }} 1600w
+                    "
+                    sizes="(max-width: 767px) 100vw, 50vw"
+                    alt="{{ heading_check | default: product.title | escape }}"
+                    width="{{ meta_media.width }}"
+                    height="{{ meta_media.height }}"
+                    loading="lazy"
+                    decoding="async"
+                    class="iwt-img"
+                  >
+              {% endcase %}
             </div>
           {% endif %}
 
@@ -93,9 +144,103 @@
 
         </div>
       </section>
-
     {% endif %}
   {%- endfor -%}
+
+  {%- comment -%}
+    SECOND: append any number of NEW image/video feature items.
+    These are additions only; they do not replace the original 3 metafields.
+  {%- endcomment -%}
+  {%- if repeatable_items != blank -%}
+    {%- for item in repeatable_items -%}
+      {%- assign feature_media = item.media.value -%}
+      {%- assign feature_heading = item.heading.value | default: '' | strip -%}
+      {%- assign feature_desc_html = item.subheading | metafield_tag -%}
+      {%- assign feature_desc_check = feature_desc_html | strip_html | strip -%}
+
+      {%- if feature_media != blank or feature_heading != blank or feature_desc_check != blank -%}
+        {%- assign render_index = render_index | plus: 1 -%}
+        {%- assign mod = render_index | modulo: 2 -%}
+
+        {%- if section.settings.alternate_layout -%}
+          {%- if mod == 0 -%}
+            {%- assign block_layout = 'image_right' -%}
+          {%- else -%}
+            {%- assign block_layout = 'image_left' -%}
+          {%- endif -%}
+        {%- else -%}
+          {%- assign block_layout = section.settings.layout -%}
+        {%- endif -%}
+
+        <section class="iwt-{{ section.id }} iwt-block iwt-layout--{{ block_layout }}">
+          <div class="iwt-wrap">
+
+            {% if feature_media != blank %}
+              <div class="iwt-media">
+                {% case feature_media.media_type %}
+                  {% when 'video' %}
+                    {{
+                      feature_media
+                      | video_tag:
+                        autoplay: true,
+                        loop: true,
+                        muted: true,
+                        controls: false,
+                        playsinline: true,
+                        preload: 'metadata',
+                        class: 'iwt-img'
+                    }}
+                  {% when 'image' %}
+                    <img
+                      src="{{ feature_media | image_url: width: 1200 }}"
+                      srcset="
+                        {{ feature_media | image_url: width: 400 }} 400w,
+                        {{ feature_media | image_url: width: 600 }} 600w,
+                        {{ feature_media | image_url: width: 800 }} 800w,
+                        {{ feature_media | image_url: width: 1200 }} 1200w,
+                        {{ feature_media | image_url: width: 1600 }} 1600w
+                      "
+                      sizes="(max-width: 767px) 100vw, 50vw"
+                      alt="{{ feature_heading | default: product.title | escape }}"
+                      width="{{ feature_media.width }}"
+                      height="{{ feature_media.height }}"
+                      loading="lazy"
+                      decoding="async"
+                      class="iwt-img"
+                    >
+                  {% else %}
+                    {% if feature_media.preview_image != blank %}
+                      <img
+                        src="{{ feature_media.preview_image | image_url: width: 1200 }}"
+                        alt="{{ feature_heading | default: product.title | escape }}"
+                        width="{{ feature_media.preview_image.width }}"
+                        height="{{ feature_media.preview_image.height }}"
+                        loading="lazy"
+                        decoding="async"
+                        class="iwt-img"
+                      >
+                    {% endif %}
+                {% endcase %}
+              </div>
+            {% endif %}
+
+            {% if feature_heading != blank or feature_desc_check != blank %}
+              <div class="iwt-content">
+                {% if feature_heading != blank %}
+                  <h2 class="iwt-heading">{{ feature_heading | escape }}</h2>
+                {% endif %}
+
+                {% if feature_desc_check != blank %}
+                  <div class="iwt-desc">{{ feature_desc_html }}</div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+          </div>
+        </section>
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
 
 </div>
 
@@ -211,7 +356,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Auto-renders 3 image+text blocks from product metafields. Empty blocks auto-hide. Section hides completely if no data."
+      "content": "SAFE MODE: keeps the original 3 product metafield blocks and appends unlimited extra image/video feature items from feature_media_blocks. Existing product metafield data does not need migration."
     },
 
     {

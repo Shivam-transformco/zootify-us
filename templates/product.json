@@ -574,6 +574,186 @@
         "padding_bottom_mobile": 0
       }
     },
+    "frostand_section_dcYBRU": {
+      "type": "frostand-section",
+      "blocks": {
+        "card_zhfJN8": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/download (2).mp4",
+            "heading": "Frosted. Refined.",
+            "body": "A clean translucent back keeps your iPhone visible while helping resist everyday scratches.",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#FFFFFF",
+            "card_gradient_end": "#F5F5F3",
+            "media_background": "#FFFFFF"
+          }
+        },
+        "card_LcLKbC": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/download (5).mp4",
+            "heading": "MagSafe. Right on cue.",
+            "body": "Snap on chargers and accessories",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#FFFFFF",
+            "card_gradient_end": "#F5F5F3",
+            "media_background": "#FFFFFF"
+          }
+        },
+        "card_qpQcdH": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/download (3).mp4",
+            "heading": "Stand when you need it.",
+            "body": "Flip out the integrated kickstand for effortless hands-free viewing",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#FFFFFF",
+            "card_gradient_end": "#F5F5F3",
+            "media_background": "#FFFFFF"
+          }
+        },
+        "card_yHpyMV": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/download (4).mp4",
+            "heading": "Built for everyday impact.",
+            "body": "A rigid PC back and flexible TPU edges help guard against daily drops",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#FFFFFF",
+            "card_gradient_end": "#F5F5F3",
+            "media_background": "#FFFFFF"
+          }
+        },
+        "feature_9EAz63": {
+          "type": "feature",
+          "settings": {
+            "icon": "frost",
+            "title": "Frosted PC Back",
+            "body": "Clean, translucent finish"
+          }
+        },
+        "feature_TUhDk4": {
+          "type": "feature",
+          "settings": {
+            "icon": "grip",
+            "title": "Premium Textured Edges",
+            "body": "Secure, comfortable grip"
+          }
+        },
+        "feature_krhpgQ": {
+          "type": "feature",
+          "settings": {
+            "icon": "magsafe",
+            "title": "MagSafe Ready",
+            "body": "Charge and attach effortlessly"
+          }
+        },
+        "feature_3U8UEi": {
+          "type": "feature",
+          "settings": {
+            "icon": "stand",
+            "title": "Built-in Kickstand",
+            "body": "Hands-free viewing anywhere"
+          }
+        }
+      },
+      "block_order": [
+        "card_zhfJN8",
+        "card_LcLKbC",
+        "card_qpQcdH",
+        "card_yHpyMV",
+        "feature_9EAz63",
+        "feature_TUhDk4",
+        "feature_krhpgQ",
+        "feature_3U8UEi"
+      ],
+      "disabled": true,
+      "name": "Frostand Arc Features",
+      "settings": {
+        "max_width": 1800,
+        "cards_max_width": 1200,
+        "background_color": "#FFFFFF",
+        "text_color": "#171714",
+        "muted_color": "#66645F",
+        "side_padding": 48,
+        "side_padding_mobile": 20,
+        "padding_top": 48,
+        "padding_bottom": 92,
+        "padding_top_mobile": 28,
+        "padding_bottom_mobile": 64,
+        "cards_per_row": 4,
+        "card_gap": 12,
+        "card_gap_mobile": 12,
+        "card_height": 480,
+        "card_height_mobile": 480,
+        "media_height": 75,
+        "mobile_media_height": 75,
+        "card_radius": 5,
+        "border_width": 1,
+        "border_color": "#CECDC9",
+        "card_background": "#FFFFFF",
+        "enable_card_gradient": true,
+        "card_gradient_end": "#FFFFFF",
+        "soft_gradient_enable": true,
+        "soft_gradient_color": "#000000",
+        "soft_gradient_opacity": 6,
+        "soft_gradient_start": 58,
+        "media_fit": "cover",
+        "mobile_layout": "scroll",
+        "mobile_card_width": 88,
+        "show_progress": true,
+        "heading_font": "montserrat_n4",
+        "body_font": "montserrat_n4",
+        "use_individual_fonts": false,
+        "card_title_font": "montserrat_n4",
+        "card_body_font": "montserrat_n4",
+        "eyebrow_font": "montserrat_n4",
+        "discover_heading_font": "montserrat_n4",
+        "discover_body_font": "montserrat_n4",
+        "feature_title_font": "montserrat_n4",
+        "feature_body_font": "montserrat_n4",
+        "card_title_size": 18,
+        "card_title_size_mobile": 18,
+        "card_title_weight": "400",
+        "card_body_size": 13,
+        "card_body_size_mobile": 13,
+        "eyebrow_size": 12,
+        "eyebrow_size_mobile": 10,
+        "feature_title_size": 15,
+        "feature_title_size_mobile": 16,
+        "feature_body_size": 14,
+        "feature_body_size_mobile": 13,
+        "show_discover": true,
+        "discover_eyebrow": "FROSTED FINISH. MAGNETIC. MOVIE-READY.",
+        "discover_heading": "Discover Frostand",
+        "discover_body": "A clean frosted finish meets everyday utility. Designed for professionals and minimalists, Frostand combines MagSafe support, textured edges and a built-in stand—without hiding the look of your iPhone.",
+        "discover_max_width": 520,
+        "discover_gap": 84,
+        "discover_gap_mobile": 68,
+        "discover_heading_size": 44,
+        "disc_heading_size_mobile": 36,
+        "discover_body_size": 20,
+        "discover_body_size_mobile": 18,
+        "feature_icon_size": 54
+      }
+    },
     "product_image_with_text_ynbhjk": {
       "type": "product-image-with-text",
       "name": "Product Image with Text",
@@ -583,16 +763,16 @@
         "mobile_image_first": false,
         "bg_color": "#ffffff",
         "text_color": "#000000",
-        "image_radius": 14,
+        "image_radius": 0,
         "heading_size": 32,
         "heading_size_mobile": 22,
         "desc_size": 16,
         "desc_size_mobile": 14,
         "padding_top": 50,
         "padding_bottom": 50,
-        "padding_x": 30,
+        "padding_x": 0,
         "gap": 50,
-        "block_gap": 60,
+        "block_gap": 0,
         "padding_top_mobile": 30,
         "padding_bottom_mobile": 30,
         "padding_x_mobile": 16,
@@ -1255,6 +1435,9 @@
             "show_sample_reviews": false,
             "reviews_selection": "product_reviews",
             "products": [],
+            "filter_pinned": false,
+            "filter_featured": false,
+            "filter_custom_tags": "",
             "star_rating": "all",
             "show_review_media": true,
             "display_order": "media_first",
@@ -1620,6 +1803,7 @@
     "main",
     "custom_liquid_tUAGMi",
     "product_banner_zAYQBH",
+    "frostand_section_dcYBRU",
     "product_image_with_text_ynbhjk",
     "slideshow_tdrHqd",
     "product_list_zR9Cym",

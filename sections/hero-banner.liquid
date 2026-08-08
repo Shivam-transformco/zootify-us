@@ -16,7 +16,7 @@
   style="--mobile-hero-height: {{ section.settings.mobile_banner_height | default: 62 }}vh;"
 >
 
-  <div class="hero-slides">
+  <div class="hero-slides" id="hero-track-{{ section.id }}">
     {% for block in section.blocks %}
 
       <div class="hero-slide{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
@@ -131,6 +131,31 @@
     {% endfor %}
   </div>
 
+  <!-- DESKTOP NAVIGATION -->
+  {% if section.blocks.size > 1 %}
+    <button
+      type="button"
+      class="hero-nav-button hero-nav-button--prev"
+      aria-label="Previous banner"
+      aria-controls="hero-track-{{ section.id }}"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      class="hero-nav-button hero-nav-button--next"
+      aria-label="Next banner"
+      aria-controls="hero-track-{{ section.id }}"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  {% endif %}
+
   <!-- DOTS -->
   <div class="hero-dots">
     {% for block in section.blocks %}
@@ -148,11 +173,22 @@
   overflow: hidden;
 }
 
+.hero-slides {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transform: translate3d(0, 0, 0);
+  transition: transform .8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
 .hero-slide {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity .6s ease;
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  opacity: 1;
 }
 
 .hero-slide.is-active {
@@ -311,6 +347,72 @@
 
 }
 
+/* DESKTOP NAVIGATION */
+
+.hero-nav-button {
+  position: absolute;
+  top: 50%;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid rgba(1, 21, 30, 0.14);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #01151E;
+  appearance: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease;
+}
+
+.hero-nav-button--prev {
+  left: 18px;
+}
+
+.hero-nav-button--next {
+  right: 18px;
+}
+
+.hero-nav-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.hero-dynamic:hover .hero-nav-button,
+.hero-dynamic:focus-within .hero-nav-button {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hero-nav-button:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.06);
+}
+
+.hero-nav-button:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+@media (max-width: 768px) {
+  .hero-nav-button {
+    display: none;
+  }
+
+  .hero-slides {
+    touch-action: pan-y;
+  }
+}
+
 /* DOTS */
 
 .hero-dots {
@@ -340,37 +442,266 @@
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+(() => {
+  const sectionId = 'hero-{{ section.id }}';
 
-  const section = document.getElementById('hero-{{ section.id }}');
-  if (!section) return;
+  function initHeroSlider() {
+    const section = document.getElementById(sectionId);
+    if (!section || section.dataset.sliderInitialized === 'true') return;
 
-  const slides = section.querySelectorAll('.hero-slide');
-  const dots = section.querySelectorAll('.hero-dot');
+    const track = section.querySelector('.hero-slides');
+    const slides = Array.from(section.querySelectorAll('.hero-slide:not(.hero-slide-clone)'));
+    const dots = Array.from(section.querySelectorAll('.hero-dot'));
+    const prevButton = section.querySelector('.hero-nav-button--prev');
+    const nextButton = section.querySelector('.hero-nav-button--next');
 
-  let index = 0;
+    if (!track || slides.length === 0) return;
 
-  function go(i) {
-    slides[index].classList.remove('is-active');
-    dots[index].classList.remove('is-active');
+    section.dataset.sliderInitialized = 'true';
 
-    index = i;
+    const slideCount = slides.length;
+    const interval = {{ section.settings.interval | default: 6000 }};
 
-    slides[index].classList.add('is-active');
-    dots[index].classList.add('is-active');
+    let index = 0;
+    let physicalIndex = slideCount > 1 ? 1 : 0;
+    let isTransitioning = false;
+    let autoplayTimer = null;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+
+    function prepareClone(slide, cloneClass) {
+      const clone = slide.cloneNode(true);
+
+      clone.classList.remove('is-active');
+      clone.classList.add('hero-slide-clone', cloneClass);
+      clone.removeAttribute('data-index');
+      clone.removeAttribute('data-shopify-editor-block');
+      clone.setAttribute('aria-hidden', 'true');
+
+      clone.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach(element => {
+        element.setAttribute('tabindex', '-1');
+      });
+
+      return clone;
+    }
+
+    if (slideCount > 1) {
+      const lastSlideClone = prepareClone(slides[slideCount - 1], 'hero-slide-clone--last');
+      const firstSlideClone = prepareClone(slides[0], 'hero-slide-clone--first');
+
+      track.insertBefore(lastSlideClone, track.firstChild);
+      track.appendChild(firstSlideClone);
+    }
+
+    function updateActiveState(activeIndex) {
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle('is-active', slideIndex === activeIndex);
+      });
+
+      dots.forEach((dot, dotIndex) => {
+        dot.classList.toggle('is-active', dotIndex === activeIndex);
+      });
+    }
+
+    function moveTo(targetPhysicalIndex, animate = true) {
+      if (!animate) {
+        track.style.transition = 'none';
+      } else {
+        track.style.removeProperty('transition');
+      }
+
+      track.style.transform = `translate3d(-${targetPhysicalIndex * 100}%, 0, 0)`;
+    }
+
+    function goTo(targetIndex, direction = 'direct') {
+      if (slideCount < 2 || isTransitioning) return;
+
+      const normalizedIndex = (targetIndex + slideCount) % slideCount;
+
+      isTransitioning = true;
+      index = normalizedIndex;
+
+      if (direction === 'next' && normalizedIndex === 0) {
+        physicalIndex = slideCount + 1;
+      } else if (direction === 'prev' && normalizedIndex === slideCount - 1) {
+        physicalIndex = 0;
+      } else {
+        physicalIndex = normalizedIndex + 1;
+      }
+
+      updateActiveState(index);
+      moveTo(physicalIndex, true);
+    }
+
+    function next() {
+      if (index === slideCount - 1) {
+        goTo(0, 'next');
+      } else {
+        goTo(index + 1, 'next');
+      }
+    }
+
+    function prev() {
+      if (index === 0) {
+        goTo(slideCount - 1, 'prev');
+      } else {
+        goTo(index - 1, 'prev');
+      }
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = null;
+        section.heroAutoplayTimer = null;
+      }
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+
+      if (slideCount < 2) return;
+
+      autoplayTimer = window.setInterval(next, interval);
+      section.heroAutoplayTimer = autoplayTimer;
+    }
+
+    track.addEventListener('transitionend', event => {
+      if (event.propertyName !== 'transform') return;
+
+      if (physicalIndex === slideCount + 1) {
+        physicalIndex = 1;
+        moveTo(physicalIndex, false);
+        track.offsetHeight;
+        track.style.removeProperty('transition');
+      } else if (physicalIndex === 0) {
+        physicalIndex = slideCount;
+        moveTo(physicalIndex, false);
+        track.offsetHeight;
+        track.style.removeProperty('transition');
+      }
+
+      isTransitioning = false;
+    });
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const targetIndex = Number(dot.dataset.slide);
+
+        if (targetIndex === index || isTransitioning) return;
+
+        if (index === slideCount - 1 && targetIndex === 0) {
+          goTo(0, 'next');
+        } else if (index === 0 && targetIndex === slideCount - 1) {
+          goTo(slideCount - 1, 'prev');
+        } else {
+          goTo(targetIndex, 'direct');
+        }
+
+        startAutoplay();
+      });
+    });
+
+    if (prevButton) {
+      prevButton.addEventListener('click', () => {
+        prev();
+        startAutoplay();
+      });
+    }
+
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+        next();
+        startAutoplay();
+      });
+    }
+
+    track.addEventListener('touchstart', event => {
+      if (slideCount < 2 || !window.matchMedia('(max-width: 768px)').matches) return;
+
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      touchStartTime = Date.now();
+
+      stopAutoplay();
+    }, { passive: true });
+
+    track.addEventListener('touchend', event => {
+      if (slideCount < 2 || !window.matchMedia('(max-width: 768px)').matches) return;
+
+      const touch = event.changedTouches[0];
+      if (!touch) {
+        startAutoplay();
+        return;
+      }
+
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const elapsed = Date.now() - touchStartTime;
+      const horizontalDistance = Math.abs(deltaX);
+      const verticalDistance = Math.abs(deltaY);
+
+      const isHorizontalSwipe =
+        horizontalDistance >= 45 &&
+        horizontalDistance > verticalDistance * 1.15 &&
+        elapsed <= 900;
+
+      if (isHorizontalSwipe && !isTransitioning) {
+        if (deltaX < 0) {
+          next();
+        } else {
+          prev();
+        }
+      }
+
+      startAutoplay();
+    }, { passive: true });
+
+    track.addEventListener('touchcancel', () => {
+      startAutoplay();
+    }, { passive: true });
+
+    updateActiveState(0);
+    moveTo(physicalIndex, false);
+    track.offsetHeight;
+    track.style.removeProperty('transition');
+
+    startAutoplay();
   }
 
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      go(+dot.dataset.slide);
-    });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeroSlider);
+  } else {
+    initHeroSlider();
+  }
+
+  document.addEventListener('shopify:section:load', event => {
+    const loadedSection =
+      event.target.id === sectionId
+        ? event.target
+        : event.target.querySelector(`#${sectionId}`);
+
+    if (loadedSection) {
+      delete loadedSection.dataset.sliderInitialized;
+      initHeroSlider();
+    }
   });
 
-  setInterval(() => {
-    go((index + 1) % slides.length);
-  }, {{ section.settings.interval | default: 6000 }});
+  document.addEventListener('shopify:section:unload', event => {
+    const unloadedSection =
+      event.target.id === sectionId
+        ? event.target
+        : event.target.querySelector(`#${sectionId}`);
 
-});
+    if (unloadedSection && unloadedSection.heroAutoplayTimer) {
+      window.clearInterval(unloadedSection.heroAutoplayTimer);
+    }
+  });
+})();
 </script>
 
 {% schema %}
