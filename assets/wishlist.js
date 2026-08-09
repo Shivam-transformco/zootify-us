@@ -62,5 +62,27 @@ document.addEventListener('click', e => {
 });
 
 /* INIT */
-document.addEventListener('DOMContentLoaded', updateUI);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', updateUI);
+} else {
+  updateUI();
+}
 document.addEventListener('wishlist:updated', updateUI);
+window.addEventListener('pageshow', (e) => { if (e.persisted) updateUI(); });
+
+/* RE-APPLY after header morph resets the counter */
+function observeCounter() {
+  const counter = document.querySelector('[data-wishlist-count]');
+  if (!counter) return;
+  new MutationObserver(() => updateUI()).observe(counter, {
+    attributes: true,
+    attributeFilter: ['hidden'],
+    characterData: true,
+    subtree: true,
+  });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', observeCounter);
+} else {
+  observeCounter();
+}
