@@ -4646,7 +4646,7 @@ product-recommendations .section-resource-list__content > *:first-child {
 .sorting-filter .icon-caret {
   width: 14px !important;
   height: 14px !important;
-  opacity: 0.7;
+  color: rgb(var(--color-foreground-rgb) / var(--icon-opacity, 0.5));
 }
 
 .facets__summary .icon-caret svg,
