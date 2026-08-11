@@ -1,7 +1,7 @@
 {% liquid
   assign product = closest.product
 
-  if product.compare_at_price > product.price
+  if settings.show_sale_badges and product.compare_at_price > product.price
     assign discount = product.compare_at_price | minus: product.price
     assign discount_percent = discount | times: 100 | divided_by: product.compare_at_price | round
   endif
@@ -9,7 +9,7 @@
 
 <div class="product-card-wrapper">
 
-  {% if discount_percent %}
+  {% if settings.show_sale_badges and discount_percent %}
     <div class="discount-badge">
       {{ discount_percent }}% OFF
     </div>

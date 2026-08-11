@@ -600,7 +600,7 @@
         "show_discover": true,
         "discover_eyebrow": "BEST SELLER FOR A REASON",
         "discover_heading": "You get all you need.",
-        "discover_body": "Frostand follows our ideology of providing all the essentials functions of an iPhone case in a sophisticated and elegant design for modern people who are constantly moving between work, travel, and life.\nEssentials Combined with Elegance",
+        "discover_body": "Frostand follows our ideology of providing all the essential functions of an iPhone case in a sophisticated and elegant design for modern people who are constantly moving between work, travel, and life.\nEssentials Combined with Elegance",
         "discover_max_width": 520,
         "discover_gap": 72,
         "discover_gap_mobile": 68,
@@ -617,8 +617,8 @@
         "slide_DW4AAE": {
           "type": "slide",
           "settings": {
-            "heading": "RIDGE CASE FOR iPHONE",
-            "subtext": "Move with PURPOSE,\nMove with ZOOTIFY.",
+            "heading": "CASES MADE FOR EVERYDAY",
+            "subtext": "For people on the move.",
             "content_alignment": "left",
             "heading_color": "#ffffff",
             "subtext_color": "#ffffff",

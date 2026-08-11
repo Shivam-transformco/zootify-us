@@ -11,16 +11,21 @@
         --badge-font-family: var(--font-{{ settings.badge_font_family }}--family); --badge-font-weight: var(--font-{{ settings.badge_font_family }}--weight); --badge-text-transform: {{ settings.badge_text_transform }};
       "
     >
-      {%- if product.available == false or product.compare_at_price > product.price -%}
+      {%- assign show_sale_badge = false -%}
+      {%- if settings.show_sale_badges and product.compare_at_price > product.price -%}
+        {%- assign show_sale_badge = true -%}
+      {%- endif -%}
+
+      {%- if product.available == false or show_sale_badge -%}
         <div
           class="
             product-badges__badge product-badges__badge--rectangle
-            {% if product.available == false %} color-{{ settings.badge_sold_out_color_scheme }}{% elsif product.compare_at_price > product.price %} color-{{ settings.badge_sale_color_scheme }}{% endif %}
+            {% if product.available == false %} color-{{ settings.badge_sold_out_color_scheme }}{% elsif show_sale_badge %} color-{{ settings.badge_sale_color_scheme }}{% endif %}
           "
         >
           {%- if product.available == false -%}
             {{ 'content.product_badge_sold_out' | t }}
-          {%- elsif product.compare_at_price > product.price -%}
+          {%- elsif show_sale_badge -%}
             {{ 'content.product_badge_sale' | t }}
           {%- endif -%}
         </div>

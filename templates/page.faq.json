@@ -1,0 +1,94 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "faq-page",
+      "settings": {
+        "eyebrow": "SUPPORT",
+        "heading": "FAQ",
+        "intro": "<p>Everything you need to know about ZOOTIFY products, orders and support.</p>",
+        "heading_alignment": "center",
+        "mobile_heading_alignment": "left",
+        "intro_width": 620,
+        "single_open": true,
+        "open_first_item": false,
+        "icon_style": "plus",
+        "use_accent_for_icon": false,
+        "enable_faq_schema": true,
+        "content_width": 920,
+        "answer_width": 780,
+        "space_above_faqs": 52,
+        "space_above_faqs_mobile": 34,
+        "row_padding_desktop": 24,
+        "row_padding_mobile": 20,
+        "padding_top_desktop": 72,
+        "padding_bottom_desktop": 96,
+        "padding_top_mobile": 44,
+        "padding_bottom_mobile": 64,
+        "title_size_desktop": 46,
+        "title_size_mobile": 34,
+        "title_weight": "600",
+        "intro_size_desktop": 16,
+        "intro_size_mobile": 15,
+        "question_size_desktop": 18,
+        "question_size_mobile": 16,
+        "question_weight": "500",
+        "answer_size_desktop": 16,
+        "answer_size_mobile": 15,
+        "icon_size": 22,
+        "background_color": "#FFFFFF",
+        "text_color": "#01151E",
+        "muted_text_color": "#4D565A",
+        "divider_color": "#E6E8E8",
+        "accent_color": "#7DC762"
+      },
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "Are ZOOTIFY phone cases compatible with wireless charging?",
+            "answer": "<p>Yes. MagSafe-compatible ZOOTIFY cases are designed to work with compatible magnetic charging accessories.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "What materials are used in ZOOTIFY phone cases?",
+            "answer": "<p>Materials vary by product and can include polycarbonate, TPU, and other premium finishes selected for protection, grip, durability, and everyday use.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "Do your cases provide protection against drops and scratches?",
+            "answer": "<p>Our cases are designed for everyday protection against common bumps, scratches, and daily wear. Protection levels can vary by product.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "How can I contact ZOOTIFY?",
+            "answer": "<p>Use the Contact Us page on our website and our team will help with product, order, or support questions.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

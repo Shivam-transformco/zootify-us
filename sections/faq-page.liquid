@@ -1,0 +1,425 @@
+{% liquid
+  assign section_id = 'faq-page-' | append: section.id
+%}
+
+<section
+  id="{{ section_id }}"
+  class="zfaq"
+  style="
+    --zfaq-bg: {{ section.settings.background_color }};
+    --zfaq-text: {{ section.settings.text_color }};
+    --zfaq-muted: {{ section.settings.muted_text_color }};
+    --zfaq-divider: {{ section.settings.divider_color }};
+    --zfaq-accent: {{ section.settings.accent_color }};
+    --zfaq-max-width: {{ section.settings.content_width }}px;
+    --zfaq-pt-d: {{ section.settings.padding_top_desktop }}px;
+    --zfaq-pb-d: {{ section.settings.padding_bottom_desktop }}px;
+    --zfaq-pt-m: {{ section.settings.padding_top_mobile }}px;
+    --zfaq-pb-m: {{ section.settings.padding_bottom_mobile }}px;
+    --zfaq-title-d: {{ section.settings.title_size_desktop }}px;
+    --zfaq-title-m: {{ section.settings.title_size_mobile }}px;
+    --zfaq-intro-d: {{ section.settings.intro_size_desktop }}px;
+    --zfaq-intro-m: {{ section.settings.intro_size_mobile }}px;
+    --zfaq-q-d: {{ section.settings.question_size_desktop }}px;
+    --zfaq-q-m: {{ section.settings.question_size_mobile }}px;
+    --zfaq-a-d: {{ section.settings.answer_size_desktop }}px;
+    --zfaq-a-m: {{ section.settings.answer_size_mobile }}px;
+    --zfaq-row-d: {{ section.settings.row_padding_desktop }}px;
+    --zfaq-row-m: {{ section.settings.row_padding_mobile }}px;
+    --zfaq-icon: {{ section.settings.icon_size }}px;
+  "
+>
+  <div class="zfaq__inner">
+    {% if section.settings.eyebrow != blank %}
+      <div class="zfaq__eyebrow">{{ section.settings.eyebrow | escape }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h1 class="zfaq__heading">{{ section.settings.heading | escape }}</h1>
+    {% endif %}
+
+    {% if section.settings.intro != blank %}
+      <div class="zfaq__intro rte">{{ section.settings.intro }}</div>
+    {% endif %}
+
+    <div class="zfaq__list" data-faq-list data-single-open="{{ section.settings.single_open }}">
+      {% for block in section.blocks %}
+        {% if block.settings.question != blank %}
+          <details class="zfaq__item" {{ block.shopify_attributes }} {% if section.settings.open_first_item and forloop.first %}open{% endif %}>
+            <summary class="zfaq__summary">
+              <span class="zfaq__question">{{ block.settings.question | escape }}</span>
+              <span class="zfaq__icon" aria-hidden="true">
+                {% case section.settings.icon_style %}
+                  {% when 'chevron' %}
+                    <svg viewBox="0 0 24 24" role="presentation" focusable="false">
+                      <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  {% else %}
+                    <svg class="zfaq__plus" viewBox="0 0 24 24" role="presentation" focusable="false">
+                      <path d="M5 12h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      <path class="zfaq__plus-v" d="M12 5v14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                {% endcase %}
+              </span>
+            </summary>
+
+            {% if block.settings.answer != blank %}
+              <div class="zfaq__answer rte">{{ block.settings.answer }}</div>
+            {% endif %}
+          </details>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if section.settings.enable_faq_schema %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {% assign faq_schema_count = 0 %}
+        {% for block in section.blocks %}
+          {% if block.settings.question != blank and block.settings.answer != blank %}
+            {% if faq_schema_count > 0 %},{% endif %}
+            {
+              "@type": "Question",
+              "name": {{ block.settings.question | json }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ block.settings.answer | strip_html | strip | json }}
+              }
+            }
+            {% assign faq_schema_count = faq_schema_count | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      ]
+    }
+  </script>
+{% endif %}
+
+<style>
+  #{{ section_id }} {
+    background: var(--zfaq-bg);
+    color: var(--zfaq-text);
+    padding: var(--zfaq-pt-d) 24px var(--zfaq-pb-d);
+  }
+
+  #{{ section_id }} .zfaq__inner {
+    width: 100%;
+    max-width: var(--zfaq-max-width);
+    margin: 0 auto;
+  }
+
+  #{{ section_id }} .zfaq__eyebrow {
+    margin: 0 0 12px;
+    text-align: {{ section.settings.heading_alignment }};
+    font-family: Montserrat, var(--font-body-family, sans-serif);
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--zfaq-accent);
+  }
+
+  #{{ section_id }} .zfaq__heading {
+    margin: 0;
+    text-align: {{ section.settings.heading_alignment }};
+    font-family: Montserrat, var(--font-heading-family, var(--font-body-family, sans-serif));
+    font-size: var(--zfaq-title-d);
+    line-height: 1.08;
+    font-weight: {{ section.settings.title_weight }};
+    letter-spacing: -0.025em;
+    color: var(--zfaq-text);
+  }
+
+  #{{ section_id }} .zfaq__intro {
+    max-width: {{ section.settings.intro_width }}px;
+    margin: 16px {% if section.settings.heading_alignment == 'center' %}auto{% else %}0{% endif %} 0;
+    text-align: {{ section.settings.heading_alignment }};
+    font-family: Montserrat, var(--font-body-family, sans-serif);
+    font-size: var(--zfaq-intro-d);
+    line-height: 1.6;
+    color: var(--zfaq-muted);
+  }
+
+  #{{ section_id }} .zfaq__intro p { margin: 0; }
+
+  #{{ section_id }} .zfaq__list {
+    margin-top: {{ section.settings.space_above_faqs }}px;
+    border-top: 1px solid var(--zfaq-divider);
+  }
+
+  #{{ section_id }} .zfaq__item {
+    margin: 0;
+    border-bottom: 1px solid var(--zfaq-divider);
+  }
+
+  #{{ section_id }} .zfaq__summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 28px;
+    padding: var(--zfaq-row-d) 0;
+    list-style: none;
+    cursor: pointer;
+    color: var(--zfaq-text);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #{{ section_id }} .zfaq__summary::-webkit-details-marker { display: none; }
+
+  #{{ section_id }} .zfaq__question {
+    font-family: Montserrat, var(--font-body-family, sans-serif);
+    font-size: var(--zfaq-q-d);
+    line-height: 1.35;
+    font-weight: {{ section.settings.question_weight }};
+    letter-spacing: -0.01em;
+  }
+
+  #{{ section_id }} .zfaq__icon {
+    display: inline-grid;
+    place-items: center;
+    width: var(--zfaq-icon);
+    height: var(--zfaq-icon);
+    color: {% if section.settings.use_accent_for_icon %}var(--zfaq-accent){% else %}var(--zfaq-text){% endif %};
+    transition: transform 220ms ease, color 220ms ease;
+  }
+
+  #{{ section_id }} .zfaq__icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #{{ section_id }} .zfaq__plus-v {
+    transform-origin: center;
+    transition: transform 220ms ease, opacity 220ms ease;
+  }
+
+  #{{ section_id }} details[open] .zfaq__plus-v {
+    transform: rotate(90deg);
+    opacity: 0;
+  }
+
+  #{{ section_id }} details[open] .zfaq__icon:has(path[d="M6 9l6 6 6-6"]) {
+    transform: rotate(180deg);
+  }
+
+  #{{ section_id }} .zfaq__answer {
+    max-width: {{ section.settings.answer_width }}px;
+    padding: 0 52px calc(var(--zfaq-row-d) + 4px) 0;
+    font-family: Montserrat, var(--font-body-family, sans-serif);
+    font-size: var(--zfaq-a-d);
+    line-height: 1.7;
+    color: var(--zfaq-muted);
+  }
+
+  #{{ section_id }} .zfaq__answer > *:first-child { margin-top: 0; }
+  #{{ section_id }} .zfaq__answer > *:last-child { margin-bottom: 0; }
+
+  #{{ section_id }} .zfaq__answer a {
+    color: var(--zfaq-accent);
+    text-underline-offset: 3px;
+  }
+
+  @media (hover: hover) {
+    #{{ section_id }} .zfaq__summary:hover .zfaq__question,
+    #{{ section_id }} .zfaq__summary:hover .zfaq__icon {
+      color: var(--zfaq-accent);
+    }
+  }
+
+  @media (max-width: 749px) {
+    #{{ section_id }} {
+      padding: var(--zfaq-pt-m) 20px var(--zfaq-pb-m);
+    }
+
+    #{{ section_id }} .zfaq__eyebrow,
+    #{{ section_id }} .zfaq__heading,
+    #{{ section_id }} .zfaq__intro {
+      text-align: {{ section.settings.mobile_heading_alignment }};
+    }
+
+    #{{ section_id }} .zfaq__heading { font-size: var(--zfaq-title-m); }
+
+    #{{ section_id }} .zfaq__intro {
+      margin-left: {% if section.settings.mobile_heading_alignment == 'center' %}auto{% else %}0{% endif %};
+      margin-right: {% if section.settings.mobile_heading_alignment == 'center' %}auto{% else %}0{% endif %};
+      font-size: var(--zfaq-intro-m);
+    }
+
+    #{{ section_id }} .zfaq__list {
+      margin-top: {{ section.settings.space_above_faqs_mobile }}px;
+    }
+
+    #{{ section_id }} .zfaq__summary {
+      gap: 18px;
+      padding: var(--zfaq-row-m) 0;
+    }
+
+    #{{ section_id }} .zfaq__question { font-size: var(--zfaq-q-m); }
+
+    #{{ section_id }} .zfaq__answer {
+      padding: 0 40px calc(var(--zfaq-row-m) + 2px) 0;
+      font-size: var(--zfaq-a-m);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} .zfaq__icon,
+    #{{ section_id }} .zfaq__plus-v {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    var root = document.getElementById('{{ section_id }}');
+    if (!root || root.dataset.faqInitialized === 'true') return;
+
+    root.dataset.faqInitialized = 'true';
+
+    var list = root.querySelector('[data-faq-list]');
+    if (!list || list.dataset.singleOpen !== 'true') return;
+
+    list.addEventListener('toggle', function (event) {
+      var openedItem = event.target;
+      if (!openedItem || openedItem.tagName !== 'DETAILS' || !openedItem.open) return;
+
+      list.querySelectorAll('details[open]').forEach(function (item) {
+        if (item !== openedItem) item.removeAttribute('open');
+      });
+    }, true);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "ZOOTIFY FAQ page",
+  "tag": "section",
+  "class": "section-zootify-faq",
+  "settings": [
+    { "type": "header", "content": "Header" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "SUPPORT" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "FAQ" },
+    { "type": "richtext", "id": "intro", "label": "Intro text", "default": "<p>Everything you need to know about ZOOTIFY products, orders and support.</p>" },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Desktop header alignment",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_heading_alignment",
+      "label": "Mobile header alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    { "type": "range", "id": "intro_width", "label": "Intro max width", "min": 360, "max": 900, "step": 20, "unit": "px", "default": 620 },
+
+    { "type": "header", "content": "FAQ behaviour" },
+    { "type": "checkbox", "id": "single_open", "label": "Keep only one question open at a time", "default": true },
+    { "type": "checkbox", "id": "open_first_item", "label": "Open first question by default", "default": false },
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "Question icon",
+      "default": "plus",
+      "options": [
+        { "value": "plus", "label": "Plus / minus" },
+        { "value": "chevron", "label": "Chevron" }
+      ]
+    },
+    { "type": "checkbox", "id": "use_accent_for_icon", "label": "Use accent color for icons", "default": false },
+    { "type": "checkbox", "id": "enable_faq_schema", "label": "Enable FAQ structured data for SEO", "default": true },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "content_width", "label": "Content max width", "min": 680, "max": 1200, "step": 20, "unit": "px", "default": 920 },
+    { "type": "range", "id": "answer_width", "label": "Answer max width", "min": 500, "max": 1000, "step": 20, "unit": "px", "default": 780 },
+    { "type": "range", "id": "space_above_faqs", "label": "Space above FAQs — desktop", "min": 20, "max": 100, "step": 4, "unit": "px", "default": 52 },
+    { "type": "range", "id": "space_above_faqs_mobile", "label": "Space above FAQs — mobile", "min": 16, "max": 70, "step": 2, "unit": "px", "default": 34 },
+    { "type": "range", "id": "row_padding_desktop", "label": "Question row spacing — desktop", "min": 16, "max": 44, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "row_padding_mobile", "label": "Question row spacing — mobile", "min": 14, "max": 36, "step": 2, "unit": "px", "default": 20 },
+    { "type": "range", "id": "padding_top_desktop", "label": "Top padding — desktop", "min": 20, "max": 140, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "Bottom padding — desktop", "min": 20, "max": 160, "step": 4, "unit": "px", "default": 96 },
+    { "type": "range", "id": "padding_top_mobile", "label": "Top padding — mobile", "min": 16, "max": 100, "step": 4, "unit": "px", "default": 44 },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Bottom padding — mobile", "min": 20, "max": 120, "step": 4, "unit": "px", "default": 64 },
+
+    { "type": "header", "content": "Typography" },
+    { "type": "range", "id": "title_size_desktop", "label": "Heading size — desktop", "min": 28, "max": 72, "step": 2, "unit": "px", "default": 46 },
+    { "type": "range", "id": "title_size_mobile", "label": "Heading size — mobile", "min": 26, "max": 48, "step": 2, "unit": "px", "default": 34 },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Heading weight",
+      "default": "600",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi bold" },
+        { "value": "700", "label": "Bold" }
+      ]
+    },
+    { "type": "range", "id": "intro_size_desktop", "label": "Intro size — desktop", "min": 14, "max": 22, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "intro_size_mobile", "label": "Intro size — mobile", "min": 13, "max": 20, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "question_size_desktop", "label": "Question size — desktop", "min": 15, "max": 26, "step": 1, "unit": "px", "default": 18 },
+    { "type": "range", "id": "question_size_mobile", "label": "Question size — mobile", "min": 14, "max": 22, "step": 1, "unit": "px", "default": 16 },
+    {
+      "type": "select",
+      "id": "question_weight",
+      "label": "Question weight",
+      "default": "500",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi bold" },
+        { "value": "700", "label": "Bold" }
+      ]
+    },
+    { "type": "range", "id": "answer_size_desktop", "label": "Answer size — desktop", "min": 14, "max": 21, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "answer_size_mobile", "label": "Answer size — mobile", "min": 13, "max": 19, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "icon_size", "label": "Icon size", "min": 18, "max": 32, "step": 1, "unit": "px", "default": 22 },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#FFFFFF" },
+    { "type": "color", "id": "text_color", "label": "Heading and question text", "default": "#01151E" },
+    { "type": "color", "id": "muted_text_color", "label": "Intro and answer text", "default": "#4D565A" },
+    { "type": "color", "id": "divider_color", "label": "Divider", "default": "#E6E8E8" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#7DC762" }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Are ZOOTIFY phone cases compatible with wireless charging?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Yes. MagSafe-compatible ZOOTIFY cases are designed to work with compatible magnetic charging accessories.</p>" }
+      ]
+    }
+  ],
+  "max_blocks": 50,
+  "presets": [
+    {
+      "name": "ZOOTIFY FAQ page",
+      "blocks": [
+        { "type": "faq" },
+        { "type": "faq" },
+        { "type": "faq" },
+        { "type": "faq" }
+      ]
+    }
+  ]
+}
+{% endschema %}

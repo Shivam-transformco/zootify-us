@@ -1,0 +1,333 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "Title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "enable_mobile_title_control": false,
+            "mobile_title_font_size": 30,
+            "mobile_title_line_height": "1.15",
+            "mobile_use_full_width": true,
+            "type_preset": "h3",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "page-content"
+      ],
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 15,
+        "color_scheme": "",
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+    "samsung_NHzbrY": {
+      "type": "samsung",
+      "blocks": {
+        "model_aic4zA": {
+          "type": "model",
+          "settings": {
+            "model_name": "S24 Ultra",
+            "model_link": "shopify://collections/s24-ultra-screenguards"
+          }
+        },
+        "model_6frQzL": {
+          "type": "model",
+          "settings": {
+            "model_name": "S25 Ultra",
+            "model_link": "shopify://collections/s25-ultra-screenguards"
+          }
+        },
+        "model_FLfzmR": {
+          "type": "model",
+          "settings": {
+            "model_name": "Galaxy Z Fold 6",
+            "model_link": ""
+          }
+        },
+        "model_naCARj": {
+          "type": "model",
+          "settings": {
+            "model_name": "Galaxy Z Fold 6",
+            "model_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "model_aic4zA",
+        "model_6frQzL",
+        "model_FLfzmR",
+        "model_naCARj"
+      ],
+      "disabled": true,
+      "name": "Samsung Models Section",
+      "settings": {
+        "heading": "Choose Your Samsung Model"
+      }
+    },
+    "model_section_XnJVWB": {
+      "type": "model-section",
+      "blocks": {
+        "model_NRaxgq": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 13",
+            "model_link": "shopify://collections/iphone-13-screenguard"
+          }
+        },
+        "model_fzXmnC": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 13 Pro",
+            "model_link": "shopify://collections/iphone-13-pro-screenguard"
+          }
+        },
+        "model_tire3L": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 13 Pro Max",
+            "model_link": "shopify://collections/iphone-13-pro-max-screenguards"
+          }
+        },
+        "model_GUaiLC": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 14",
+            "model_link": "shopify://collections/iphone-14"
+          }
+        },
+        "model_XKWEHW": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 14 plus",
+            "model_link": "shopify://collections/iphone-14-plus-screenguards"
+          }
+        },
+        "model_8Cqa89": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 14 Pro",
+            "model_link": "shopify://collections/iphone-14-pro-screenguards"
+          }
+        },
+        "model_x8AEdm": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 14 Pro Max",
+            "model_link": "shopify://collections/iphone-14-pro-max-screenguards"
+          }
+        },
+        "model_e89Lky": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 15",
+            "model_link": "shopify://collections/iphone-15-screenguards"
+          }
+        },
+        "model_qbY44Y": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 15 Pro",
+            "model_link": "shopify://collections/iphone-15-pro-screenguards"
+          }
+        },
+        "model_dYUM6U": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 15 Pro Max",
+            "model_link": "shopify://collections/iphone-15-pro-max-screenguards"
+          }
+        },
+        "model_bBFYqp": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 16",
+            "model_link": "shopify://collections/iphone-16-screenguards"
+          }
+        },
+        "model_KDUcQW": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 16 Pro",
+            "model_link": "shopify://collections/iphone-16-pro-screenguards"
+          }
+        },
+        "model_qFyJLM": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 16 Pro Max",
+            "model_link": "shopify://collections/iphone-16-pro-max-screenguards"
+          }
+        },
+        "model_bUA9c9": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17",
+            "model_link": "shopify://collections/iphone-17-screenguards"
+          }
+        },
+        "model_8HYgGF": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Air",
+            "model_link": "shopify://collections/iphone-17-air-screenguards"
+          }
+        },
+        "model_nprCX7": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Pro",
+            "model_link": "shopify://collections/iphone-17-pro-screenguards"
+          }
+        },
+        "model_WEMByD": {
+          "type": "model",
+          "settings": {
+            "model_name": "iPhone 17 Pro Max",
+            "model_link": "shopify://collections/iphone-17-pro-max-screenguards"
+          }
+        }
+      },
+      "block_order": [
+        "model_NRaxgq",
+        "model_fzXmnC",
+        "model_tire3L",
+        "model_GUaiLC",
+        "model_XKWEHW",
+        "model_8Cqa89",
+        "model_x8AEdm",
+        "model_e89Lky",
+        "model_qbY44Y",
+        "model_dYUM6U",
+        "model_bBFYqp",
+        "model_KDUcQW",
+        "model_qFyJLM",
+        "model_bUA9c9",
+        "model_8HYgGF",
+        "model_nprCX7",
+        "model_WEMByD"
+      ],
+      "disabled": true,
+      "name": "iPhone Models Section",
+      "settings": {
+        "heading": "Choose Your iPhone Model"
+      }
+    },
+    "17863940265e28c57f": {
+      "type": "_blocks",
+      "blocks": {
+        "judge_me_reviews_reviews_grid_widget_TD7KMR": {
+          "type": "shopify://apps/judge-me-reviews/blocks/reviews_grid_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "show_sample_reviews": true,
+            "review_selection": "product_reviews",
+            "products": [],
+            "filter_pinned": false,
+            "filter_featured": false,
+            "filter_custom_tags": "",
+            "show_media_only": false,
+            "display_order": "most_recent",
+            "card_grouping": "per_media",
+            "columns_desktop": 3,
+            "rows_desktop": 3,
+            "columns_mobile": "1",
+            "rows_mobile": 6,
+            "show_stars": true,
+            "show_reviewer_name": true,
+            "show_review_title_on_hover_desktop": true,
+            "max_width": 1100,
+            "corner_styling": "soft",
+            "card_spacing": "medium",
+            "header_text_color": "#000000",
+            "star_and_reviewer_name_color": "#F9F9F9",
+            "drop_shadow_color": "#000000",
+            "overlay_and_background_color": "#000000",
+            "content_color": "#F9F9F9",
+            "header_text": "CUSTOMER REVIEWS",
+            "show_average_rating": true,
+            "rating_display": "default"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_reviews_grid_widget_TD7KMR"
+      ],
+      "custom_css": [
+        ".shopify-app-block {width: 100%; max-width: 100%;}"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "flex-start",
+        "gap": 12,
+        "section_width": "full-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "samsung_NHzbrY",
+    "model_section_XnJVWB",
+    "17863940265e28c57f"
+  ]
+}
