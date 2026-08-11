@@ -772,8 +772,15 @@
 
   .header__icon--summary .header-drawer-icon {
     margin: auto;
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+  }
+
+  @media (max-width: 749px) {
+    .header__icon--summary .header-drawer-icon {
+      width: 18px;
+      height: 18px;
+    }
   }
 
   .header__drawer {
