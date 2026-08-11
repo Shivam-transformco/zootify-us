@@ -99,327 +99,184 @@
 
 {% stylesheet %}
   .email-signup-block {
-    --arrow-button-size: 58px;
-    --arrow-button-size-integrated: 42px;
-    --arrow-button-size-small: 20px;
-    --arrow-icon-size: 32px;
-    --arrow-icon-size-small: 24px;
-
-    min-width: fit-content;
-
-    @media screen and (max-width: 749px) {
-      width: 100%;
-      min-width: unset;
-    }
+    --z-news-dark: #01151e;
+    --z-news-green: #7dc762;
+    --z-news-border: rgba(1, 21, 30, 0.18);
+    --z-news-muted: rgba(1, 21, 30, 0.54);
+    width: 100%;
+    min-width: 0;
+    max-width: 350px;
   }
 
   .email-signup__heading {
-    padding-block: var(--padding-sm);
+    padding-block: 0 10px;
+    color: var(--z-news-dark);
   }
 
   .email-signup__form {
     display: flex;
     flex-direction: column;
+    width: 100%;
   }
 
-  .email-signup__input-group {
-  display: flex !important;
-  align-items: stretch !important;
-  
-  /* Centers the block and adds spacing around it */
-  width: 90% !important;
-  margin-inline: auto !important;
-  margin-block: 15px !important;
-  
-  /* Critical: Prevents padding from pushing the element out of bounds */
-  box-sizing: border-box !important;
-  
- 
-  
-  /* Smooth rounded corners */
-  border-radius: 16px !important; 
-  
-  /* Forces child elements to stay inside the rounded corners */
-  overflow: hidden !important; 
-
-  /* Styling defaults */
-  background-color: #ffffff !important;
-  border: none !important; 
-}
-
-  .email-signup__input-group:not(.email-signup__input-group--integrated):not(.email-signup__input-group--underline) {
-    gap: var(--gap-xs);
-    align-items: center;
+  /* ZOOTIFY editorial newsletter field — compact, quiet, premium */
+  .email-signup__input-group,
+  .email-signup__input-group--integrated,
+  .email-signup__input-group--no-border,
+  .email-signup__input-group--underline {
+    width: 100% !important;
+    min-height: 46px !important;
+    margin: 0 !important;
+    padding: 0 4px 0 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    border: 1px solid var(--z-news-border) !important;
+    border-radius: 8px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    transition: border-color 160ms ease, background-color 160ms ease;
   }
 
-  .email-signup__input-group:not(.email-signup__input-group--arrow):not(.email-signup__input-group--underline):not(
-      .email-signup__input-group--integrated
-    ) {
-    @media screen and (max-width: 749px) {
-      flex-direction: column;
-    }
-  }
-
-  .email-signup__input-group--integrated {
-    border-width: var(--border-width);
-    border-radius: var(--border-radius);
-    border-style: solid;
-    border-color: var(--color-input-border);
-    background-color: var(--color-input-background);
-  }
-
-  .email-signup__input-group--integrated.email-signup__input-group--no-border {
-    border: none;
-  }
-.email-signup__input-group {
-  /* The exact shadow from the image */
- box-shadow: 4px 0 7px rgba(0, 0, 0, 0.15);
-  
-  /* Matches the rounded corners in your image */
-  border-radius: 12px; 
-  
-  /* Isse left side ke corners bhi round ho jayenge */
-  overflow: hidden; 
-
-  /* Standard styling to ensure it renders correctly */
-  background-color: #ffffff;
-  border: none; 
-  margin: 5px; 
-}
-  .email-signup__input {
-    flex: 1;
-    min-width: 0;
-    border-width: var(--border-width);
-    border-radius: var(--border-radius);
-    border-style: solid;
-    border-color: var(--color-input-border);
-
-    @media screen and (max-width: 749px) {
-      width: 100%;
-    }
-  }
-
-  .email-signup__input-group--integrated .email-signup__input {
-    background-color: transparent;
-    border: none;
-    border-radius: 0;
-  }
-
-  .email-signup__input.paragraph {
-    color: var(--color-input-text);
-    outline-color: var(--color-input-background);
-  }
-
-  .email-signup__button {
-    white-space: nowrap;
-    padding: 0;
-
-    @media screen and (max-width: 749px) {
-      width: 100%;
-    }
+  .email-signup__input-group:focus-within {
+    border-color: var(--z-news-dark) !important;
+    background: #fff !important;
+    box-shadow: none !important;
   }
 
   .email-signup__input,
-  .email-signup__button--text {
-    padding: var(--padding-lg) var(--padding-3xl);
-  }
-
-  .email-signup__input-group--underline {
-    --box-shadow-color: var(--color-input-border);
-    --box-shadow-multiplier: 1;
-    --box-shadow-focused-multiplier: 1.75;
-
-    box-shadow: 0 calc(var(--border-width) * var(--box-shadow-multiplier)) 0 var(--box-shadow-color);
-    transition: box-shadow var(--animation-values);
-    margin-block-end: calc(var(--border-width) * var(--box-shadow-focused-multiplier));
-
-    &:focus-within {
-      --box-shadow-multiplier: var(--box-shadow-focused-multiplier);
-      --box-shadow-color: var(--color-input-text);
-    }
-  }
-
-  .email-signup__input-group .email-signup__input--underline {
-    color: var(--color-input-text);
-    background-color: transparent;
-    padding: 12px 0;
-    border: none;
-    border-radius: 0;
-
-    &:focus-visible {
-      outline: none;
-    }
+  .email-signup__input-group .email-signup__input--underline,
+  .email-signup__input-group .email-signup__input--none {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    height: 44px !important;
+    padding: 0 12px 0 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--z-news-dark) !important;
+    font: inherit;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.01em;
   }
 
   .email-signup__input::placeholder {
-    color: rgb(var(--color-input-text-rgb) / var(--opacity-70));
+    color: var(--z-news-muted) !important;
+    opacity: 1 !important;
   }
 
-  .email-signup__input-group .email-signup__input--none {
-    color: var(--color-input-text);
-    background-color: var(--color-input-background);
-    border: none;
+  .email-signup__input:focus,
+  .email-signup__input:focus-visible {
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Arrow CTA: no heavy circle — just a refined action area */
+  .email-signup__button--arrow,
+  .email-signup__button--integrated.email-signup__button--arrow {
+    width: 40px !important;
+    height: 38px !important;
+    min-width: 40px !important;
+    flex: 0 0 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-left: 1px solid rgba(1, 21, 30, 0.10) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--z-news-dark) !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+  }
+
+  .email-signup__button--arrow:hover,
+  .email-signup__button--integrated.email-signup__button--arrow:hover {
+  color: var(--z-news-green) !important;
+  background: transparent !important;
+  }
+
+  .email-signup__button--arrow:active,
+  .email-signup__button--integrated.email-signup__button--arrow:active {
+    transform: translateX(1px);
   }
 
   .email-signup__button-icon {
-    color: currentcolor;
-    padding: 5px;
-
-    @media screen and (max-width: 749px) {
-      padding: 0;
-      align-self: center;
-      justify-self: center;
-      width: var(--icon-size-lg);
-      height: var(--icon-size-lg);
-    }
+    width: 17px !important;
+    height: 17px !important;
+    padding: 0 !important;
+    color: currentColor !important;
   }
 
-  .email-signup__button--arrow {
-    width: var(--arrow-button-size-small);
-    height: var(--arrow-button-size-small);
-    padding: 0;
-
-    &:not(.email-signup__button--integrated) {
-      width: var(--arrow-button-size);
-      height: var(--arrow-button-size);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      > .email-signup__button-icon {
-        width: var(--arrow-icon-size);
-        height: var(--arrow-icon-size);
-        padding: 0;
-      }
-    }
-  }
-
-  .email-signup__button--integrated {
-    --button-offset: var(--margin-xs);
-    align-self: stretch;
-    
-    flex-shrink: 0;
-
-    @media screen and (max-width: 749px) {
-      width: fit-content;
-    }
-
-    &.email-signup__button--text {
-      padding: 0 var(--padding-3xl);
-    }
-
-    &.email-signup__button--text.button-unstyled {
-      padding: 0 var(--padding-xl);
-    }
-
-    &.button-unstyled {
-      border-radius: var(--border-radius);
-    }
-
-    > .email-signup__button-icon {
-      padding: 0;
-    }
-
-    &.email-signup__button--arrow {
-      width: var(--arrow-button-size-integrated);
-      height: var(--arrow-button-size-integrated);
-      align-self: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      > .email-signup__button-icon {
-        width: var(--arrow-icon-size-small);
-        height: var(--arrow-icon-size-small);
-      }
-    }
-  }
-
-  .email-signup__input--underline + .email-signup__button--integrated {
-    margin: 0;
-    align-self: center;
-
-    &.email-signup__button--text {
-      padding-block: 9px;
-    }
-
-    &.email-signup__button--text.button-unstyled {
-      padding-inline: 0;
-    }
-
-    &.button-unstyled {
-      border-radius: 0;
-    }
-
-    &.email-signup__button--arrow {
-      width: var(--arrow-button-size-integrated);
-      height: var(--arrow-button-size-integrated);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      > .email-signup__button-icon {
-        width: var(--arrow-icon-size-small);
-        height: var(--arrow-icon-size-small);
-      }
-    }
-  }
-
-  .email-signup__button:not(.button-unstyled) {
-    background-color: var(--button-background-color);
-    color: var(--button-color);
-    text-transform: var(--button-text-case-primary);
-  }
-
-  .email-signup__button.button-secondary {
-    text-transform: var(--button-text-case-secondary);
-  }
-
-  .email-signup__button.button-unstyled {
-    background-color: transparent;
-    color: var(--color-input-text);
-  }
-
-  .email-signup__button.button-unstyled:hover {
-    color: rgb(var(--color-input-text-rgb) / var(--opacity-70));
+  /* Text CTA version if selected in Theme Editor */
+  .email-signup__button--text {
+    min-height: 36px !important;
+    padding: 0 14px !important;
+    margin: 4px 0 !important;
+    border: 0 !important;
+    border-radius: 6px !important;
+    background: var(--z-news-dark) !important;
+    color: #fff !important;
+    font: inherit;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em;
     cursor: pointer;
+    transition: background-color 160ms ease, color 160ms ease;
+  }
+
+  .email-signup__button--text:hover {
+    background: var(--z-news-green) !important;
+    color: var(--z-news-dark) !important;
   }
 
   .email-signup__message {
     display: flex;
     align-items: center;
-    gap: var(--gap-xs);
+    gap: 6px;
+    margin-top: 7px;
+    font-size: 12px;
+    line-height: 1.4;
   }
 
-  .email-signup__message-text {
-    margin: 0;
-  }
-  /* Reduces the height of the input field and adjusts paddings to minimize gaps */
-  .email-signup__input {
-    padding-block: 10px !important; /* Decreased from theme default (var(--padding-lg)) */
-    padding-left: 12px !important;
-    padding-right: 8px !important; /* Reduces gap between text and button */
-  }
+  .email-signup__message-text { margin: 0; }
+  .email-signup__message--success { color: #2f6d22; }
+  .email-signup__message--error { color: #a12a2a; }
 
-  /* Adjusts the button height to match the new smaller layout */
-  .email-signup__button--integrated.email-signup__button--arrow {
-    height: 34px !important; /* Decreased from 42px to fit the sleeker container */
-    width: 34px !important;
-  }
-
-  /* Responsive styling for smaller laptops (like 13-inch and 13.5-inch), tablets, and mobile screens */
-  @media screen and (max-width: 1500px) {
-    .email-signup__input-group {
-      width: 100% !important; /* Take full available width to prevent squeezing */
+  @media screen and (max-width: 749px) {
+    .email-signup-block {
+      max-width: 100%;
     }
+
+    .email-signup__input-group,
+    .email-signup__input-group--integrated,
+    .email-signup__input-group--no-border,
+    .email-signup__input-group--underline {
+      min-height: 44px !important;
+      padding-left: 12px !important;
+      border-radius: 8px !important;
+    }
+
     .email-signup__input {
-      padding-left: 10px !important;
-      padding-right: 6px !important;
-      font-size: 13px !important; /* Slightly smaller text to prevent truncation */
+      height: 42px !important;
+      font-size: 13px !important;
     }
+
+    .email-signup__button--arrow,
     .email-signup__button--integrated.email-signup__button--arrow {
-      height: 30px !important;
-      width: 30px !important;
+      width: 38px !important;
+      height: 36px !important;
+      min-width: 38px !important;
+      flex-basis: 38px !important;
     }
   }
 {% endstylesheet %}

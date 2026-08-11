@@ -588,9 +588,9 @@
             "focal_x_mobile": 50,
             "focal_y_mobile": 50,
             "use_custom_colors": false,
-            "card_background": "#FFFFFF",
-            "card_gradient_end": "#F5F5F3",
-            "media_background": "#FFFFFF"
+            "card_background": "#ffffff",
+            "card_gradient_end": "#f5f5f3",
+            "media_background": "#ffffff"
           }
         },
         "card_LcLKbC": {
@@ -604,9 +604,9 @@
             "focal_x_mobile": 50,
             "focal_y_mobile": 50,
             "use_custom_colors": false,
-            "card_background": "#FFFFFF",
-            "card_gradient_end": "#F5F5F3",
-            "media_background": "#FFFFFF"
+            "card_background": "#ffffff",
+            "card_gradient_end": "#f5f5f3",
+            "media_background": "#ffffff"
           }
         },
         "card_qpQcdH": {
@@ -620,9 +620,9 @@
             "focal_x_mobile": 50,
             "focal_y_mobile": 50,
             "use_custom_colors": false,
-            "card_background": "#FFFFFF",
-            "card_gradient_end": "#F5F5F3",
-            "media_background": "#FFFFFF"
+            "card_background": "#ffffff",
+            "card_gradient_end": "#f5f5f3",
+            "media_background": "#ffffff"
           }
         },
         "card_yHpyMV": {
@@ -636,9 +636,9 @@
             "focal_x_mobile": 50,
             "focal_y_mobile": 50,
             "use_custom_colors": false,
-            "card_background": "#FFFFFF",
-            "card_gradient_end": "#F5F5F3",
-            "media_background": "#FFFFFF"
+            "card_background": "#ffffff",
+            "card_gradient_end": "#f5f5f3",
+            "media_background": "#ffffff"
           }
         },
         "feature_9EAz63": {
@@ -689,9 +689,9 @@
       "settings": {
         "max_width": 1800,
         "cards_max_width": 1200,
-        "background_color": "#FFFFFF",
+        "background_color": "#ffffff",
         "text_color": "#171714",
-        "muted_color": "#66645F",
+        "muted_color": "#66645f",
         "side_padding": 48,
         "side_padding_mobile": 20,
         "padding_top": 48,
@@ -707,10 +707,10 @@
         "mobile_media_height": 75,
         "card_radius": 5,
         "border_width": 1,
-        "border_color": "#CECDC9",
-        "card_background": "#FFFFFF",
+        "border_color": "#cecdc9",
+        "card_background": "#ffffff",
         "enable_card_gradient": true,
-        "card_gradient_end": "#FFFFFF",
+        "card_gradient_end": "#ffffff",
         "soft_gradient_enable": true,
         "soft_gradient_color": "#000000",
         "soft_gradient_opacity": 6,
@@ -1297,11 +1297,11 @@
           "type": "text",
           "name": "t:names.header",
           "settings": {
-            "text": "<h5><strong>RELATED PRODUCTS</strong></h5>",
+            "text": "<h5><strong>YOU MAY ALSO LIKE</strong></h5>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
-            "enable_mobile_title_control": false,
+            "enable_mobile_title_control": true,
             "mobile_title_font_size": 30,
             "mobile_title_line_height": "1.15",
             "mobile_use_full_width": true,
