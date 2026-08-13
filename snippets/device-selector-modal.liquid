@@ -180,17 +180,37 @@
   }
   */
 
-  function fetchSiblings() {
-    // ✅ Return cached data if available
-    var cached = sessionStorage.getItem('dsm_' + coverModel);
-    if (cached) {
-      grouped = JSON.parse(cached);
-      showModels('Apple');
-      return;
-    }
+  function normalizeText(value) {
+    return String(value || '')
+      .toLowerCase()
+      .replace(/[–—]/g, '-')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
 
+  function getBaseTitle(title) {
+    var lower = title.toLowerCase();
+    var lastIndex = lower.lastIndexOf(' for ');
+    if (lastIndex !== -1) {
+      return title.slice(0, lastIndex).trim();
+    }
+    return title.trim();
+  }
+
+  function getCanonicalModel(title) {
+    var model = getModelOnly(title).replace(/\s+/g, ' ').trim();
+
+    if (/iphone\s*17\s*pro\s*max/i.test(model)) return 'iPhone 17 Pro Max';
+    if (/iphone\s*17\s*pro/i.test(model)) return 'iPhone 17 Pro';
+    if (/iphone\s*17\s*air/i.test(model)) return 'iPhone 17 Air';
+    if (/iphone\s*17/i.test(model)) return 'iPhone 17';
+
+    return model;
+  }
+
+  function fetchSiblings() {
     var query = `{
-      products(first: 20, query: "metafield:custom.cover_model:${coverModel}") {
+      products(first: 50, query: "metafield:custom.cover_model:${coverModel}") {
         edges {
           node {
             title
@@ -217,25 +237,71 @@
         return;
       }
 
-      grouped = {};
-      edges.forEach(function(edge) {
-        var p = edge.node;
-        var brand = getBrand(p.title);
-        if (!grouped[brand]) grouped[brand] = [];
-        grouped[brand].push({
-          title: getModelOnly(p.title),
-          url: '/products/' + p.handle,
-          handle: p.handle
-        });
+      /*
+        Extra safety:
+        cover_model on your products is the base product title without
+        the trailing "for iPhone ...". If a product from another family
+        accidentally shares the same metafield value, exclude it here.
+      */
+      var expectedBase = normalizeText(coverModel);
+      var exactFamilyEdges = edges.filter(function(edge) {
+        return normalizeText(getBaseTitle(edge.node.title)) === expectedBase;
       });
 
-      // ✅ Save to session cache
-      sessionStorage.setItem('dsm_' + coverModel, JSON.stringify(grouped));
+      // Use the strict family match when it found products.
+      // Fall back to the Shopify metafield result so the selector never breaks
+      // if an older product uses a slightly different cover_model convention.
+      var sourceEdges = exactFamilyEdges.length ? exactFamilyEdges : edges;
 
-      // Skip brand step — only Apple for now
-      // To re-enable: remove this line and uncomment renderBrands() below
+      grouped = {};
+      var seen = {};
+
+      sourceEdges.forEach(function(edge) {
+        var p = edge.node;
+        var brand = getBrand(p.title);
+        var modelTitle = getCanonicalModel(p.title);
+        var dedupeKey = brand + '|' + normalizeText(modelTitle);
+
+        if (seen[dedupeKey]) {
+          // If the duplicate is the current product, keep the current product's URL.
+          if (p.handle === currentHandle) {
+            var existing = seen[dedupeKey];
+            existing.url = '/products/' + p.handle;
+            existing.handle = p.handle;
+          }
+          return;
+        }
+
+        if (!grouped[brand]) grouped[brand] = [];
+
+        var item = {
+          title: modelTitle,
+          url: '/products/' + p.handle,
+          handle: p.handle
+        };
+
+        grouped[brand].push(item);
+        seen[dedupeKey] = item;
+      });
+
+      // Fixed order for the iPhone 17 family
+      if (grouped.Apple) {
+        var modelOrder = {
+          'iphone 17': 1,
+          'iphone 17 air': 2,
+          'iphone 17 pro': 3,
+          'iphone 17 pro max': 4
+        };
+
+        grouped.Apple.sort(function(a, b) {
+          var aKey = normalizeText(a.title);
+          var bKey = normalizeText(b.title);
+          return (modelOrder[aKey] || 999) - (modelOrder[bKey] || 999);
+        });
+      }
+
+      // No sessionStorage cache here: always use current Shopify data.
       showModels('Apple');
-      // renderBrands();
 
     })
     .catch(function() {

@@ -38,7 +38,7 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/Group4101cop.jpg",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/frostand-purple-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-pro-max-copy"
+            "button_link": "shopify://collections/the-frostand-collection"
           }
         },
         "slide_RUGfKG": {
@@ -67,7 +67,7 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/banner_ridge_leather.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/frostand-orange-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-pro-max"
+            "button_link": "shopify://collections/phone-covers-1"
           }
         },
         "slide_nML68w": {
@@ -397,8 +397,8 @@
         "text_width": 820,
         "description_width": 680,
         "alignment_desktop": "center",
-        "alignment_mobile": "center",
-        "show_side_lines": true,
+        "alignment_mobile": "left",
+        "show_side_lines": false,
         "show_accent_line": true,
         "accent_line_width": 64,
         "accent_line_height": 3,
@@ -677,7 +677,7 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/frostandkickstandmagsafe.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/frostand-purple-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-pro-max-copy-1"
+            "button_link": "shopify://collections/the-frostand-collection"
           }
         }
       },

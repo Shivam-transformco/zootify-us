@@ -32,6 +32,92 @@
 >
   <div class="{{ cart_summary_inner_class }}">
     {% render 'cart-summary', accelerated_checkout_buttons_layout: 'vertical', section_id: section.id %}
+
+    {% if block_settings.show_trust_badges %}
+      <div
+        class="zootify-cart-trust"
+        style="
+          --zt-trust-icon-circle: {{ block_settings.trust_icon_circle_size }}px;
+          --zt-trust-icon-size: {{ block_settings.trust_icon_size }}px;
+          --zt-trust-icon-bg: {{ block_settings.trust_icon_bg }};
+          --zt-trust-icon-color: {{ block_settings.trust_icon_color }};
+          --zt-trust-title-size: {{ block_settings.trust_title_size }}px;
+          --zt-trust-title-weight: {{ block_settings.trust_title_weight }};
+          --zt-trust-title-color: {{ block_settings.trust_title_color }};
+          --zt-trust-text-size: {{ block_settings.trust_text_size }}px;
+          --zt-trust-text-weight: {{ block_settings.trust_text_weight }};
+          --zt-trust-text-color: {{ block_settings.trust_text_color }};
+          --zt-trust-gap: {{ block_settings.trust_gap }}px;
+          --zt-trust-title-font: {% if block_settings.trust_title_font == 'heading' %}var(--font-heading--family){% else %}var(--font-body--family){% endif %};
+          --zt-trust-text-font: {% if block_settings.trust_text_font == 'heading' %}var(--font-heading--family){% else %}var(--font-body--family){% endif %};
+        "
+        aria-label="Checkout benefits"
+      >
+        {% for i in (1..3) %}
+          {% liquid
+            assign show_key = 'trust_' | append: i | append: '_show'
+            assign icon_key = 'trust_' | append: i | append: '_icon'
+            assign image_key = 'trust_' | append: i | append: '_image'
+            assign title_key = 'trust_' | append: i | append: '_title'
+            assign text_key = 'trust_' | append: i | append: '_text'
+            assign show_item = block_settings[show_key]
+            assign icon_name = block_settings[icon_key]
+            assign custom_icon = block_settings[image_key]
+            assign trust_title = block_settings[title_key]
+            assign trust_text = block_settings[text_key]
+          %}
+          {% if show_item %}
+            <div class="zootify-cart-trust__item">
+              <span class="zootify-cart-trust__icon" aria-hidden="true">
+                {% if custom_icon != blank %}
+                  {{ custom_icon | image_url: width: 96 | image_tag: loading: 'lazy', class: 'zootify-cart-trust__custom-icon' }}
+                {% else %}
+                  {% case icon_name %}
+                    {% when 'shield' %}
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 3 19 6v5c0 4.6-2.9 8-7 10-4.1-2-7-5.4-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                        <path d="m9.2 12 1.8 1.8 3.8-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    {% when 'return' %}
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M7.5 8H16a5 5 0 1 1 0 10h-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                        <path d="m7.5 8 3-3M7.5 8l3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    {% when 'headset' %}
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M4 13v-1a8 8 0 0 1 16 0v1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                        <path d="M4 13h2.5v5H5a1 1 0 0 1-1-1v-4Zm16 0h-2.5v5H19a1 1 0 0 0 1-1v-4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                        <path d="M17.5 18c-.3 1.4-1.4 2-3.2 2H13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                      </svg>
+                    {% when 'truck' %}
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M3 6h11v10H3V6Zm11 4h3.5L21 13.5V16h-7v-6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                        <circle cx="7" cy="18" r="2" stroke="currentColor" stroke-width="1.7"/>
+                        <circle cx="18" cy="18" r="2" stroke="currentColor" stroke-width="1.7"/>
+                      </svg>
+                    {% when 'heart' %}
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M20.8 5.8a5 5 0 0 0-7.1 0L12 7.5l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21l8.8-8.1a5 5 0 0 0 0-7.1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                      </svg>
+                    {% else %}
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <rect x="5" y="10" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/>
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                      </svg>
+                  {% endcase %}
+                {% endif %}
+              </span>
+              {% if trust_title != blank %}
+                <div class="zootify-cart-trust__title">{{ trust_title }}</div>
+              {% endif %}
+              {% if trust_text != blank %}
+                <div class="zootify-cart-trust__text">{{ trust_text }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
 </div>
 
@@ -135,6 +221,280 @@
       --color-input-background: inherit;
     }
   }
+
+  /* ============================================================
+     ZOOTIFY CART — clean right summary (cart page only)
+     ============================================================ */
+
+  .zootify-cart-page .cart-page__summary > .section-background {
+    display: none !important;
+  }
+
+  .zootify-cart-page .cart-summary,
+  .zootify-cart-page .cart-summary--extend {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .zootify-cart-page .cart-summary {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .zootify-cart-page .cart-summary__inner,
+  .zootify-cart-page .cart-summary--extend .cart-summary__inner {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    margin-inline: auto;
+    padding: 0 0 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: transparent;
+    grid-row: auto;
+  }
+
+  .zootify-cart-page .cart-totals {
+    width: 100%;
+    gap: 0;
+  }
+
+  .zootify-cart-page .cart-actions {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid #ecefed;
+    border-bottom: 1px solid #ecefed;
+  }
+
+  .zootify-cart-page .cart-actions__divider {
+    border-color: #ecefed;
+  }
+
+  .zootify-cart-page .cart-discount__summary,
+  .zootify-cart-page .cart-note__summary {
+    min-height: 60px;
+    padding: 0;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .zootify-cart-page .cart-totals__icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .zootify-cart-page .cart-totals__original-container {
+    padding: 22px 0 0;
+  }
+
+  .zootify-cart-page .cart-totals__container {
+    gap: 8px;
+    padding: 26px 0 24px;
+    border-bottom: 1px solid #ecefed;
+  }
+
+  .zootify-cart-page .cart-totals__total {
+    align-items: baseline;
+    font-weight: 500;
+  }
+
+  .zootify-cart-page .cart-totals__total-label {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .zootify-cart-page .cart-totals__total-value {
+    font-size: 17px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .zootify-cart-page .cart-totals__installments {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .zootify-cart-page .cart-totals__tax-note,
+  .zootify-cart-page .cart-totals__tax-note small {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .zootify-cart-page .cart__ctas {
+    width: 100%;
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .zootify-cart-page .cart__ctas .cart__checkout-button {
+    width: 100%;
+    min-height: 55px;
+    height: 55px;
+    padding-inline: 24px;
+    border-radius: 4px;
+  }
+
+  .zootify-cart-page .additional-checkout-buttons,
+  .zootify-cart-page .additional-checkout-buttons--vertical {
+    width: 100%;
+  }
+
+  .zootify-cart-page shopify-accelerated-checkout-cart {
+    --shopify-accelerated-checkout-inline-alignment: center;
+    --shopify-accelerated-checkout-button-border-radius: 4px;
+    --shopify-accelerated-checkout-button-block-size: 55px;
+    --shopify-accelerated-checkout-row-gap: 12px;
+  }
+
+  .zootify-cart-trust {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--zt-trust-gap);
+    margin-top: 34px;
+    padding-top: 28px;
+    border-top: 1px solid #ecefed;
+  }
+
+  .zootify-cart-trust__item {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .zootify-cart-trust__icon {
+    width: var(--zt-trust-icon-circle);
+    height: var(--zt-trust-icon-circle);
+    margin: 0 auto 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--zt-trust-icon-color);
+    background: var(--zt-trust-icon-bg);
+    border-radius: 999px;
+  }
+
+  .zootify-cart-trust__icon svg,
+  .zootify-cart-trust__custom-icon {
+    width: var(--zt-trust-icon-size);
+    height: var(--zt-trust-icon-size);
+    object-fit: contain;
+  }
+
+  .zootify-cart-trust__title {
+    font-family: var(--zt-trust-title-font);
+    font-size: var(--zt-trust-title-size);
+    font-weight: var(--zt-trust-title-weight);
+    line-height: 1.25;
+    color: var(--zt-trust-title-color);
+  }
+
+  .zootify-cart-trust__text {
+    margin-top: 5px;
+    font-family: var(--zt-trust-text-font);
+    font-size: var(--zt-trust-text-size);
+    font-weight: var(--zt-trust-text-weight);
+    line-height: 1.35;
+    color: var(--zt-trust-text-color);
+  }
+
+  @media screen and (min-width: 990px) {
+    .zootify-cart-page .cart-summary__inner,
+    .zootify-cart-page .cart-summary--extend .cart-summary__inner {
+      position: sticky;
+      top: calc(var(--header-height, 0px) + 24px);
+      align-self: start;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .zootify-cart-page .cart-summary,
+    .zootify-cart-page .cart-summary--extend {
+      height: auto;
+    }
+
+    .zootify-cart-page .cart-summary__inner,
+    .zootify-cart-page .cart-summary--extend .cart-summary__inner {
+      position: static;
+      max-width: none;
+      padding: 0 0 32px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .zootify-cart-page .cart-actions {
+      border-top: 1px solid #ecefed;
+    }
+
+    .zootify-cart-page .cart-totals__container {
+      padding: 22px 0;
+    }
+
+    .zootify-cart-page .cart-totals__total-label {
+      font-size: 15px;
+    }
+
+    .zootify-cart-page .cart-totals__total-value {
+      font-size: 16px;
+    }
+
+    .zootify-cart-page .cart__ctas {
+      margin-top: 22px;
+    }
+
+    .zootify-cart-trust {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+      margin-top: 26px;
+      padding-top: 22px;
+      gap: 8px;
+    }
+
+    .zootify-cart-trust__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-width: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    .zootify-cart-trust__icon {
+      width: min(var(--zt-trust-icon-circle), 36px);
+      height: min(var(--zt-trust-icon-circle), 36px);
+      margin: 0 auto 8px;
+      flex: 0 0 auto;
+    }
+
+    .zootify-cart-trust__icon svg,
+    .zootify-cart-trust__custom-icon {
+      width: min(var(--zt-trust-icon-size), 17px);
+      height: min(var(--zt-trust-icon-size), 17px);
+    }
+
+    .zootify-cart-trust__title {
+      width: 100%;
+      font-size: min(var(--zt-trust-title-size), 11px);
+      line-height: 1.18;
+      white-space: nowrap;
+    }
+
+    .zootify-cart-trust__text {
+      width: 100%;
+      margin-top: 5px;
+      font-size: min(var(--zt-trust-text-size), 9px);
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+  }
+
 {% endstylesheet %}
 
 {% schema %}
@@ -212,6 +572,343 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Trust badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "Show trust badges",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "trust_title_font",
+      "label": "Trust title font",
+      "options": [
+        {
+          "value": "body",
+          "label": "Body font"
+        },
+        {
+          "value": "heading",
+          "label": "Heading font"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "range",
+      "id": "trust_title_size",
+      "label": "Trust title size",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "trust_title_weight",
+      "label": "Trust title weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "color",
+      "id": "trust_title_color",
+      "label": "Trust title color",
+      "default": "#01151E"
+    },
+    {
+      "type": "select",
+      "id": "trust_text_font",
+      "label": "Trust description font",
+      "options": [
+        {
+          "value": "body",
+          "label": "Body font"
+        },
+        {
+          "value": "heading",
+          "label": "Heading font"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "range",
+      "id": "trust_text_size",
+      "label": "Trust description size",
+      "min": 9,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "select",
+      "id": "trust_text_weight",
+      "label": "Trust description weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "color",
+      "id": "trust_text_color",
+      "label": "Trust description color",
+      "default": "#8A8F8C"
+    },
+    {
+      "type": "range",
+      "id": "trust_icon_circle_size",
+      "label": "Icon circle size",
+      "min": 30,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "trust_icon_size",
+      "label": "Icon size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "trust_icon_bg",
+      "label": "Icon circle background",
+      "default": "#F4F7F4"
+    },
+    {
+      "type": "color",
+      "id": "trust_icon_color",
+      "label": "Icon color",
+      "default": "#01151E"
+    },
+    {
+      "type": "range",
+      "id": "trust_gap",
+      "label": "Space between trust items",
+      "min": 6,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Trust item 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "trust_1_show",
+      "label": "Show trust item 1",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "trust_1_icon",
+      "label": "Trust item 1 icon",
+      "options": [
+        {
+          "value": "lock",
+          "label": "Lock"
+        },
+        {
+          "value": "shield",
+          "label": "Shield"
+        },
+        {
+          "value": "return",
+          "label": "Return"
+        },
+        {
+          "value": "headset",
+          "label": "Headset"
+        },
+        {
+          "value": "truck",
+          "label": "Truck"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        }
+      ],
+      "default": "lock"
+    },
+    {
+      "type": "image_picker",
+      "id": "trust_1_image",
+      "label": "Custom icon 1 (optional)"
+    },
+    {
+      "type": "text",
+      "id": "trust_1_title",
+      "label": "Trust item 1 title",
+      "default": "Secure Checkout"
+    },
+    {
+      "type": "text",
+      "id": "trust_1_text",
+      "label": "Trust item 1 description",
+      "default": "Encrypted & trusted"
+    },
+    {
+      "type": "header",
+      "content": "Trust item 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "trust_2_show",
+      "label": "Show trust item 2",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "trust_2_icon",
+      "label": "Trust item 2 icon",
+      "options": [
+        {
+          "value": "lock",
+          "label": "Lock"
+        },
+        {
+          "value": "shield",
+          "label": "Shield"
+        },
+        {
+          "value": "return",
+          "label": "Return"
+        },
+        {
+          "value": "headset",
+          "label": "Headset"
+        },
+        {
+          "value": "truck",
+          "label": "Truck"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        }
+      ],
+      "default": "return"
+    },
+    {
+      "type": "image_picker",
+      "id": "trust_2_image",
+      "label": "Custom icon 2 (optional)"
+    },
+    {
+      "type": "text",
+      "id": "trust_2_title",
+      "label": "Trust item 2 title",
+      "default": "Easy Returns"
+    },
+    {
+      "type": "text",
+      "id": "trust_2_text",
+      "label": "Trust item 2 description",
+      "default": "14-day return policy"
+    },
+    {
+      "type": "header",
+      "content": "Trust item 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "trust_3_show",
+      "label": "Show trust item 3",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "trust_3_icon",
+      "label": "Trust item 3 icon",
+      "options": [
+        {
+          "value": "lock",
+          "label": "Lock"
+        },
+        {
+          "value": "shield",
+          "label": "Shield"
+        },
+        {
+          "value": "return",
+          "label": "Return"
+        },
+        {
+          "value": "headset",
+          "label": "Headset"
+        },
+        {
+          "value": "truck",
+          "label": "Truck"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        }
+      ],
+      "default": "headset"
+    },
+    {
+      "type": "image_picker",
+      "id": "trust_3_image",
+      "label": "Custom icon 3 (optional)"
+    },
+    {
+      "type": "text",
+      "id": "trust_3_title",
+      "label": "Trust item 3 title",
+      "default": "Premium Support"
+    },
+    {
+      "type": "text",
+      "id": "trust_3_text",
+      "label": "Trust item 3 description",
+      "default": "Here when you need us"
     }
   ],
   "presets": [
