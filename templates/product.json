@@ -136,6 +136,10 @@
               },
               "blocks": {}
             },
+            "judge_me_reviews_preview_badge_nU3W8F": {
+              "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+              "settings": {}
+            },
             "reviews": {
               "type": "review",
               "disabled": true,
@@ -520,6 +524,7 @@
           "block_order": [
             "text_GnyQiN",
             "product_description_LyJnwN",
+            "judge_me_reviews_preview_badge_nU3W8F",
             "reviews",
             "price_a7krng",
             "custom_liquid_dUdGEJ",
