@@ -288,6 +288,24 @@
                   },
                   "blocks": {}
                 },
+                "judge_me_reviews_preview_badge_nxqYXB": {
+                  "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+                  "settings": {}
+                },
+                "review_aTTeC6": {
+                  "type": "review",
+                  "name": "t:names.product_review_stars",
+                  "disabled": true,
+                  "settings": {
+                    "stars_style": "shaded",
+                    "show_number": true,
+                    "rating_color": "primary",
+                    "type_preset": "paragraph",
+                    "width": "100%",
+                    "alignment": "left"
+                  },
+                  "blocks": {}
+                },
                 "price": {
                   "type": "price",
                   "settings": {
@@ -323,27 +341,14 @@
                     "product_swatches_padding_right": 0
                   },
                   "blocks": {}
-                },
-                "review_aTTeC6": {
-                  "type": "review",
-                  "name": "t:names.product_review_stars",
-                  "disabled": true,
-                  "settings": {
-                    "stars_style": "shaded",
-                    "show_number": true,
-                    "rating_color": "primary",
-                    "type_preset": "paragraph",
-                    "width": "100%",
-                    "alignment": "left"
-                  },
-                  "blocks": {}
                 }
               },
               "block_order": [
                 "product_title_NzQUxN",
+                "judge_me_reviews_preview_badge_nxqYXB",
+                "review_aTTeC6",
                 "price",
-                "swatches_4339Te",
-                "review_aTTeC6"
+                "swatches_4339Te"
               ]
             }
           },
