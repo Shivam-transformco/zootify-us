@@ -95,6 +95,9 @@
             if (wrapper) {
               wrapper.classList.remove('hidden');
               wrapper.classList.toggle('collapsed');
+              const isCollapsed = wrapper.classList.contains('collapsed');
+              const label = this.querySelector('.facets--filters-label');
+              if (label) label.textContent = isCollapsed ? 'FILTERS' : 'HIDE FILTERS';
             }
             if (collectionWrapper) {
               collectionWrapper.classList.toggle('filters-collapsed');
@@ -105,7 +108,7 @@
             {{ 'icon-filter.svg' | inline_asset_content }}
           </span>
 
-          <span>{{ 'content.filters' | t }}</span>
+          <span class="facets--filters-label">HIDE FILTERS</span>
 
           {% if total_active_values > 0 %}
             <div
