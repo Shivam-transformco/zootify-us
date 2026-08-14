@@ -290,6 +290,7 @@
                 },
                 "judge_me_reviews_preview_badge_nxqYXB": {
                   "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+                  "disabled": true,
                   "settings": {}
                 },
                 "review_aTTeC6": {
