@@ -438,7 +438,7 @@
                     "text_DNPAct": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>Returns accepted within 7 days of delivery. Product must be unused and in original packaging</p>",
+                        "text": "<p>10-day return or replacement - No questions asked. Product ordered must be unused, in original condition, and in brand packaging. For complete details, please visit <a href=\"https://us.zootify.com/policies/refund-policy\" target=\"_blank\" title=\"https://us.zootify.com/policies/refund-policy\">Return Policy</a></p>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
