@@ -6,7 +6,46 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
-   
+    <!-- Geo redirect script -->
+        <script>
+      (function() {
+        // 1. Exclude search engine crawlers so SEO indexing is not broken
+        var isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent);
+        if (isBot) return;
+
+        // 2. Prevent infinite redirect loops during a session
+        if (sessionStorage.getItem('geo_redirect_completed')) return;
+
+        // 3. Query Shopify's native browsing context endpoint for the visitor's location
+        fetch(window.Shopify.routes.root + 'browsing_context_suggestions.json')
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            var countryCode = data && data.detected_values && data.detected_values.country && data.detected_values.country.handle;
+            
+            // If detected country is NOT India ('IN'), silently redirect to us.zootify.com
+            if (countryCode && countryCode !== 'IN') {
+              sessionStorage.setItem('geo_redirect_completed', 'true');
+              var fullPath = window.location.pathname + window.location.search + window.location.hash;
+              window.location.replace('https://us.zootify.com' + fullPath);
+            }
+          })
+          .catch(function(err) {
+            // Fallback to third-party IP API if Shopify endpoint is unreachable
+            fetch('https://ipapi.co/json/')
+              .then(function(res) { return res.json(); })
+              .then(function(ipData) {
+                if (ipData.country_code && ipData.country_code !== 'IN') {
+                  sessionStorage.setItem('geo_redirect_completed', 'true');
+                  var fullPath = window.location.pathname + window.location.search + window.location.hash;
+                  window.location.replace('https://us.zootify.com' + fullPath);
+                }
+              })
+              .catch(function(e) {
+                console.warn('Geo redirect error:', e);
+              });
+          });
+      })();
+    </script>
 
     <script>
       function onCheckoutNow(e) {
