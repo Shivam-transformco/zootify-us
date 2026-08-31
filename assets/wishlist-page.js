@@ -26,9 +26,9 @@ async function fetchProduct(handle) {
    =============================== */
 
 function formatMoney(cents) {
-  return (cents / 100).toLocaleString(undefined, {
+  return (cents / 100).toLocaleString('en-US', {
     style: 'currency',
-    currency: 'INR' // change if needed
+    currency: 'USD'
   });
 }
 
