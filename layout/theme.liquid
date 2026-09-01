@@ -6,6 +6,16 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
+    <!-- Contact form: prevent anchor scroll to #contact_form after submission -->
+    <script>
+      if (window.location.hash === '#contact_form' && window.location.search.indexOf('contact_posted=true') !== -1) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        document.addEventListener('scroll', function block(e) {
+          window.scrollTo(0, 0);
+          document.removeEventListener('scroll', block);
+        }, { once: true, passive: false, capture: true });
+      }
+    </script>
     <!-- Geo redirect script -->
         <script>
       (function() {

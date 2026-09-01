@@ -18,7 +18,8 @@
 >
   {% assign form_id = block.id | default: section.id | prepend: 'ContactForm-' %}
 
-  {%- form 'contact', id: form_id, class: 'contact-form__form' -%}
+  {%- form 'contact', class: 'contact-form__form' -%}
+    <input type="hidden" name="return_to" value="{{ request.path }}?contact_posted=true">
     {%- if form.errors -%}
       <div
         class="contact-form__error"
@@ -36,7 +37,6 @@
       <div
         class="contact-form__success"
         tabindex="-1"
-        autofocus
       >
         {{- 'icon-checkmark.svg' | inline_asset_content -}}
         {{- 'blocks.contact_form.post_success' | t -}}
