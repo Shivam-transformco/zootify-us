@@ -157,9 +157,6 @@
       <span class="price">{{ price }}</span>
       <span class="compare-at-price">{{ compare_at_price }}</span>
 
-      {% if is_product_page %}
-        <span class="price-discount">{{ discount_percent | round }}% OFF</span>
-      {% endif %}
     {% else %}
       <span class="price">{{ price }}</span>
     {% endif %}
