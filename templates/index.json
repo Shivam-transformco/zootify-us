@@ -399,7 +399,7 @@
         "alignment_desktop": "center",
         "alignment_mobile": "left",
         "show_side_lines": false,
-        "show_accent_line": true,
+        "show_accent_line": false,
         "accent_line_width": 64,
         "accent_line_height": 3,
         "show_top_border": false,
@@ -434,43 +434,43 @@
         "card_UBEg6r": {
           "type": "card",
           "settings": {
-            "video": "shopify://files/videos/download (4).mp4",
-            "mobile_video": "shopify://files/videos/download (4).mp4",
+            "video": "shopify://files/videos/ZOOTIFY_wireframe_preview.mp4",
+            "mobile_video": "shopify://files/videos/ZOOTIFY_wireframe_preview.mp4",
             "heading": "Frosted. Refined. Protected",
-            "body": "A clean translucent back keeps your iPhone visible.",
+            "body": "A soft translucent finish with a clean, refined look.",
             "focal_x_desktop": 50,
             "focal_y_desktop": 50,
             "focal_x_mobile": 50,
             "focal_y_mobile": 50,
             "use_custom_colors": false,
             "card_background": "#ffffff",
-            "card_gradient_end": "#f5f5f3",
+            "card_gradient_end": "#FFFFFF",
             "media_background": "#ffffff"
           }
         },
         "card_94ipm4": {
           "type": "card",
           "settings": {
-            "video": "shopify://files/videos/download (2).mp4",
-            "mobile_video": "shopify://files/videos/download (2).mp4",
-            "heading": "MagSafe Compatible",
-            "body": "Snap on chargers and accessories.",
+            "video": "shopify://files/videos/Untitled design (2).mp4",
+            "mobile_video": "shopify://files/videos/Untitled design (2).mp4",
+            "heading": "Flush when closed.",
+            "body": "The stand sits flat. No extra bump or bulk.",
             "focal_x_desktop": 50,
             "focal_y_desktop": 50,
             "focal_x_mobile": 50,
             "focal_y_mobile": 50,
             "use_custom_colors": false,
             "card_background": "#ffffff",
-            "card_gradient_end": "#f5f5f3",
+            "card_gradient_end": "#FFFFFF",
             "media_background": "#ffffff"
           }
         },
         "card_9UfLyd": {
           "type": "card",
           "settings": {
-            "video": "shopify://files/videos/download (3).mp4",
-            "mobile_video": "shopify://files/videos/download (3).mp4",
-            "heading": "Stand when you need it.",
+            "video": "shopify://files/videos/2.mp4",
+            "mobile_video": "shopify://files/videos/2.mp4",
+            "heading": "Stand when needed.",
             "body": "Flip out the kickstand for hands-free viewing.",
             "focal_x_desktop": 50,
             "focal_y_desktop": 50,
@@ -478,24 +478,24 @@
             "focal_y_mobile": 50,
             "use_custom_colors": false,
             "card_background": "#ffffff",
-            "card_gradient_end": "#f5f5f3",
+            "card_gradient_end": "#FFFFFF",
             "media_background": "#ffffff"
           }
         },
         "card_LTxKcK": {
           "type": "card",
           "settings": {
-            "video": "shopify://files/videos/download (5).mp4",
-            "mobile_video": "shopify://files/videos/download (5).mp4",
-            "heading": "Built for everyday impact.",
-            "body": "A rigid PC back and flexible TPU edges.",
+            "video": "shopify://files/videos/1.mp4",
+            "mobile_video": "shopify://files/videos/1.mp4",
+            "heading": "Made in your colour.",
+            "body": "Choose the shade that feels most like you.",
             "focal_x_desktop": 50,
             "focal_y_desktop": 50,
             "focal_x_mobile": 50,
             "focal_y_mobile": 50,
             "use_custom_colors": false,
             "card_background": "#ffffff",
-            "card_gradient_end": "#f5f5f3",
+            "card_gradient_end": "#FFFFFF",
             "media_background": "#ffffff"
           }
         },

@@ -4214,26 +4214,26 @@ product-card {
 
 .wishlist-count {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: -4px;
+  right: -4px;
 
-  min-width: 15px;
-  height: 15px;
-  padding: 0 5px;
+  min-width: 20px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
 
   background: #6ac857;
   color: #000;
 
-  border-radius: 50px;
+  border-radius: 50%;
 
   font-size: 12px;
   font-weight: 500;
+  line-height: 1;
 
   display: flex;
   align-items: center;
   justify-content: center;
-
-  line-height: 20px;   /* prevents vertical shift */
 }
 
 
@@ -4243,35 +4243,9 @@ product-card {
 }
 
 
-/* ===============================
-   MOBILE HEADER — FORCE VISIBILITY
-   =============================== */
-
-@media (max-width: 749px) {
-
-  .header__columns {
-    overflow: visible !important;
-  }
-
-  header-actions {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    gap: 14px !important;
-  }
-
-  header-actions > * {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-  }
-
-  header-actions .header-actions__wishlist {
-    order: 2 !important;
-    min-width: 28px;
-  }
-}
+/* Mobile header visibility/alignment is handled in header-actions.liquid.
+   Do not force every direct child visible here; Horizon has separate
+   desktop/mobile account implementations. */
 
 
 /* ===============================
