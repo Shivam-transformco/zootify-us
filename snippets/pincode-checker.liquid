@@ -121,9 +121,9 @@
       <div class="pincode-container">
         <input 
           type="text" 
-          placeholder="Enter 6 digit PIN code" 
+          placeholder="Enter ZIP code" 
           id="pincodeVal" 
-          maxlength="6"
+          maxlength="5"
           inputmode="numeric"
         />
         <button id="checkButton">CHECK</button>
@@ -153,61 +153,62 @@ document.addEventListener('DOMContentLoaded', function () {
   var loader = document.querySelector('.loading_icon');
 
   /* Allow only numbers */
-  pincodeVal.addEventListener('input', function(){
+  pincodeVal.addEventListener('input', function () {
     this.value = this.value.replace(/[^0-9]/g, '');
+  });
+
+  /* Submit on Enter key */
+  pincodeVal.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') checkButton.click();
   });
 
   checkButton.addEventListener('click', function (e) {
     e.preventDefault();
 
-    var enteredPincode = pincodeVal.value.trim();
+    var enteredZip = pincodeVal.value.trim();
 
-    /* Validate PIN */
-    if (enteredPincode.length !== 6) {
-      messageContainer.innerHTML = "Please enter a valid 6-digit PIN code.";
+    /* ── US ZIP validation ──────────────────────────────────────────
+       Valid US ZIPs are exactly 5 digits in the range 00501–99950.
+       The regex below rejects all-zero codes and the unassigned
+       00100–00500 range used by no USPS delivery area.
+    ───────────────────────────────────────────────────────────────── */
+    var usZipRegex = /^(0[0-9]{4}|[1-9][0-9]{4})$/;
+    var numericZip = parseInt(enteredZip, 10);
+
+    if (!usZipRegex.test(enteredZip) || numericZip < 501 || numericZip > 99950) {
+      messageContainer.innerHTML = "Please enter a valid 5-digit US ZIP code.";
       messageContainer.style.color = "red";
       return;
     }
 
-    loader.style.display = 'block';
     messageContainer.innerHTML = "";
 
-    fetch('https://cdn.shopify.com/s/files/1/0586/9207/5703/files/pincode-data.json?v=1729676401')
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (data) {
+    /* ── Calculate delivery window: 2–7 business days (skip weekends) ── */
+    function addBusinessDays(date, days) {
+      var result = new Date(date);
+      var added = 0;
+      while (added < days) {
+        result.setDate(result.getDate() + 1);
+        var day = result.getDay();
+        if (day !== 0 && day !== 6) added++; /* skip Sunday (0) and Saturday (6) */
+      }
+      return result;
+    }
 
-        loader.style.display = 'none';
+    var today = new Date();
+    var earliest = addBusinessDays(today, 2);
+    var latest   = addBusinessDays(today, 7);
 
-        var pincodeData = data.Sheet1.find(function (entry) {
-          return entry["Delivery Pincode"].toString() === enteredPincode;
-        });
+    var dateOptions = { weekday: 'long', month: 'short', day: 'numeric' };
+    var earliestStr = earliest.toLocaleDateString('en-US', dateOptions);
+    var latestStr   = latest.toLocaleDateString('en-US', dateOptions);
 
-        if (pincodeData) {
-
-          // Sets delivery date to exactly 3 days from now
-          var deliveryDate = new Date();
-          deliveryDate.setDate(deliveryDate.getDate() + 3);
-
-          // Format options to match exactly: "Thursday, 7 May"
-          var options = { weekday: 'long', day: 'numeric', month: 'short' };
-          var formattedDate = deliveryDate.toLocaleDateString('en-US', options);
-
-          // Render active details
-          messageContainer.innerHTML =
-            `<span style="color: #52ad4d;">Free delivery</span> <span style="color: #1a1a1a; font-weight: 500;">| By ${formattedDate}</span>`;
-
-        } else {
-          messageContainer.innerHTML = "Sorry, delivery not available to this pincode.";
-          messageContainer.style.color = "red";
-        }
-      })
-      .catch(function () {
-        loader.style.display = 'none';
-        messageContainer.innerHTML = "Error checking pincode. Try again.";
-        messageContainer.style.color = "red";
-      });
+    messageContainer.innerHTML =
+      '<span style="color: #52ad4d;">Free delivery</span> ' +
+      '<span style="color: #1a1a1a; font-weight: 500;">| ' + earliestStr + ' – ' + latestStr + '</span>' +
+      '<div style="margin-top: 6px; font-size: 12px; color: #555; font-weight: 400;">' +
+        'Tracking details will be shared once your order is placed.' +
+      '</div>';
 
   });
 
