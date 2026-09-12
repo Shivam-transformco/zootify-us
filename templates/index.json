@@ -326,6 +326,22 @@
     "shop_by_category_MGfVXR": {
       "type": "shop-by-category",
       "blocks": {
+        "category_DX9Bra": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_4qdjqk4qdjqk4qdj.png",
+            "title": "iPhone 18 Pro Max",
+            "link": "shopify://collections/iphone-18-pro-max"
+          }
+        },
+        "category_dF3UYf": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/blue.png",
+            "title": "iPhone 18 Pro",
+            "link": "shopify://collections/iphone-18-pro"
+          }
+        },
         "category_WdNmMF": {
           "type": "category",
           "settings": {
@@ -347,7 +363,7 @@
           "settings": {
             "image": "shopify://shop_images/Gemini_Generated_Image_mv7zc1mv7zc1mv7z_copy.png",
             "title": "iPhone 17 Pro",
-            "link": "shopify://collections/iphone-17-pro-covers"
+            "link": "shopify://collections/iphone-17-pro"
           }
         },
         "category_xbzzd6": {
@@ -355,11 +371,13 @@
           "settings": {
             "image": "shopify://shop_images/thumbnail_air.png",
             "title": "iPhone 17 Air",
-            "link": "shopify://collections/iphone-17-air"
+            "link": "shopify://collections/iphone-air"
           }
         }
       },
       "block_order": [
+        "category_DX9Bra",
+        "category_dF3UYf",
         "category_WdNmMF",
         "category_dqXL6q",
         "category_qUADQD",
@@ -444,15 +462,15 @@
             "focal_y_mobile": 50,
             "use_custom_colors": false,
             "card_background": "#ffffff",
-            "card_gradient_end": "#FFFFFF",
+            "card_gradient_end": "#ffffff",
             "media_background": "#ffffff"
           }
         },
         "card_94ipm4": {
           "type": "card",
           "settings": {
-            "video": "shopify://files/videos/Untitled design (2).mp4",
-            "mobile_video": "shopify://files/videos/Untitled design (2).mp4",
+            "video": "shopify://files/videos/Untitled design (3).mp4",
+            "mobile_video": "shopify://files/videos/Untitled design (3).mp4",
             "heading": "Flush when closed.",
             "body": "The stand sits flat. No extra bump or bulk.",
             "focal_x_desktop": 50,
@@ -461,7 +479,7 @@
             "focal_y_mobile": 50,
             "use_custom_colors": false,
             "card_background": "#ffffff",
-            "card_gradient_end": "#FFFFFF",
+            "card_gradient_end": "#ffffff",
             "media_background": "#ffffff"
           }
         },
@@ -478,7 +496,7 @@
             "focal_y_mobile": 50,
             "use_custom_colors": false,
             "card_background": "#ffffff",
-            "card_gradient_end": "#FFFFFF",
+            "card_gradient_end": "#ffffff",
             "media_background": "#ffffff"
           }
         },
@@ -495,7 +513,7 @@
             "focal_y_mobile": 50,
             "use_custom_colors": false,
             "card_background": "#ffffff",
-            "card_gradient_end": "#FFFFFF",
+            "card_gradient_end": "#ffffff",
             "media_background": "#ffffff"
           }
         },
@@ -856,7 +874,7 @@
       },
       "name": "t:names.products_carousel",
       "settings": {
-        "collection": "phone-covers-1",
+        "collection": "phone-cases",
         "layout_type": "carousel",
         "carousel_on_mobile": false,
         "max_products": 6,
