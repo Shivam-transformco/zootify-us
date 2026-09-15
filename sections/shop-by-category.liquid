@@ -1,44 +1,61 @@
 {% comment %}
-  Shop by Category - Pixel Perfect
+  Shop by Category - Carousel with arrow navigation
 {% endcomment %}
 
 <section class="shop-category-{{ section.id }} section">
   <div class="page-width">
 
-    {% if section.settings.heading != blank %}
-      <h2 class="category-heading">{{ section.settings.heading }}</h2>
-    {% endif %}
+    <div class="category-header">
+      {% if section.settings.heading != blank %}
+        <h2 class="category-heading">{{ section.settings.heading }}</h2>
+      {% endif %}
 
-    <div class="category-grid">
-      {% for block in section.blocks %}
-        <a href="{{ block.settings.link }}" class="category-card" {{ block.shopify_attributes }}>
+      <div class="carousel-arrows" aria-label="Carousel navigation">
+        <button class="carousel-btn carousel-btn--prev" aria-label="Previous" disabled>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="13,4 7,10 13,16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="carousel-btn carousel-btn--next" aria-label="Next">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="7,4 13,10 7,16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
 
-          <div class="img-wrap">
-            {% if block.settings.image != blank %}
-              <img
-                src="{{ block.settings.image | image_url: width: 1200 }}"
-                alt="{{ block.settings.title | escape }}"
-                class="category-image"
-                loading="lazy"
-                width=""
-                height=""
-              >
-            {% endif %}
-          </div>
+    <div class="carousel-viewport">
+      <div class="category-grid" id="cat-grid-{{ section.id }}">
+        {% for block in section.blocks %}
+          <a href="{{ block.settings.link }}" class="category-card" {{ block.shopify_attributes }}>
 
-          <div class="category-content">
-            <span class="cat-title">{{ block.settings.title }}</span>
+            <div class="img-wrap">
+              {% if block.settings.image != blank %}
+                <img
+                  src="{{ block.settings.image | image_url: width: 1200 }}"
+                  alt="{{ block.settings.title | escape }}"
+                  class="category-image"
+                  loading="lazy"
+                  width=""
+                  height=""
+                >
+              {% endif %}
+            </div>
 
-            <span class="arrow-line">
-              <svg class="arrow-head" viewBox="0 0 60 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="0" y1="5" x2="55" y2="5" stroke="#000" stroke-width="1.2"/>
-                <polyline points="50,1 56,5 50,9" fill="none" stroke="#000" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-          </div>
+            <div class="category-content">
+              <span class="cat-title">{{ block.settings.title }}</span>
 
-        </a>
-      {% endfor %}
+              <span class="arrow-line">
+                <svg class="arrow-head" viewBox="0 0 60 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="0" y1="5" x2="55" y2="5" stroke="#000" stroke-width="1.2"/>
+                  <polyline points="50,1 56,5 50,9" fill="none" stroke="#000" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+
+          </a>
+        {% endfor %}
+      </div>
     </div>
 
   </div>
@@ -54,9 +71,17 @@
     box-sizing: border-box;
   }
 
+  /* HEADER ROW: heading + arrows */
+  .shop-category-{{ section.id }} .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
   /* HEADING */
   .shop-category-{{ section.id }} .category-heading {
-    margin: 0 0 20px;
+    margin: 0;
     font-size: 22px;
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -64,21 +89,61 @@
     line-height: 1.1;
   }
 
-  /* GRID */
-  .shop-category-{{ section.id }} .category-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
+  /* ARROW BUTTONS */
+  .shop-category-{{ section.id }} .carousel-arrows {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
   }
 
-  /* CARD */
+  .shop-category-{{ section.id }} .carousel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid #d0d0d0;
+    background: #fff;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .shop-category-{{ section.id }} .carousel-btn:hover:not([disabled]) {
+    border-color: #1a1a1a;
+    background: #1a1a1a;
+    color: #fff;
+  }
+
+  .shop-category-{{ section.id }} .carousel-btn[disabled] {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  /* VIEWPORT clips overflow */
+  .shop-category-{{ section.id }} .carousel-viewport {
+    overflow: hidden;
+  }
+
+  /* GRID — horizontal flex strip */
+  .shop-category-{{ section.id }} .category-grid {
+    display: flex;
+    gap: 18px;
+    transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+
+  /* CARD — fixed width: 4 visible at a time */
   .shop-category-{{ section.id }} .category-card {
+    flex: 0 0 calc((100% - 3 * 18px) / 4);
+    min-width: 0;
     display: flex;
     flex-direction: column;
     text-decoration: none;
     color: #000;
-    height: 100%;
-    overflow: hidden;
   }
 
   /* IMAGE WRAP */
@@ -147,7 +212,7 @@
     display: block;
   }
 
-  /* MOBILE */
+  /* MOBILE — hide arrow buttons, enable touch scroll */
   @media (max-width: 767px) {
 
     .shop-category-{{ section.id }} .page-width {
@@ -157,24 +222,29 @@
       padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
     }
 
+    .shop-category-{{ section.id }} .carousel-arrows {
+      display: none;
+    }
+
+    .shop-category-{{ section.id }} .carousel-viewport {
+      overflow: visible;
+    }
+
     .shop-category-{{ section.id }} .category-grid {
-      display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       gap: 12px;
+      transform: none !important;
+      transition: none;
 
       width: calc(100% + {{ section.settings.padding_left_mobile | plus: section.settings.padding_right_mobile }}px);
-
       margin-left: -{{ section.settings.padding_left_mobile }}px;
       margin-right: -{{ section.settings.padding_right_mobile }}px;
-
       padding-left: {{ section.settings.padding_left_mobile }}px;
       padding-right: {{ section.settings.padding_right_mobile }}px;
-
       box-sizing: border-box;
       scroll-padding-left: {{ section.settings.padding_left_mobile }}px;
-
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
@@ -185,7 +255,6 @@
 
     .shop-category-{{ section.id }} .category-card {
       flex: 0 0 70%;
-      min-width: 0;
       scroll-snap-align: start;
     }
 
@@ -208,6 +277,9 @@
 
     .shop-category-{{ section.id }} .category-heading {
       font-size: 18px;
+    }
+
+    .shop-category-{{ section.id }} .category-header {
       margin-bottom: 16px;
     }
   }
@@ -219,6 +291,59 @@
   }
 
 </style>
+
+<script>
+(function () {
+  const section = document.querySelector('.shop-category-{{ section.id }}');
+  if (!section) return;
+
+  const grid      = section.querySelector('.category-grid');
+  const btnPrev   = section.querySelector('.carousel-btn--prev');
+  const btnNext   = section.querySelector('.carousel-btn--next');
+  const cards     = Array.from(section.querySelectorAll('.category-card'));
+  const VISIBLE   = 4;
+  const GAP       = 18; /* px — must match CSS gap */
+
+  let currentIndex = 0;
+
+  function getCardWidth() {
+    if (!cards.length) return 0;
+    return cards[0].getBoundingClientRect().width;
+  }
+
+  function maxIndex() {
+    return Math.max(0, cards.length - VISIBLE);
+  }
+
+  function slide(index) {
+    currentIndex = Math.max(0, Math.min(index, maxIndex()));
+    const offset = currentIndex * (getCardWidth() + GAP);
+    grid.style.transform = `translateX(-${offset}px)`;
+    btnPrev.disabled = currentIndex === 0;
+    btnNext.disabled = currentIndex >= maxIndex();
+  }
+
+  btnPrev.addEventListener('click', () => slide(currentIndex - 1));
+  btnNext.addEventListener('click', () => slide(currentIndex + 1));
+
+  /* Reset on resize so cards re-measure */
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      /* On mobile the grid uses native scroll — don't interfere */
+      if (window.innerWidth <= 767) {
+        grid.style.transform = '';
+        return;
+      }
+      slide(currentIndex);
+    }, 100);
+  });
+
+  /* Initial state */
+  slide(0);
+})();
+</script>
 
 {% schema %}
 {
