@@ -342,12 +342,12 @@
             "link": "shopify://collections/iphone-18-pro"
           }
         },
-        "category_WdNmMF": {
+        "category_qUADQD": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_j45ofij45ofij45o_copy.png",
-            "title": "iPhone 17",
-            "link": "shopify://collections/iphone-17"
+            "image": "shopify://shop_images/Gemini_Generated_Image_mv7zc1mv7zc1mv7z_copy.png",
+            "title": "iPhone 17 Pro",
+            "link": "shopify://collections/iphone-17-pro"
           }
         },
         "category_dqXL6q": {
@@ -358,12 +358,12 @@
             "link": "shopify://collections/iphone-17-pro-max"
           }
         },
-        "category_qUADQD": {
+        "category_WdNmMF": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_mv7zc1mv7zc1mv7z_copy.png",
-            "title": "iPhone 17 Pro",
-            "link": "shopify://collections/iphone-17-pro"
+            "image": "shopify://shop_images/Gemini_Generated_Image_j45ofij45ofij45o_copy.png",
+            "title": "iPhone 17",
+            "link": "shopify://collections/iphone-17"
           }
         },
         "category_xbzzd6": {
@@ -378,9 +378,9 @@
       "block_order": [
         "category_DX9Bra",
         "category_dF3UYf",
-        "category_WdNmMF",
-        "category_dqXL6q",
         "category_qUADQD",
+        "category_dqXL6q",
+        "category_WdNmMF",
         "category_xbzzd6"
       ],
       "custom_css": [
