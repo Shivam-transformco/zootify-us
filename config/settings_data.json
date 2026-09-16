@@ -30,6 +30,7 @@
     "badge_position": "top-left",
     "badge_sale_color_scheme": "scheme-8",
     "badge_sold_out_color_scheme": "scheme-5",
+    "button_text_case_primary": "uppercase",
     "secondary_button_border_width": 0,
     "cart_type": "page",
     "icon_stroke": "heavy",
