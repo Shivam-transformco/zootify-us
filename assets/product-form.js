@@ -13,6 +13,19 @@ const ERROR_BUTTON_REENABLE_DELAY = 1000;
 // Success message display duration for screen readers
 const SUCCESS_MESSAGE_DISPLAY_DURATION = 5000;
 
+// ZOOTIFY: one real product-page button is used on desktop and mobile.
+const GO_TO_CART_TEXT = 'GO TO CART';
+const ADDING_TO_CART_TEXT = 'ADDING…';
+const CART_BUTTON_LABEL = '.add-to-cart-text__content > span > span';
+
+/** @param {HTMLButtonElement | undefined} button */
+function isProductPageButton(button) {
+  return Boolean(
+    button?.matches('[data-testid="standalone-add-to-cart"]') &&
+      !button.closest('.quick-add-modal, product-card')
+  );
+}
+
 /**
  * @typedef {HTMLElement & {
  *   source: Element,
@@ -33,6 +46,7 @@ export class AddToCartComponent extends Component {
 
   /** @type {number[] | undefined} */
   #resetTimeouts = /** @type {number[]} */ ([]);
+  #animationId = 0;
 
   connectedCallback() {
     super.connectedCallback();
@@ -43,9 +57,7 @@ export class AddToCartComponent extends Component {
   disconnectedCallback() {
     super.disconnectedCallback();
 
-    if (this.#resetTimeouts) {
-      this.#resetTimeouts.forEach(/** @param {number} timeoutId */ (timeoutId) => clearTimeout(timeoutId));
-    }
+    this.cancelAddToCartAnimation();
     this.removeEventListener('pointerenter', this.#preloadImage);
   }
 
@@ -70,6 +82,14 @@ export class AddToCartComponent extends Component {
   handleClick(event) {
     const { addToCartButton } = this.refs;
 
+    if (
+      addToCartButton.disabled ||
+      this.closest('product-form-component')?.hasAttribute('data-zootify-submitting')
+    ) {
+      event.preventDefault();
+      return;
+    }
+
     // If the selected variant is already in the cart, use the same button to open the cart.
     if (addToCartButton.dataset.goToCart === 'true') {
       event.preventDefault();
@@ -90,6 +110,10 @@ export class AddToCartComponent extends Component {
         return;
       }
     }
+    // Product-page success feedback starts only after Shopify confirms the add.
+    // Quick-add cards/modals retain their existing click animation.
+    if (isProductPageButton(addToCartButton) && productForm) return;
+
     if (this.refs.addToCartButton.dataset.puppet !== 'true') {
       const animationEnabled = this.dataset.addToCartAnimation === 'true';
       if (animationEnabled && !event.target.closest('.quick-add-modal')) {
@@ -97,6 +121,21 @@ export class AddToCartComponent extends Component {
       }
       this.animateAddToCart();
     }
+  }
+
+  /** Play the existing effects after a confirmed product-page addition. */
+  animateConfirmedAddition() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (this.dataset.addToCartAnimation === 'true') this.#animateFlyToCart();
+    void this.animateAddToCart();
+  }
+
+  /** Invalidate old animation callbacks when a variant or component changes. */
+  cancelAddToCartAnimation() {
+    ++this.#animationId;
+    this.#resetTimeouts?.forEach((timeoutId) => clearTimeout(timeoutId));
+    this.#resetTimeouts = [];
+    this.refs.addToCartButton?.removeAttribute('data-added');
   }
 
   #preloadImage = () => {
@@ -139,14 +178,9 @@ export class AddToCartComponent extends Component {
   animateAddToCart = async function () {
     const { addToCartButton } = this.refs;
 
-    // Initialize the array if it doesn't exist
-    if (!this.#resetTimeouts) {
-      this.#resetTimeouts = [];
-    }
-
-    // Clear all existing timeouts
-    this.#resetTimeouts.forEach(/** @param {number} timeoutId */ (timeoutId) => clearTimeout(timeoutId));
-    this.#resetTimeouts = [];
+    // Keep the theme's existing effect and display duration.
+    this.cancelAddToCartAnimation();
+    const animationId = this.#animationId;
 
     if (addToCartButton.dataset.added !== 'true') {
       addToCartButton.dataset.added = 'true';
@@ -155,9 +189,21 @@ export class AddToCartComponent extends Component {
     // The onAnimationEnd can trigger a style recalculation so we yield to the main thread first.
     await yieldToMainThread();
     await onAnimationEnd(addToCartButton);
+    if (animationId !== this.#animationId || !addToCartButton.isConnected) return;
 
     // Create new timeout and store it in the array
     const timeoutId = setTimeout(() => {
+      if (animationId !== this.#animationId) return;
+
+      // Set the final label BEFORE revealing it. Do not flash ADD TO CART again.
+      if (isProductPageButton(addToCartButton)) {
+        const label = addToCartButton.querySelector(CART_BUTTON_LABEL);
+        if (label) {
+          label.textContent = addToCartButton.dataset.goToCart === 'true'
+            ? GO_TO_CART_TEXT
+            : addToCartButton.dataset.defaultAddToCartText || Theme.translations?.add_to_cart || 'ADD TO CART';
+        }
+      }
       addToCartButton.removeAttribute('data-added');
 
       // Remove this timeout from the array
@@ -200,6 +246,9 @@ if (!customElements.get('add-to-cart-component')) {
 class ProductFormComponent extends Component {
   requiredRefs = ['variantId', 'liveRegion'];
   #abortController = new AbortController();
+  #cartRequestId = 0;
+  #cartQuantity = 0;
+  #variantUpdating = false;
 
   /** @type {number | undefined} */
   #timeout;
@@ -207,6 +256,7 @@ class ProductFormComponent extends Component {
   connectedCallback() {
     super.connectedCallback();
 
+    if (this.#abortController.signal.aborted) this.#abortController = new AbortController();
     const { signal } = this.#abortController;
     const target = this.closest('.shopify-section, dialog, product-card');
     target?.addEventListener(ThemeEvents.variantUpdate, this.#onVariantUpdate, { signal });
@@ -214,10 +264,13 @@ class ProductFormComponent extends Component {
 
     // Listen for cart updates to sync data-cart-quantity
     document.addEventListener(ThemeEvents.cartUpdate, this.#onCartUpdate, { signal });
+    window.addEventListener('pageshow', this.#onPageShow, { signal });
 
     // Sync the initial button state in case the selected variant is already in the cart.
     // Waiting one microtask ensures the product-form child refs are available after initial parsing.
     queueMicrotask(() => {
+      if (!this.isConnected) return;
+      this.#rememberDefaultButtonState();
       void this.#fetchAndUpdateCartQuantity();
     });
   }
@@ -226,6 +279,22 @@ class ProductFormComponent extends Component {
     super.disconnectedCallback();
 
     this.#abortController.abort();
+    ++this.#cartRequestId;
+  }
+
+  /** Refresh a browser-restored product page after visiting the cart. */
+  #onPageShow = (event) => {
+    if (event.persisted) void this.#fetchAndUpdateCartQuantity();
+  };
+
+  /** Save Shopify's normal label/availability, not a temporary loading label. */
+  #rememberDefaultButtonState() {
+    const button = this.refs.addToCartButtonContainer?.refs.addToCartButton;
+    if (!button || !isProductPageButton(button)) return;
+    const text = button.querySelector(CART_BUTTON_LABEL)?.textContent?.trim();
+    if (!text || text === GO_TO_CART_TEXT || text === ADDING_TO_CART_TEXT) return;
+    button.dataset.defaultAddToCartText = text;
+    button.dataset.defaultAddToCartDisabled = String(button.disabled);
   }
 
   /**
@@ -237,8 +306,11 @@ class ProductFormComponent extends Component {
     const variantIdInput = /** @type {HTMLInputElement | null} */ (this.querySelector('input[name="id"]'));
     if (!variantIdInput?.value || !cart?.items) return 0;
 
-    const cartItem = cart.items.find((item) => item.variant_id.toString() === variantIdInput.value.toString());
-    const cartQty = cartItem ? cartItem.quantity : 0;
+    // A variant can occupy more than one line (for example, with line-item properties).
+    const cartQty = cart.items.reduce(
+      (quantity, item) => quantity + (String(item.variant_id) === variantIdInput.value ? Number(item.quantity) : 0),
+      0
+    );
 
     // Use public API to update quantity selector
     const quantitySelector = /** @type {any | undefined} */ (this.querySelector('quantity-selector-component'));
@@ -256,44 +328,33 @@ class ProductFormComponent extends Component {
   }
 
   /**
-   * Changes only the button text/action when the selected variant is already in the cart.
-   * The existing button styling and success animation remain untouched.
-   * @param {number} cartQty - Quantity of the currently selected variant in the cart.
+   * Render the current cart state on the single product-page button.
+   * @param {number} cartQty - Quantity of the selected variant in the cart.
    */
   #updateAddToCartButtonState(cartQty) {
-    const container = this.refs.addToCartButtonContainer;
-    const button = container?.refs.addToCartButton;
-    if (!button) return;
-
-    // Scope this UX change to the main product-page add-to-cart button only.
-    // Quick-add and other purchase buttons keep their existing behavior.
-    if (!button.matches('[data-testid="standalone-add-to-cart"]')) return;
-
-    const label = button.querySelector('.add-to-cart-text__content > span > span');
+    this.#cartQuantity = cartQty;
+    const button = this.refs.addToCartButtonContainer?.refs.addToCartButton;
+    if (!button || !isProductPageButton(button)) return;
+    const label = button.querySelector(CART_BUTTON_LABEL);
     if (!(label instanceof HTMLElement)) return;
 
-    const currentText = label.textContent?.trim() || '';
+    if (!button.dataset.defaultAddToCartText) this.#rememberDefaultButtonState();
+    const submitting = this.hasAttribute('data-zootify-submitting');
+    const inCart = cartQty > 0;
+    if (inCart) button.dataset.goToCart = 'true';
+    else button.removeAttribute('data-go-to-cart');
 
-    // Whenever Shopify renders the normal variant state, remember that exact text
-    // so it can be restored if the item is later removed from the cart.
-    if (currentText && currentText !== 'GO TO CART') {
-      button.dataset.defaultAddToCartText = currentText;
+    // During the checkmark effect, keep the label hidden until its reset callback.
+    if (button.dataset.added !== 'true') {
+      label.textContent = submitting ? ADDING_TO_CART_TEXT : inCart
+        ? GO_TO_CART_TEXT
+        : button.dataset.defaultAddToCartText || 'ADD TO CART';
     }
 
-    if (cartQty > 0) {
-      button.dataset.goToCart = 'true';
-      label.textContent = 'GO TO CART';
-
-      // Even if quantity rules would otherwise disable adding more, navigation to cart must remain available.
-      button.disabled = false;
-      return;
-    }
-
-    button.removeAttribute('data-go-to-cart');
-
-    if (button.dataset.defaultAddToCartText) {
-      label.textContent = button.dataset.defaultAddToCartText;
-    }
+    button.disabled = submitting || this.#variantUpdating ||
+      (!inCart && button.dataset.defaultAddToCartDisabled === 'true');
+    if (submitting) button.setAttribute('aria-busy', 'true');
+    else button.removeAttribute('aria-busy');
   }
 
   /**
@@ -304,10 +365,17 @@ class ProductFormComponent extends Component {
     const variantIdInput = /** @type {HTMLInputElement | null} */ (this.querySelector('input[name="id"]'));
     if (!variantIdInput?.value) return 0;
 
+    const variantId = variantIdInput.value;
+    const requestId = ++this.#cartRequestId;
     try {
-      const response = await fetch('/cart.js');
+      const response = await fetch(`${window.Shopify?.routes?.root || '/'}cart.js`, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Cart refresh failed (${response.status})`);
       const cart = await response.json();
 
+      // An older cart read must not undo a confirmed add or a newer variant selection.
+      if (!this.isConnected || requestId !== this.#cartRequestId || this.refs.variantId.value !== variantId) {
+        return this.#cartQuantity;
+      }
       return this.#updateCartQuantityFromData(cart);
     } catch (error) {
       console.error('Failed to fetch cart quantity:', error);
@@ -321,10 +389,11 @@ class ProductFormComponent extends Component {
    */
   #onCartUpdate = async (event) => {
     // Skip if this event came from this component
-    if (event.detail?.sourceId === this.id || event.detail?.data?.source === 'product-form-component') return;
+    if (event.target === this || (this.id && event.detail?.sourceId === this.id)) return;
 
     const cart = /** @type {Cart} */ (event.detail?.resource);
-    if (cart?.items) {
+    if (cart?.items && event.detail?.data?.source !== 'product-form-component') {
+      ++this.#cartRequestId;
       this.#updateCartQuantityFromData(cart);
     } else {
       await this.#fetchAndUpdateCartQuantity();
@@ -340,6 +409,16 @@ class ProductFormComponent extends Component {
     const { addToCartTextError } = this.refs;
     // Stop default behaviour from the browser
     event.preventDefault();
+
+    const mainContainer = this.refs.addToCartButtonContainer;
+    const mainButton = mainContainer?.refs.addToCartButton;
+    const mainPurchase = isProductPageButton(mainButton);
+    if (mainPurchase && (this.hasAttribute('data-zootify-submitting') || this.#variantUpdating)) return;
+    // Also cover keyboard / requestSubmit(), not only a pointer click.
+    if (mainPurchase && mainButton?.dataset.goToCart === 'true') {
+      window.location.href = Theme.routes.cart_url || '/cart';
+      return;
+    }
 
     if (this.#timeout) clearTimeout(this.#timeout);
 
@@ -414,6 +493,14 @@ class ProductFormComponent extends Component {
     });
 
     const fetchCfg = fetchConfig('javascript', { body: formData });
+    const submittedVariantId = String(formData.get('id') || '');
+    const submittedProductId = this.dataset.productId;
+    if (mainPurchase) {
+      this.#rememberDefaultButtonState();
+      ++this.#cartRequestId;
+      this.setAttribute('data-zootify-submitting', '');
+      this.#updateAddToCartButtonState(this.#cartQuantity);
+    }
 
     fetch(Theme.routes.cart_add_url, {
       ...fetchCfg,
@@ -422,9 +509,15 @@ class ProductFormComponent extends Component {
         Accept: 'text/html',
       },
     })
-      .then((response) => response.json())
+      .then(async (httpResponse) => {
+        const response = await httpResponse.json();
+        if (!httpResponse.ok && !response.status) response.status = httpResponse.status;
+        return response;
+      })
       .then(async (response) => {
         if (response.status) {
+          // Shopify can partially add a quantity even when returning a stock error.
+          if (mainPurchase) void this.#fetchAndUpdateCartQuantity();
           this.dispatchEvent(
             new CartErrorEvent(form.getAttribute('id') || '', response.message, response.description, response.errors)
           );
@@ -459,7 +552,7 @@ class ProductFormComponent extends Component {
               didError: true,
               source: 'product-form-component',
               itemCount: Number(formData.get('quantity')) || Number(this.dataset.quantityDefault),
-              productId: this.dataset.productId,
+              productId: submittedProductId,
             })
           );
 
@@ -488,14 +581,27 @@ class ProductFormComponent extends Component {
             }, SUCCESS_MESSAGE_DISPLAY_DURATION);
           }
 
-          // Fetch the updated cart to get the actual total quantity for this variant
-          await this.#fetchAndUpdateCartQuantity();
+          if (mainPurchase) {
+            // The successful add response confirms presence; do not wait for a second request.
+            const addedItems = Array.isArray(response.items) ? response.items : [response];
+            const addedQuantity = addedItems.reduce((quantity, item) => quantity +
+              (String(item.variant_id ?? item.id) === submittedVariantId ? Number(item.quantity) || 0 : 0), 0);
+            ++this.#cartRequestId;
+            if (this.isConnected && !this.#variantUpdating && this.refs.variantId.value === submittedVariantId && addedQuantity > 0) {
+              this.refs.addToCartButtonContainer?.animateConfirmedAddition();
+              this.#updateAddToCartButtonState(addedQuantity);
+            }
+            // Reconcile quantity rules in parallel; the button no longer waits for this.
+            void this.#fetchAndUpdateCartQuantity();
+          } else {
+            await this.#fetchAndUpdateCartQuantity();
+          }
 
           this.dispatchEvent(
             new CartAddEvent({}, id.toString(), {
               source: 'product-form-component',
               itemCount: Number(formData.get('quantity')) || Number(this.dataset.quantityDefault),
-              productId: this.dataset.productId,
+              productId: submittedProductId,
               sections: response.sections,
             })
           );
@@ -503,8 +609,24 @@ class ProductFormComponent extends Component {
       })
       .catch((error) => {
         console.error(error);
+        if (mainPurchase) {
+          const message = 'We could not confirm the addition. Please check your cart and try again.';
+          this.#setLiveRegionText(message);
+          if (addToCartTextError) {
+            addToCartTextError.classList.remove('hidden');
+            const textNode = addToCartTextError.childNodes[2];
+            if (textNode) textNode.textContent = message;
+            else addToCartTextError.appendChild(document.createTextNode(message));
+          }
+          // Never retry an add automatically: the server may already have received it.
+          void this.#fetchAndUpdateCartQuantity();
+        }
       })
       .finally(() => {
+        if (mainPurchase) {
+          this.removeAttribute('data-zootify-submitting');
+          this.#updateAddToCartButtonState(this.#cartQuantity);
+        }
         cartPerformance.measureFromEvent('add:user-action', event);
       });
   }
@@ -566,6 +688,11 @@ class ProductFormComponent extends Component {
     }
 
     const { variantId } = this.refs;
+
+    // Invalidate old cart reads and success animations before replacing the variant markup.
+    ++this.#cartRequestId;
+    this.#cartQuantity = 0;
+    this.refs.addToCartButtonContainer?.cancelAddToCartAnimation();
 
     // Update the variant ID
     variantId.value = event.detail.resource?.id ?? '';
@@ -675,6 +802,14 @@ class ProductFormComponent extends Component {
     const newVolumePricing = event.detail.data.html.querySelector('volume-pricing');
     this.#morphOrUpdateElement(currentVolumePricing, newVolumePricing, this.refs.productFormButtons);
 
+    // Let Horizon refresh child refs if morph replaced the complete button area.
+    const updatedVariantId = variantId.value;
+    await Promise.resolve();
+    if (!this.isConnected || this.refs.variantId.value !== updatedVariantId) return;
+    this.#variantUpdating = false;
+    this.#rememberDefaultButtonState();
+    this.#updateAddToCartButtonState(0);
+
     // Always check the newly selected variant against the cart so the button can switch
     // between ADD TO CART and GO TO CART correctly.
     await this.#fetchAndUpdateCartQuantity();
@@ -685,6 +820,11 @@ class ProductFormComponent extends Component {
    * Accelerated checkout button is also disabled via its own event listener not exposed to the theme.
    */
   #onVariantSelected = () => {
+    this.#variantUpdating = true;
+    ++this.#cartRequestId;
+    this.#cartQuantity = 0;
+    this.refs.addToCartButtonContainer?.cancelAddToCartAnimation();
+    this.refs.addToCartButtonContainer?.refs.addToCartButton?.removeAttribute('data-go-to-cart');
     this.refs.addToCartButtonContainer?.disable();
   };
 }

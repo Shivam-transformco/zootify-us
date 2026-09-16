@@ -288,19 +288,6 @@
       {%- endform -%}
     </product-form-component>
 
-<!-- MOBILE ADD TO CART BUTTON -->
-<div class="mobile-atc-wrapper">
-  <button
-    type="button"
-    class="mobile-atc-full"
-    onclick="document.querySelector('.add-to-cart-button').click();"
-  >
-    ADD TO CART
-  </button>
-</div>
-
-
-
   {%- else -%}
     <div class="product-form-buttons">
       <button
@@ -753,62 +740,82 @@
   margin-top: 10px;
 }
 
-@media (max-width: 768px) {
-  .product-form-buttons {
-    display: none;
-  }
-}
-
-.mobile-atc-wrapper {
-  display: none;
+/* ZOOTIFY: keep one native button; only its existing wrapper becomes a mobile bar.
+   Desktop markup, width and animation CSS are unchanged. */
+.buy-buttons-block .add-to-cart-button[aria-busy='true'] {
+  opacity: 1;
+  cursor: progress;
 }
 
 @media (max-width: 768px) {
-
-  .product-form-buttons {
-    display: block !important;
+  .buy-buttons-block:not(.quick-add-modal *, product-card *) .product-form-buttons {
+    display: block;
   }
 
-  .product-form-buttons > *:not(.customlineitem) {
+  /* Preserve the existing mobile choice to hide quantity/express-checkout controls.
+     Keep custom warranty fields AND real error messages available. */
+  .buy-buttons-block:not(.quick-add-modal *, product-card *) .product-form-buttons
+    > *:not(.customlineitem, .product-form-text__error, :has([data-testid='standalone-add-to-cart'])) {
     display: none !important;
   }
 
-}
-
-
-
-@media (max-width: 768px) {
-
-  .mobile-atc-wrapper {
+  /* This is the original block wrapper, not a clone or click-through button. */
+  .buy-buttons-block:not(.quick-add-modal *, product-card *) .product-form-buttons
+    > :has([data-testid='standalone-add-to-cart']) {
     display: block;
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    margin: 0;
     background: #ffffff;
     padding: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     z-index: 999;
   }
 
-  .mobile-atc-full {
+  .buy-buttons-block:not(.quick-add-modal *, product-card *) .product-form-buttons
+    .add-to-cart-button[data-testid='standalone-add-to-cart'] {
     width: 100%;
+    height: auto;
+    min-height: 52px;
+    margin: 0;
     background: #01161e;
     color: #6ac857;
     border: none;
+    box-shadow: none;
     padding: 16px;
     font-size: 16px;
+    line-height: 1.25;
     font-weight: 600;
     border-radius: 6px;
-    cursor: pointer;
+    position: relative;
+    overflow: hidden;
   }
 
-  .mobile-atc-full:active {
+  /* Match the old mobile bar's text-only idle design; keep its success checkmark. */
+  .buy-buttons-block:not(.quick-add-modal *, product-card *)
+    .add-to-cart-button[data-testid='standalone-add-to-cart'] .add-to-cart-icon {
+    display: none;
+  }
+
+  .buy-buttons-block:not(.quick-add-modal *, product-card *) .product-form-buttons
+    .add-to-cart-button[data-testid='standalone-add-to-cart']:hover {
+    background: #01161e;
+    color: #6ac857;
+    transform: none;
+  }
+
+  .buy-buttons-block:not(.quick-add-modal *, product-card *) .product-form-buttons
+    .add-to-cart-button[data-testid='standalone-add-to-cart']:active {
     transform: scale(0.98);
   }
 
-  /* Prevent content being hidden */
+  /* Keep the last page content above the bar, including the iPhone safe area. */
   .product {
-    padding-bottom: 90px;
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   }
 }
 
