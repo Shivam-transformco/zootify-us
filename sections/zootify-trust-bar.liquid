@@ -1,0 +1,1966 @@
+{% comment %}
+  ZOOTIFY TRUST BAR — v1.0 / 2026-10-07
+  Install as sections/zootify-trust-bar.liquid, then Add section in the theme editor.
+  Self-contained: no app, snippets, JavaScript, tracking or structured rating markup.
+  Values are manual. There is no Judge.me integration or cross-store synchronisation.
+  Blank statistics are editor-only placeholders; no estimated customer/rating values
+  are pre-populated. The brand-history preset uses the merchant-confirmed 2012 date.
+  All CSS is scoped to this section instance. The first breakpoint is 750px.
+{% endcomment %}
+
+{%- liquid
+  assign zt_count = 0
+  assign zt_empty_count = 0
+  for block in section.blocks
+    if block.settings.show_block
+      assign zt_value = block.settings.value | strip
+      if zt_value != blank
+        assign zt_count = zt_count | plus: 1
+      elsif request.design_mode
+        assign zt_count = zt_count | plus: 1
+        assign zt_empty_count = zt_empty_count | plus: 1
+      endif
+    endif
+  endfor
+  assign zt_justify_d = 'center'
+  if section.settings.align_d == 'left'
+    assign zt_justify_d = 'flex-start'
+  elsif section.settings.align_d == 'right'
+    assign zt_justify_d = 'flex-end'
+  endif
+  assign zt_justify_m = 'center'
+  if section.settings.align_m == 'left'
+    assign zt_justify_m = 'flex-start'
+  elsif section.settings.align_m == 'right'
+    assign zt_justify_m = 'flex-end'
+  endif
+-%}
+
+{% style %}
+  /* Only custom-font mode declares additional font faces. Browsers request
+     font files only for the faces actually used. Theme modes inherit theme fonts. */
+  {% if section.settings.number_font_mode == 'custom' %}
+    {{ section.settings.number_font | font_face: font_display: 'swap' }}
+    {% for zt_weight in (1..9) %}
+      {% assign zt_numeric_weight = zt_weight | times: 100 | append: '' %}
+      {% assign zt_face = section.settings.number_font | font_modify: 'weight', zt_numeric_weight %}
+      {% if zt_face != blank %}{{ zt_face | font_face: font_display: 'swap' }}{% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if section.settings.text_font_mode == 'custom' %}
+    {{ section.settings.text_font | font_face: font_display: 'swap' }}
+    {% for zt_weight in (1..9) %}
+      {% assign zt_numeric_weight = zt_weight | times: 100 | append: '' %}
+      {% assign zt_face = section.settings.text_font | font_modify: 'weight', zt_numeric_weight %}
+      {% if zt_face != blank %}{{ zt_face | font_face: font_display: 'swap' }}{% endif %}
+    {% endfor %}
+  {% endif %}
+
+  #shopify-section-{{ section.id }} {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    {% if zt_count == 0 and request.design_mode == false %}display: none;{% endif %}
+  }
+  #ZootifyTrust-{{ section.id }} {
+    --zt-cols: {{ zt_count | at_least: 1 }};
+    {% case section.settings.number_font_mode %}
+      {% when 'custom' %}
+        --zt-number-family: {{ section.settings.number_font.family | json }}, {{ section.settings.number_font.fallback_families }};
+      {% when 'body' %}
+        --zt-number-family: var(--font-body--family, var(--font-body-family));
+      {% else %}
+        --zt-number-family: var(--font-heading--family, var(--font-heading-family, var(--font-body--family, var(--font-body-family))));
+    {% endcase %}
+    {% case section.settings.text_font_mode %}
+      {% when 'custom' %}
+        --zt-text-family: {{ section.settings.text_font.family | json }}, {{ section.settings.text_font.fallback_families }};
+      {% when 'heading' %}
+        --zt-text-family: var(--font-heading--family, var(--font-heading-family, var(--font-body--family, var(--font-body-family))));
+      {% else %}
+        --zt-text-family: var(--font-body--family, var(--font-body-family));
+    {% endcase %}
+    --zt-number-size: {{ section.settings.number_size_d }}px;
+    --zt-number-weight: {{ section.settings.number_weight_d }};
+    --zt-label-size: {{ section.settings.label_size_d }}px;
+    --zt-label-weight: {{ section.settings.label_weight_d }};
+    --zt-detail-size: {{ section.settings.detail_size_d }}px;
+    --zt-detail-weight: {{ section.settings.detail_weight_d }};
+    --zt-heading-size: {{ section.settings.heading_size_d }}px;
+    --zt-heading-weight: {{ section.settings.heading_weight_d }};
+    --zt-eyebrow-size: {{ section.settings.eyebrow_size_d }}px;
+    --zt-eyebrow-weight: {{ section.settings.eyebrow_weight_d }};
+    --zt-note-size: {{ section.settings.note_size_d }}px;
+    --zt-note-weight: {{ section.settings.note_weight_d }};
+    --zt-outer-top: {{ section.settings.outer_top_d }}px;
+    --zt-outer-bottom: {{ section.settings.outer_bottom_d }}px;
+    --zt-panel-gutter: {{ section.settings.panel_gutter_d }}px;
+    --zt-pad-top: {{ section.settings.pad_top_d }}px;
+    --zt-pad-bottom: {{ section.settings.pad_bottom_d }}px;
+    --zt-pad-side: {{ section.settings.pad_side_d }}px;
+    --zt-stat-gap: {{ section.settings.stat_gap_d }}px;
+    --zt-stat-pad-x: {{ section.settings.stat_pad_x_d }}px;
+    --zt-stat-pad-y: {{ section.settings.stat_pad_y_d }}px;
+    --zt-header-gap: {{ section.settings.header_gap_d }}px;
+    --zt-header-inner-gap: {{ section.settings.header_inner_gap_d }}px;
+    --zt-label-gap: {{ section.settings.label_gap_d }}px;
+    --zt-detail-gap: {{ section.settings.detail_gap_d }}px;
+    --zt-note-gap: {{ section.settings.note_gap_d }}px;
+    --zt-number-color: {{ section.settings.number_color }};
+    --zt-label-color: {{ section.settings.label_color }};
+    --zt-detail-color: {{ section.settings.detail_color }};
+    --zt-heading-color: {{ section.settings.heading_color }};
+    --zt-eyebrow-color: {{ section.settings.eyebrow_color }};
+    --zt-note-color: {{ section.settings.note_color }};
+    --zt-star-color: {{ section.settings.star_color }};
+    --zt-divider-color: {{ section.settings.divider_color }};
+    --zt-border-color: {{ section.settings.border_color }};
+    --zt-number-tracking: {{ section.settings.number_tracking_d }}px;
+    --zt-label-tracking: {{ section.settings.label_tracking }}px;
+    --zt-heading-tracking: {{ section.settings.heading_tracking }}px;
+    --zt-eyebrow-tracking: {{ section.settings.eyebrow_tracking }}px;
+    --zt-number-lh: {{ section.settings.number_line_height | divided_by: 100.0 }};
+    --zt-label-lh: {{ section.settings.label_line_height | divided_by: 100.0 }};
+    --zt-text-lh: {{ section.settings.text_line_height | divided_by: 100.0 }};
+    --zt-heading-lh: {{ section.settings.heading_line_height | divided_by: 100.0 }};
+    --zt-star-size: {{ section.settings.star_size_d }}px;
+    --zt-value-gap: {{ section.settings.value_gap_d }}px;
+    --zt-line-thickness: {{ section.settings.divider_thickness }}px;
+    --zt-line-height: {{ section.settings.divider_height_d }}px;
+    --zt-align: {{ section.settings.align_d }};
+    --zt-justify: {{ zt_justify_d }};
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: var(--zt-outer-top) 0 var(--zt-outer-bottom);
+    background: {{ section.settings.outer_background }};
+    color: var(--zt-label-color);
+    font-family: var(--zt-text-family, inherit);
+    font-style: normal;
+    text-align: var(--zt-align);
+    text-transform: none;
+  }
+  #ZootifyTrust-{{ section.id }} *,
+  #ZootifyTrust-{{ section.id }} *::before,
+  #ZootifyTrust-{{ section.id }} *::after { box-sizing: border-box; }
+  #ZootifyTrust-{{ section.id }} .zt__surface {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    {% if section.settings.use_gradient and section.settings.gradient != blank %}
+      background: {{ section.settings.gradient }};
+    {% else %}
+      background: {{ section.settings.background }};
+    {% endif %}
+    border: 0 solid var(--zt-border-color);
+    {% case section.settings.border_style %}
+      {% when 'top' %}border-top-width: {{ section.settings.border_thickness }}px;
+      {% when 'bottom' %}border-bottom-width: {{ section.settings.border_thickness }}px;
+      {% when 'both' %}border-block-width: {{ section.settings.border_thickness }}px;
+      {% when 'all' %}border-width: {{ section.settings.border_thickness }}px;
+    {% endcase %}
+  }
+  {% if section.settings.frame == 'inset' %}
+    #ZootifyTrust-{{ section.id }} { padding-inline: var(--zt-panel-gutter); }
+    #ZootifyTrust-{{ section.id }} .zt__surface {
+      max-width: {{ section.settings.max_width }}px;
+      border-radius: {{ section.settings.radius }}px;
+    }
+  {% endif %}
+  #ZootifyTrust-{{ section.id }} .zt__inner {
+    width: 100%;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: var(--zt-pad-top) var(--zt-pad-side) var(--zt-pad-bottom);
+  }
+  #ZootifyTrust-{{ section.id }} .zt__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--zt-header-inner-gap);
+    margin: 0 0 var(--zt-header-gap);
+  }
+  #ZootifyTrust-{{ section.id }} .zt__eyebrow,
+  #ZootifyTrust-{{ section.id }} .zt__heading,
+  #ZootifyTrust-{{ section.id }} .zt__intro {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    overflow-wrap: anywhere;
+    text-align: var(--zt-align);
+    font-style: normal;
+    text-transform: none;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__eyebrow {
+    color: var(--zt-eyebrow-color);
+    font-family: var(--zt-text-family, inherit);
+    font-size: var(--zt-eyebrow-size);
+    font-weight: var(--zt-eyebrow-weight);
+    line-height: var(--zt-text-lh);
+    letter-spacing: var(--zt-eyebrow-tracking);
+  }
+  #ZootifyTrust-{{ section.id }} .zt__heading {
+    color: var(--zt-heading-color);
+    font-family: var(--zt-number-family, inherit);
+    font-size: var(--zt-heading-size);
+    font-weight: var(--zt-heading-weight);
+    line-height: var(--zt-heading-lh);
+    letter-spacing: var(--zt-heading-tracking);
+  }
+  #ZootifyTrust-{{ section.id }} .zt__intro {
+    color: var(--zt-detail-color);
+    font-size: var(--zt-detail-size);
+    font-weight: var(--zt-detail-weight);
+    line-height: var(--zt-text-lh);
+    letter-spacing: normal;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__stats {
+    display: grid;
+    grid-template-columns: repeat(var(--zt-cols), minmax(0, 1fr));
+    gap: var(--zt-stat-gap);
+    align-items: stretch;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__stat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-width: 0;
+    margin: 0;
+    padding: var(--zt-stat-pad-y) var(--zt-stat-pad-x);
+    text-align: var(--zt-align);
+  }
+  #ZootifyTrust-{{ section.id }} .zt__stat + .zt__stat::before {
+    content: '';
+    position: absolute;
+    display: {% if section.settings.dividers_d %}block{% else %}none{% endif %};
+    inset-inline-start: calc((var(--zt-stat-gap) + var(--zt-line-thickness)) / -2);
+    top: 50%;
+    width: var(--zt-line-thickness);
+    height: min(var(--zt-line-height), 85%);
+    transform: translateY(-50%);
+    background: var(--zt-divider-color);
+    pointer-events: none;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__value,
+  #ZootifyTrust-{{ section.id }} .zt__label,
+  #ZootifyTrust-{{ section.id }} .zt__detail,
+  #ZootifyTrust-{{ section.id }} .zt__source {
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    text-align: var(--zt-align);
+    font-style: normal;
+    text-transform: none;
+    overflow-wrap: anywhere;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__value {
+    order: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: var(--zt-justify);
+    gap: 0 var(--zt-value-gap);
+    color: var(--zt-number-color);
+    font-family: var(--zt-number-family, inherit);
+    font-size: var(--zt-number-size);
+    font-weight: var(--zt-number-weight);
+    line-height: var(--zt-number-lh);
+    letter-spacing: var(--zt-number-tracking);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__value-text { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+  #ZootifyTrust-{{ section.id }} .zt__suffix {
+    font-size: {{ section.settings.suffix_scale }}%;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__star {
+    display: inline-block;
+    flex: 0 0 var(--zt-star-size);
+    width: var(--zt-star-size);
+    height: var(--zt-star-size);
+    max-width: 100%;
+    color: var(--zt-star-color);
+    align-self: center;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__label {
+    order: 2;
+    margin-top: var(--zt-label-gap);
+    color: var(--zt-label-color);
+    font-family: var(--zt-text-family, inherit);
+    font-size: var(--zt-label-size);
+    font-weight: var(--zt-label-weight);
+    line-height: var(--zt-label-lh);
+    letter-spacing: var(--zt-label-tracking);
+    text-transform: {{ section.settings.label_case }};
+  }
+  #ZootifyTrust-{{ section.id }} .zt__detail,
+  #ZootifyTrust-{{ section.id }} .zt__source {
+    order: 3;
+    margin-top: var(--zt-detail-gap);
+    color: var(--zt-detail-color);
+    font-family: var(--zt-text-family, inherit);
+    font-size: var(--zt-detail-size);
+    font-weight: var(--zt-detail-weight);
+    line-height: var(--zt-text-lh);
+    letter-spacing: normal;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__source { order: 4; }
+  #ZootifyTrust-{{ section.id }} .zt__source a,
+  #ZootifyTrust-{{ section.id }} .zt__note a {
+    display: inline-block;
+    padding-block: 4px;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  #ZootifyTrust-{{ section.id }} a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__note {
+    margin: var(--zt-note-gap) 0 0;
+    padding: 0;
+    color: var(--zt-note-color);
+    font-family: var(--zt-text-family, inherit);
+    font-size: var(--zt-note-size);
+    font-weight: var(--zt-note-weight);
+    line-height: var(--zt-text-lh);
+    letter-spacing: normal;
+    text-align: var(--zt-align);
+    overflow-wrap: anywhere;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__note p { margin: 0; padding: 0; font: inherit; color: inherit; }
+  #ZootifyTrust-{{ section.id }} .zt__note p + p { margin-top: 0.5em; }
+  #ZootifyTrust-{{ section.id }} .zt__sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  #ZootifyTrust-{{ section.id }} .zt__stat--empty { opacity: 0.55; }
+  #ZootifyTrust-{{ section.id }} .zt__editor-note {
+    margin: 20px auto 0;
+    padding: 12px 14px;
+    max-width: 760px;
+    border: 1px dashed currentColor;
+    border-radius: 6px;
+    color: var(--zt-detail-color);
+    font-family: var(--zt-text-family, inherit);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    letter-spacing: normal;
+  }
+
+  /* Optional per-statistic colours and desktop typography. */
+  {% for block in section.blocks %}
+    #ZootifyTrust-{{ section.id }} #ZootifyStat-{{ section.id }}-{{ block.id }} {
+      {% if block.settings.custom_colors %}
+        --zt-number-color: {{ block.settings.number_color }};
+        --zt-label-color: {{ block.settings.label_color }};
+        --zt-detail-color: {{ block.settings.detail_color }};
+        --zt-star-color: {{ block.settings.star_color }};
+      {% endif %}
+      {% if block.settings.custom_type %}
+        --zt-number-size: {{ block.settings.number_size_d }}px;
+        --zt-number-weight: {{ block.settings.number_weight_d }};
+        --zt-label-size: {{ block.settings.label_size_d }}px;
+        --zt-label-weight: {{ block.settings.label_weight_d }};
+        --zt-detail-size: {{ block.settings.detail_size_d }}px;
+        --zt-detail-weight: {{ block.settings.detail_weight_d }};
+      {% endif %}
+    }
+  {% endfor %}
+
+  @media screen and (max-width: 749px) {
+    {% if section.settings.visibility == 'desktop' %}
+      #shopify-section-{{ section.id }} { display: none !important; }
+    {% endif %}
+    #ZootifyTrust-{{ section.id }} {
+      --zt-number-size: {{ section.settings.number_size_m }}px;
+      --zt-number-weight: {{ section.settings.number_weight_m }};
+      --zt-label-size: {{ section.settings.label_size_m }}px;
+      --zt-label-weight: {{ section.settings.label_weight_m }};
+      --zt-detail-size: {{ section.settings.detail_size_m }}px;
+      --zt-detail-weight: {{ section.settings.detail_weight_m }};
+      --zt-heading-size: {{ section.settings.heading_size_m }}px;
+      --zt-heading-weight: {{ section.settings.heading_weight_m }};
+      --zt-eyebrow-size: {{ section.settings.eyebrow_size_m }}px;
+      --zt-eyebrow-weight: {{ section.settings.eyebrow_weight_m }};
+      --zt-note-size: {{ section.settings.note_size_m }}px;
+      --zt-note-weight: {{ section.settings.note_weight_m }};
+      --zt-outer-top: {{ section.settings.outer_top_m }}px;
+      --zt-outer-bottom: {{ section.settings.outer_bottom_m }}px;
+      --zt-panel-gutter: {{ section.settings.panel_gutter_m }}px;
+      --zt-pad-top: {{ section.settings.pad_top_m }}px;
+      --zt-pad-bottom: {{ section.settings.pad_bottom_m }}px;
+      --zt-pad-side: {{ section.settings.pad_side_m }}px;
+      --zt-stat-gap: {{ section.settings.stat_gap_m }}px;
+      --zt-stat-pad-x: {{ section.settings.stat_pad_x_m }}px;
+      --zt-stat-pad-y: {{ section.settings.stat_pad_y_m }}px;
+      --zt-header-gap: {{ section.settings.header_gap_m }}px;
+      --zt-header-inner-gap: {{ section.settings.header_inner_gap_m }}px;
+      --zt-label-gap: {{ section.settings.label_gap_m }}px;
+      --zt-detail-gap: {{ section.settings.detail_gap_m }}px;
+      --zt-note-gap: {{ section.settings.note_gap_m }}px;
+      --zt-number-tracking: {{ section.settings.number_tracking_m }}px;
+      --zt-star-size: {{ section.settings.star_size_m }}px;
+      --zt-value-gap: {{ section.settings.value_gap_m }}px;
+      --zt-line-height: {{ section.settings.divider_height_m }}px;
+      --zt-align: {{ section.settings.align_m }};
+      --zt-justify: {{ zt_justify_m }};
+    }
+    #ZootifyTrust-{{ section.id }} .zt__stat + .zt__stat::before {
+      display: {% if section.settings.dividers_m %}block{% else %}none{% endif %};
+    }
+    {% if section.settings.mobile_layout == 'row' and zt_count > 2 %}
+      #ZootifyTrust-{{ section.id }} .zt__label {
+        min-height: calc(var(--zt-label-size) * var(--zt-label-lh) * 2);
+      }
+    {% endif %}
+    {% if section.settings.mobile_layout == 'stack' %}
+      #ZootifyTrust-{{ section.id }} .zt__stats { grid-template-columns: minmax(0, 1fr); }
+      #ZootifyTrust-{{ section.id }} .zt__stat + .zt__stat::before {
+        inset-inline-start: 50%;
+        top: calc((var(--zt-stat-gap) + var(--zt-line-thickness)) / -2);
+        width: {{ section.settings.divider_width_m }}%;
+        height: var(--zt-line-thickness);
+        transform: translateX(-50%);
+      }
+    {% endif %}
+    {% for block in section.blocks %}
+      {% if block.settings.custom_type %}
+        #ZootifyTrust-{{ section.id }} #ZootifyStat-{{ section.id }}-{{ block.id }} {
+          --zt-number-size: {{ block.settings.number_size_m }}px;
+          --zt-number-weight: {{ block.settings.number_weight_m }};
+          --zt-label-size: {{ block.settings.label_size_m }}px;
+          --zt-label-weight: {{ block.settings.label_weight_m }};
+          --zt-detail-size: {{ block.settings.detail_size_m }}px;
+          --zt-detail-weight: {{ block.settings.detail_weight_m }};
+        }
+      {% endif %}
+    {% endfor %}
+  }
+  {% if section.settings.visibility == 'mobile' %}
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} { display: none !important; }
+    }
+  {% endif %}
+{% endstyle %}
+
+{%- if zt_count > 0 or request.design_mode -%}
+  <section
+    id="ZootifyTrust-{{ section.id }}"
+    aria-label="{{ section.settings.accessibility_label | default: 'Zootify brand statistics' | escape }}"
+  >
+    <div class="zt__surface">
+      <div class="zt__inner">
+        {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.intro != blank -%}
+          <div class="zt__header">
+            {%- if section.settings.eyebrow != blank -%}
+              <p class="zt__eyebrow">{{ section.settings.eyebrow | escape }}</p>
+            {%- endif -%}
+            {%- if section.settings.heading != blank -%}
+              <{{ section.settings.heading_tag }} class="zt__heading">{{ section.settings.heading | escape }}</{{ section.settings.heading_tag }}>
+            {%- endif -%}
+            {%- if section.settings.intro != blank -%}
+              <p class="zt__intro">{{ section.settings.intro | escape | newline_to_br }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+        {%- if zt_count > 0 -%}
+          <dl class="zt__stats">
+            {%- for block in section.blocks -%}
+              {%- unless block.settings.show_block -%}{%- continue -%}{%- endunless -%}
+              {%- assign zt_value = block.settings.value | strip -%}
+              {%- assign zt_placeholder = false -%}
+              {%- if zt_value == blank -%}
+                {%- if request.design_mode -%}
+                  {%- assign zt_placeholder = true -%}
+                {%- else -%}
+                  {%- continue -%}
+                {%- endif -%}
+              {%- endif -%}
+              <div
+                id="ZootifyStat-{{ section.id }}-{{ block.id }}"
+                class="zt__stat{% if zt_placeholder %} zt__stat--empty{% endif %}"
+                {{ block.shopify_attributes }}
+              >
+                <dt class="zt__label{% if block.settings.title == blank %} zt__sr-only{% endif %}">{{ block.settings.title | default: 'Statistic' | escape }}</dt>
+                <dd class="zt__value">
+                  {%- if zt_placeholder -%}
+                    <span class="zt__value-text" aria-hidden="true">&mdash;</span>
+                    <span class="zt__sr-only">Add a confirmed value in the theme editor</span>
+                  {%- else -%}
+                    <span class="zt__value-text">{{ zt_value | escape }}</span>
+                    {%- if block.settings.suffix != blank -%}
+                      <span class="zt__suffix">{{ block.settings.suffix | escape }}</span>
+                    {%- endif -%}
+                    {%- if block.settings.show_star -%}
+                      <svg class="zt__star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="m12 2.25 2.94 5.957 6.574.956-4.757 4.637 1.123 6.548L12 17.256l-5.88 3.092 1.123-6.548-4.757-4.637 6.574-.956L12 2.25Z"/></svg>
+                      <span class="zt__sr-only"> stars</span>
+                    {%- endif -%}
+                  {%- endif -%}
+                </dd>
+                {%- if block.settings.detail != blank -%}
+                  <dd class="zt__detail">{{ block.settings.detail | escape | newline_to_br }}</dd>
+                {%- endif -%}
+                {%- if block.settings.source_url != blank and block.settings.source_label != blank and zt_placeholder == false -%}
+                  <dd class="zt__source">
+                    <a href="{{ block.settings.source_url | escape }}"{% if block.settings.new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ block.settings.source_label | escape }}{% if block.settings.new_tab %}<span class="zt__sr-only"> (opens in a new tab)</span>{% endif %}</a>
+                  </dd>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          </dl>
+        {%- endif -%}
+        {%- if section.settings.source_note != blank -%}
+          <div class="zt__note">{{ section.settings.source_note }}</div>
+        {%- endif -%}
+        {%- if request.design_mode -%}
+          {%- if zt_empty_count > 0 -%}
+            <p class="zt__editor-note"><strong>Theme editor preview only:</strong> Open each Statistic block and enter a confirmed main value. Blank statistics and this message are not shown to shoppers. Add the review source and the market covered before publishing a rating.</p>
+          {%- elsif zt_count == 0 -%}
+            <p class="zt__editor-note">Add a Statistic block or switch on Show this statistic. This empty section is not shown to shoppers.</p>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Zootify Trust Bar",
+  "tag": "div",
+  "class": "zootify-trust-section",
+  "max_blocks": 3,
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Manual brand statistics, not a Judge.me widget. Blank statistics appear as placeholders ONLY in the theme editor and are omitted from the storefront. Publish only supported figures; identify the market and review source beside each statistic."
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "ZOOTIFY, IN NUMBERS"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Optional heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading tag",
+      "default": "h2",
+      "options": [
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "p",
+          "label": "Paragraph"
+        }
+      ]
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Optional introduction"
+    },
+    {
+      "type": "richtext",
+      "id": "source_note",
+      "label": "Source / scope note",
+      "info": "Identify the stores, channels, date and review source covered. Do not describe India-only reviews as US reviews. Leave blank to hide."
+    },
+    {
+      "type": "text",
+      "id": "accessibility_label",
+      "label": "Section accessibility label",
+      "default": "Zootify brand statistics"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "frame",
+      "label": "Section style",
+      "default": "full",
+      "options": [
+        {
+          "value": "full",
+          "label": "Full-width strip"
+        },
+        {
+          "value": "inset",
+          "label": "Inset panel"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Content maximum width",
+      "default": 1240,
+      "min": 720,
+      "max": 1840,
+      "step": 20,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "align_d",
+      "label": "Desktop text alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "align_m",
+      "label": "Mobile text alignment",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "default": "row",
+      "info": "For long values or very large mobile fonts, select Stacked vertically.",
+      "options": [
+        {
+          "value": "row",
+          "label": "Side by side"
+        },
+        {
+          "value": "stack",
+          "label": "Stacked vertically"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "visibility",
+      "label": "Show section on",
+      "default": "both",
+      "options": [
+        {
+          "value": "both",
+          "label": "Desktop and mobile"
+        },
+        {
+          "value": "desktop",
+          "label": "Desktop only"
+        },
+        {
+          "value": "mobile",
+          "label": "Mobile only"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Panel corner radius",
+      "default": 0,
+      "visible_if": "{{ section.settings.frame == 'inset' }}",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colours and background"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background",
+      "default": "#F5F6F6"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient",
+      "label": "Use gradient background",
+      "default": false
+    },
+    {
+      "type": "color_background",
+      "id": "gradient",
+      "label": "Background gradient",
+      "default": "linear-gradient(110deg, #f5f6f6 0%, #e9eeeb 100%)",
+      "visible_if": "{{ section.settings.use_gradient }}"
+    },
+    {
+      "type": "color",
+      "id": "outer_background",
+      "label": "Outside / gutter background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "number_color",
+      "label": "Numbers",
+      "default": "#01151E"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Statistic labels",
+      "default": "#01151E"
+    },
+    {
+      "type": "color",
+      "id": "detail_color",
+      "label": "Supporting text and links",
+      "default": "#58656B"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#01151E"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow",
+      "default": "#58656B"
+    },
+    {
+      "type": "color",
+      "id": "note_color",
+      "label": "Source note",
+      "default": "#58656B"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Rating star",
+      "default": "#01151E"
+    },
+    {
+      "type": "header",
+      "content": "Dividers and borders"
+    },
+    {
+      "type": "checkbox",
+      "id": "dividers_d",
+      "label": "Show desktop dividers",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "dividers_m",
+      "label": "Show mobile dividers",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider colour",
+      "default": "#D8DEDE"
+    },
+    {
+      "type": "range",
+      "id": "divider_thickness",
+      "label": "Divider thickness",
+      "default": 1,
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "divider_height_d",
+      "label": "Desktop divider height",
+      "default": 68,
+      "min": 20,
+      "max": 160,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "divider_height_m",
+      "label": "Mobile row divider height",
+      "default": 54,
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "divider_width_m",
+      "label": "Mobile stacked divider width",
+      "default": 40,
+      "visible_if": "{{ section.settings.mobile_layout == 'stack' }}",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "type": "select",
+      "id": "border_style",
+      "label": "Outer border",
+      "default": "none",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "top",
+          "label": "Top only"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom only"
+        },
+        {
+          "value": "both",
+          "label": "Top and bottom"
+        },
+        {
+          "value": "all",
+          "label": "All sides"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Outer border colour",
+      "default": "#D8DEDE",
+      "visible_if": "{{ section.settings.border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_thickness",
+      "label": "Outer border thickness",
+      "default": 1,
+      "visible_if": "{{ section.settings.border_style != 'none' }}",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Font families"
+    },
+    {
+      "type": "select",
+      "id": "number_font_mode",
+      "label": "Numbers and heading font",
+      "default": "heading",
+      "options": [
+        {
+          "value": "heading",
+          "label": "Use theme heading font"
+        },
+        {
+          "value": "body",
+          "label": "Use theme body font"
+        },
+        {
+          "value": "custom",
+          "label": "Choose a font"
+        }
+      ]
+    },
+    {
+      "type": "font_picker",
+      "id": "number_font",
+      "label": "Custom numbers / heading font",
+      "default": "montserrat_n4",
+      "visible_if": "{{ section.settings.number_font_mode == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "text_font_mode",
+      "label": "Labels and supporting text font",
+      "default": "body",
+      "options": [
+        {
+          "value": "body",
+          "label": "Use theme body font"
+        },
+        {
+          "value": "heading",
+          "label": "Use theme heading font"
+        },
+        {
+          "value": "custom",
+          "label": "Choose a font"
+        }
+      ]
+    },
+    {
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Custom labels / supporting font",
+      "default": "montserrat_n4",
+      "visible_if": "{{ section.settings.text_font_mode == 'custom' }}"
+    },
+    {
+      "type": "paragraph",
+      "content": "Theme-font modes reuse your existing theme typography. Available custom-font weights depend on the selected font. Per-statistic size and weight overrides are inside each Statistic block."
+    },
+    {
+      "type": "header",
+      "content": "Number typography"
+    },
+    {
+      "type": "range",
+      "id": "number_size_d",
+      "label": "Desktop font size",
+      "default": 48,
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "number_size_m",
+      "label": "Mobile font size",
+      "default": 26,
+      "min": 18,
+      "max": 60,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "number_weight_d",
+      "label": "Desktop font weight",
+      "default": 600,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "range",
+      "id": "number_weight_m",
+      "label": "Mobile font weight",
+      "default": 600,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "header",
+      "content": "Statistic label typography"
+    },
+    {
+      "type": "range",
+      "id": "label_size_d",
+      "label": "Desktop font size",
+      "default": 14,
+      "min": 10,
+      "max": 28,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "label_size_m",
+      "label": "Mobile font size",
+      "default": 12,
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "label_weight_d",
+      "label": "Desktop font weight",
+      "default": 500,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "range",
+      "id": "label_weight_m",
+      "label": "Mobile font weight",
+      "default": 500,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "header",
+      "content": "Supporting text typography"
+    },
+    {
+      "type": "range",
+      "id": "detail_size_d",
+      "label": "Desktop font size",
+      "default": 12,
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "detail_size_m",
+      "label": "Mobile font size",
+      "default": 11,
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "detail_weight_d",
+      "label": "Desktop font weight",
+      "default": 400,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "range",
+      "id": "detail_weight_m",
+      "label": "Mobile font weight",
+      "default": 400,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "header",
+      "content": "Optional heading typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_d",
+      "label": "Desktop font size",
+      "default": 28,
+      "min": 16,
+      "max": 64,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_m",
+      "label": "Mobile font size",
+      "default": 22,
+      "min": 16,
+      "max": 44,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_weight_d",
+      "label": "Desktop font weight",
+      "default": 600,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "range",
+      "id": "heading_weight_m",
+      "label": "Mobile font weight",
+      "default": 600,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "header",
+      "content": "Eyebrow typography"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size_d",
+      "label": "Desktop font size",
+      "default": 11,
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size_m",
+      "label": "Mobile font size",
+      "default": 10,
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_weight_d",
+      "label": "Desktop font weight",
+      "default": 500,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_weight_m",
+      "label": "Mobile font weight",
+      "default": 500,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "header",
+      "content": "Source note typography"
+    },
+    {
+      "type": "range",
+      "id": "note_size_d",
+      "label": "Desktop font size",
+      "default": 11,
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "note_size_m",
+      "label": "Mobile font size",
+      "default": 10,
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "note_weight_d",
+      "label": "Desktop font weight",
+      "default": 400,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "range",
+      "id": "note_weight_m",
+      "label": "Mobile font weight",
+      "default": 400,
+      "min": 100,
+      "max": 900,
+      "step": 100
+    },
+    {
+      "type": "header",
+      "content": "Fine typography"
+    },
+    {
+      "type": "checkbox",
+      "id": "advanced_type",
+      "label": "Show fine typography controls",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "number_tracking_d",
+      "label": "Desktop number letter spacing",
+      "default": -1,
+      "visible_if": "{{ section.settings.advanced_type }}",
+      "min": -3,
+      "max": 6,
+      "step": 0.1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "number_tracking_m",
+      "label": "Mobile number letter spacing",
+      "default": -0.5,
+      "visible_if": "{{ section.settings.advanced_type }}",
+      "min": -2,
+      "max": 4,
+      "step": 0.1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "label_tracking",
+      "label": "Label letter spacing",
+      "default": 0,
+      "visible_if": "{{ section.settings.advanced_type }}",
+      "min": -1,
+      "max": 4,
+      "step": 0.1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_tracking",
+      "label": "Heading letter spacing",
+      "default": -0.5,
+      "visible_if": "{{ section.settings.advanced_type }}",
+      "min": -2,
+      "max": 4,
+      "step": 0.1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_tracking",
+      "label": "Eyebrow letter spacing",
+      "default": 1.5,
+      "visible_if": "{{ section.settings.advanced_type }}",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "number_line_height",
+      "label": "Number line height",
+      "default": 110,
+      "visible_if": "{{ section.settings.advanced_type }}",
+      "min": 100,
+      "max": 160,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "label_line_height",
+      "label": "Label line height",
+      "default": 140,
+      "visible_if": "{{ section.settings.advanced_type }}",
+      "min": 100,
+      "max": 200,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "label": "Supporting text line height",
+      "default": 150,
+      "visible_if": "{{ section.settings.advanced_type }}",
+      "min": 100,
+      "max": 200,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "Heading line height",
+      "default": 120,
+      "visible_if": "{{ section.settings.advanced_type }}",
+      "min": 100,
+      "max": 180,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "type": "select",
+      "id": "label_case",
+      "label": "Statistic label case",
+      "default": "none",
+      "options": [
+        {
+          "value": "none",
+          "label": "As entered"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "suffix_scale",
+      "label": "Suffix size relative to number",
+      "default": 55,
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "star_size_d",
+      "label": "Desktop star size",
+      "default": 30,
+      "min": 12,
+      "max": 56,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "star_size_m",
+      "label": "Mobile star size",
+      "default": 18,
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "value_gap_d",
+      "label": "Desktop value / suffix / star gap",
+      "default": 5,
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "value_gap_m",
+      "label": "Mobile value / suffix / star gap",
+      "default": 3,
+      "min": 0,
+      "max": 16,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Desktop spacing"
+    },
+    {
+      "type": "range",
+      "id": "outer_top_d",
+      "label": "Space above section",
+      "default": 0,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "outer_bottom_d",
+      "label": "Space below section",
+      "default": 0,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "panel_gutter_d",
+      "label": "Inset panel outside side space",
+      "default": 32,
+      "visible_if": "{{ section.settings.frame == 'inset' }}",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_d",
+      "label": "Section inner top padding",
+      "default": 32,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_d",
+      "label": "Section inner bottom padding",
+      "default": 32,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pad_side_d",
+      "label": "Section inner side padding",
+      "default": 32,
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "stat_gap_d",
+      "label": "Gap between statistics",
+      "default": 24,
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "stat_pad_x_d",
+      "label": "Statistic horizontal padding",
+      "default": 20,
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "stat_pad_y_d",
+      "label": "Statistic vertical padding",
+      "default": 8,
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "header_gap_d",
+      "label": "Space below heading area",
+      "default": 28,
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "header_inner_gap_d",
+      "label": "Gap within heading area",
+      "default": 10,
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "label_gap_d",
+      "label": "Space between value and label",
+      "default": 8,
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "detail_gap_d",
+      "label": "Space above supporting text",
+      "default": 4,
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "note_gap_d",
+      "label": "Space above source note",
+      "default": 22,
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Mobile spacing"
+    },
+    {
+      "type": "range",
+      "id": "outer_top_m",
+      "label": "Space above section",
+      "default": 0,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "outer_bottom_m",
+      "label": "Space below section",
+      "default": 0,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "panel_gutter_m",
+      "label": "Inset panel outside side space",
+      "default": 16,
+      "visible_if": "{{ section.settings.frame == 'inset' }}",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pad_top_m",
+      "label": "Section inner top padding",
+      "default": 24,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pad_bottom_m",
+      "label": "Section inner bottom padding",
+      "default": 24,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "pad_side_m",
+      "label": "Section inner side padding",
+      "default": 12,
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "stat_gap_m",
+      "label": "Gap between statistics",
+      "default": 8,
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "stat_pad_x_m",
+      "label": "Statistic horizontal padding",
+      "default": 4,
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "stat_pad_y_m",
+      "label": "Statistic vertical padding",
+      "default": 6,
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "header_gap_m",
+      "label": "Space below heading area",
+      "default": 22,
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "header_inner_gap_m",
+      "label": "Gap within heading area",
+      "default": 8,
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "label_gap_m",
+      "label": "Space between value and label",
+      "default": 6,
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "detail_gap_m",
+      "label": "Space above supporting text",
+      "default": 4,
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "note_gap_m",
+      "label": "Space above source note",
+      "default": 18,
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "statistic",
+      "name": "Statistic",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Label",
+          "default": "Statistic"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_block",
+          "label": "Show this statistic",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Main value",
+          "info": "Enter a confirmed value. Leave blank to omit this statistic from the storefront. Do not use order totals as a unique-customer count."
+        },
+        {
+          "type": "text",
+          "id": "suffix",
+          "label": "Optional smaller suffix",
+          "info": "For example: /5, when the rating is on a five-point scale."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_star",
+          "label": "Show star beside value",
+          "default": false
+        },
+        {
+          "type": "textarea",
+          "id": "detail",
+          "label": "Supporting text / scope",
+          "info": "Identify what the number covers. For a rating, include the review count and market or review source."
+        },
+        {
+          "type": "url",
+          "id": "source_url",
+          "label": "Optional source / review link"
+        },
+        {
+          "type": "text",
+          "id": "source_label",
+          "label": "Source link label",
+          "default": "Read customer reviews"
+        },
+        {
+          "type": "checkbox",
+          "id": "new_tab",
+          "label": "Open source link in a new tab",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Individual colours"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_colors",
+          "label": "Override section colours",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "number_color",
+          "label": "Number colour",
+          "default": "#01151E",
+          "visible_if": "{{ block.settings.custom_colors }}"
+        },
+        {
+          "type": "color",
+          "id": "label_color",
+          "label": "Label colour",
+          "default": "#01151E",
+          "visible_if": "{{ block.settings.custom_colors }}"
+        },
+        {
+          "type": "color",
+          "id": "detail_color",
+          "label": "Supporting text / link colour",
+          "default": "#58656B",
+          "visible_if": "{{ block.settings.custom_colors }}"
+        },
+        {
+          "type": "color",
+          "id": "star_color",
+          "label": "Star colour",
+          "default": "#01151E",
+          "visible_if": "{{ block.settings.custom_colors }}"
+        },
+        {
+          "type": "header",
+          "content": "Individual typography"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_type",
+          "label": "Override number, label and text sizes / weights",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "number_size_d",
+          "label": "Desktop number size",
+          "default": 48,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 20,
+          "max": 100,
+          "step": 1,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "number_size_m",
+          "label": "Mobile number size",
+          "default": 26,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 18,
+          "max": 60,
+          "step": 1,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "number_weight_d",
+          "label": "Desktop number weight",
+          "default": 600,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 100,
+          "max": 900,
+          "step": 100
+        },
+        {
+          "type": "range",
+          "id": "number_weight_m",
+          "label": "Mobile number weight",
+          "default": 600,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 100,
+          "max": 900,
+          "step": 100
+        },
+        {
+          "type": "range",
+          "id": "label_size_d",
+          "label": "Desktop statistic label size",
+          "default": 14,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 10,
+          "max": 28,
+          "step": 1,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "label_size_m",
+          "label": "Mobile statistic label size",
+          "default": 12,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "label_weight_d",
+          "label": "Desktop statistic label weight",
+          "default": 500,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 100,
+          "max": 900,
+          "step": 100
+        },
+        {
+          "type": "range",
+          "id": "label_weight_m",
+          "label": "Mobile statistic label weight",
+          "default": 500,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 100,
+          "max": 900,
+          "step": 100
+        },
+        {
+          "type": "range",
+          "id": "detail_size_d",
+          "label": "Desktop supporting text size",
+          "default": 12,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "detail_size_m",
+          "label": "Mobile supporting text size",
+          "default": 11,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 10,
+          "max": 22,
+          "step": 1,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "detail_weight_d",
+          "label": "Desktop supporting text weight",
+          "default": 400,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 100,
+          "max": 900,
+          "step": 100
+        },
+        {
+          "type": "range",
+          "id": "detail_weight_m",
+          "label": "Mobile supporting text weight",
+          "default": 400,
+          "visible_if": "{{ block.settings.custom_type }}",
+          "min": 100,
+          "max": 900,
+          "step": 100
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Zootify Trust Bar",
+      "blocks": [
+        {
+          "type": "statistic",
+          "settings": {
+            "title": "Customers served",
+            "detail": "Across India + the US"
+          }
+        },
+        {
+          "type": "statistic",
+          "settings": {
+            "title": "Average rating",
+            "suffix": "/5",
+            "show_star": true
+          }
+        },
+        {
+          "type": "statistic",
+          "settings": {
+            "title": "Years of Zootify",
+            "value": "10+",
+            "detail": "Established in 2012"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

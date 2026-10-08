@@ -9,40 +9,154 @@
  */
 {
   "sections": {
+    "blocks_RjdHY3": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_e99c2a2_WcNdVB": {
+          "type": "ai_gen_block_e99c2a2",
+          "settings": {
+            "announcement_text": "Hello USA! We’ve officially arrived.",
+            "link_text": "",
+            "link_url": "",
+            "show_dismiss_button": true,
+            "background_color": "#000000",
+            "text_color": "#ffffff",
+            "font_size": 14,
+            "padding_vertical": 12,
+            "padding_horizontal": 20
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_e99c2a2_WcNdVB"
+      ],
+      "disabled": true,
+      "name": "Sticky announcement bar",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "hero_banner_KdECd7": {
       "type": "hero-banner",
       "blocks": {
+        "slide_VpfVbN": {
+          "type": "slide",
+          "disabled": true,
+          "settings": {
+            "heading": "NEW LAUNCH",
+            "subtext": "Frostand Magsafe Kickstand Case",
+            "content_alignment": "left",
+            "heading_color": "#ffffff",
+            "subtext_color": "#ffffff",
+            "heading_size_desktop": 48,
+            "heading_size_mobile": 28,
+            "subtext_size_desktop": 16,
+            "subtext_size_mobile": 14,
+            "heading_font_weight": 700,
+            "subtext_font_weight": 400,
+            "heading_subtext_spacing": 12,
+            "desktop_layout": "split",
+            "desktop_left_type": "image",
+            "desktop_left_image": "shopify://shop_images/Gemini_Generated_Image_4qdjqk4qdjqk4qdj.png",
+            "desktop_right_type": "video",
+            "desktop_right_video": "shopify://files/videos/Final Launch video_FROSTAND.mp4",
+            "desktop_full_type": "video",
+            "mobile_layout": "full",
+            "mobile_top_type": "image",
+            "mobile_bottom_type": "image",
+            "mobile_full_type": "video",
+            "mobile_full_video": "shopify://files/videos/Final Launch video_FROSTAND.mp4",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://collections/frostand-magsafe-kickstand-cases"
+          }
+        },
+        "slide_8J3biY": {
+          "type": "slide",
+          "settings": {
+            "heading": "CARRY WITH PURPOSE",
+            "subtext": "Now available for iPhone 18 Series.",
+            "content_alignment": "left",
+            "heading_color": "#1a1a1a",
+            "subtext_color": "#343434",
+            "heading_size_desktop": 35,
+            "heading_size_mobile": 26,
+            "subtext_size_desktop": 16,
+            "subtext_size_mobile": 16,
+            "heading_font_weight": 700,
+            "subtext_font_weight": 400,
+            "heading_subtext_spacing": 2,
+            "desktop_layout": "full",
+            "desktop_left_type": "image",
+            "desktop_right_type": "image",
+            "desktop_full_type": "image",
+            "desktop_full_image": "shopify://shop_images/Gemini_Generated_Image_unk1okunk1okunk1_copy.png",
+            "mobile_layout": "full",
+            "mobile_top_type": "image",
+            "mobile_bottom_type": "image",
+            "mobile_full_type": "image",
+            "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_cuigeqcuigeqcuig_copy.png",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://collections/iphone-18-pro"
+          }
+        },
         "slide_jafzRT": {
           "type": "slide",
           "settings": {
             "heading": "THE FROSTAND CASE",
-            "subtext": "Essentials Combined with Elegance.",
+            "subtext": "Functional Yet Playful.",
             "content_alignment": "left",
             "heading_color": "#2c2c2c",
             "subtext_color": "#2c2c2c",
             "heading_size_desktop": 35,
             "heading_size_mobile": 26,
             "subtext_size_desktop": 16,
-            "subtext_size_mobile": 18,
+            "subtext_size_mobile": 16,
             "heading_font_weight": 700,
             "subtext_font_weight": 400,
-            "heading_subtext_spacing": 12,
+            "heading_subtext_spacing": 2,
             "desktop_layout": "full",
             "desktop_left_type": "image",
             "desktop_right_type": "image",
             "desktop_full_type": "image",
-            "desktop_full_image": "shopify://shop_images/Gemini_Generated_Image_bxvwr5bxvwr5bxvw_copy_2.png",
+            "desktop_full_image": "shopify://shop_images/ZOOTIFY_Desktop_copy.png",
             "mobile_layout": "full",
             "mobile_top_type": "image",
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
-            "mobile_full_image": "shopify://shop_images/Group4101cop.jpg",
+            "mobile_full_image": "shopify://shop_images/ZOOTIFY_Mobile.webp",
+            "mobile_full_video": "shopify://files/videos/Frostand_v03_LOOK_APPROVAL_PREVIEW.mp4",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/the-frostand-collection"
+            "button_link": "shopify://collections/frostand-magsafe-kickstand-cases"
           }
         },
         "slide_RUGfKG": {
           "type": "slide",
+          "disabled": true,
           "settings": {
             "heading": "THE RIDGE CASE",
             "subtext": "Premium Textured Leatherite Fusion",
@@ -305,6 +419,8 @@
         }
       },
       "block_order": [
+        "slide_VpfVbN",
+        "slide_8J3biY",
         "slide_jafzRT",
         "slide_RUGfKG",
         "slide_nML68w",
@@ -319,7 +435,7 @@
       "custom_css": [],
       "name": "Hero – Dynamic",
       "settings": {
-        "interval": 4000,
+        "interval": 9000,
         "mobile_banner_height": 80
       }
     },
@@ -329,7 +445,7 @@
         "category_DX9Bra": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_4qdjqk4qdjqk4qdj.png",
+            "image": "shopify://shop_images/fros_blue_car_3rd_thumb_11a890fd-112e-4b24-a4c2-eb234c483d31.png",
             "title": "iPhone 18 Pro Max",
             "link": "shopify://collections/iphone-18-pro-max"
           }
@@ -337,17 +453,9 @@
         "category_dF3UYf": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/blue.png",
+            "image": "shopify://shop_images/Gemini_Generated_Image_cakxv2cakxv2cakx_copy_301c028b-ce87-4465-be35-ab3c4c0ccf26.png",
             "title": "iPhone 18 Pro",
             "link": "shopify://collections/iphone-18-pro"
-          }
-        },
-        "category_qUADQD": {
-          "type": "category",
-          "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_mv7zc1mv7zc1mv7z_copy.png",
-            "title": "iPhone 17 Pro",
-            "link": "shopify://collections/iphone-17-pro"
           }
         },
         "category_dqXL6q": {
@@ -356,6 +464,14 @@
             "image": "shopify://shop_images/Gemini_Generated_Image_e620lne620lne620.png",
             "title": "iPhone 17 Pro Max",
             "link": "shopify://collections/iphone-17-pro-max"
+          }
+        },
+        "category_qUADQD": {
+          "type": "category",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_mv7zc1mv7zc1mv7z_copy.png",
+            "title": "iPhone 17 Pro",
+            "link": "shopify://collections/iphone-17-pro"
           }
         },
         "category_WdNmMF": {
@@ -370,7 +486,7 @@
           "type": "category",
           "settings": {
             "image": "shopify://shop_images/thumbnail_air.png",
-            "title": "iPhone 17 Air",
+            "title": "iPhone Air",
             "link": "shopify://collections/iphone-air"
           }
         }
@@ -378,8 +494,8 @@
       "block_order": [
         "category_DX9Bra",
         "category_dF3UYf",
-        "category_qUADQD",
         "category_dqXL6q",
+        "category_qUADQD",
         "category_WdNmMF",
         "category_xbzzd6"
       ],
@@ -646,7 +762,7 @@
             "subtext_size_mobile": 14,
             "heading_font_weight": 700,
             "subtext_font_weight": 400,
-            "heading_subtext_spacing": 12,
+            "heading_subtext_spacing": 2,
             "desktop_layout": "split",
             "desktop_left_type": "image",
             "desktop_left_image": "shopify://shop_images/Gemini_Generated_Image_xfg9fvxfg9fvxfg9_copy.png",
@@ -679,7 +795,7 @@
             "subtext_size_mobile": 14,
             "heading_font_weight": 700,
             "subtext_font_weight": 400,
-            "heading_subtext_spacing": 12,
+            "heading_subtext_spacing": 2,
             "desktop_layout": "split",
             "desktop_left_type": "image",
             "desktop_left_image": "shopify://shop_images/Gemini_Generated_Image_wdffwcwdffwcwdff.png",
@@ -695,7 +811,7 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/frostandkickstandmagsafe.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/the-frostand-collection"
+            "button_link": "shopify://collections/frostand-magsafe-kickstand-cases"
           }
         }
       },
@@ -907,7 +1023,7 @@
             "mobile_focal_x": 50,
             "mobile_focal_y": 50,
             "show_eyebrow": true,
-            "eyebrow": "EST. 2026",
+            "eyebrow": "EST. 2012",
             "show_heading": true,
             "heading": "ZOOTIFY",
             "show_subheading": true,
@@ -1005,6 +1121,221 @@
         "button_radius": 100
       }
     },
+    "zootify_trust_bar_fBAHKg": {
+      "type": "zootify-trust-bar",
+      "blocks": {
+        "statistic_UhYncM": {
+          "type": "statistic",
+          "settings": {
+            "title": "Customers served",
+            "show_block": true,
+            "value": "1.5M+",
+            "suffix": "",
+            "show_star": false,
+            "detail": "",
+            "source_url": "",
+            "source_label": "Read customer reviews",
+            "new_tab": false,
+            "custom_colors": false,
+            "number_color": "#01151e",
+            "label_color": "#01151e",
+            "detail_color": "#58656b",
+            "star_color": "#01151e",
+            "custom_type": false,
+            "number_size_d": 48,
+            "number_size_m": 26,
+            "number_weight_d": 600,
+            "number_weight_m": 600,
+            "label_size_d": 14,
+            "label_size_m": 12,
+            "label_weight_d": 500,
+            "label_weight_m": 500,
+            "detail_size_d": 12,
+            "detail_size_m": 11,
+            "detail_weight_d": 400,
+            "detail_weight_m": 400
+          }
+        },
+        "statistic_jPwHjJ": {
+          "type": "statistic",
+          "settings": {
+            "title": "Average rating",
+            "show_block": true,
+            "value": "4.5",
+            "suffix": "/5",
+            "show_star": true,
+            "detail": "",
+            "source_url": "",
+            "source_label": "Read customer reviews",
+            "new_tab": true,
+            "custom_colors": false,
+            "number_color": "#01151e",
+            "label_color": "#01151e",
+            "detail_color": "#58656b",
+            "star_color": "#01151e",
+            "custom_type": false,
+            "number_size_d": 48,
+            "number_size_m": 26,
+            "number_weight_d": 600,
+            "number_weight_m": 600,
+            "label_size_d": 14,
+            "label_size_m": 12,
+            "label_weight_d": 500,
+            "label_weight_m": 500,
+            "detail_size_d": 12,
+            "detail_size_m": 11,
+            "detail_weight_d": 400,
+            "detail_weight_m": 400
+          }
+        },
+        "statistic_HG764V": {
+          "type": "statistic",
+          "settings": {
+            "title": "Years and counting",
+            "show_block": true,
+            "value": "10+",
+            "suffix": "",
+            "show_star": false,
+            "detail": "",
+            "source_url": "",
+            "source_label": "Read customer reviews",
+            "new_tab": false,
+            "custom_colors": false,
+            "number_color": "#01151e",
+            "label_color": "#01151e",
+            "detail_color": "#58656b",
+            "star_color": "#01151e",
+            "custom_type": false,
+            "number_size_d": 48,
+            "number_size_m": 26,
+            "number_weight_d": 600,
+            "number_weight_m": 600,
+            "label_size_d": 14,
+            "label_size_m": 12,
+            "label_weight_d": 500,
+            "label_weight_m": 500,
+            "detail_size_d": 12,
+            "detail_size_m": 11,
+            "detail_weight_d": 400,
+            "detail_weight_m": 400
+          }
+        }
+      },
+      "block_order": [
+        "statistic_UhYncM",
+        "statistic_jPwHjJ",
+        "statistic_HG764V"
+      ],
+      "name": "Zootify Trust Bar",
+      "settings": {
+        "eyebrow": "YOUR CARRY PARTNER - ZOOTIFY",
+        "heading": "",
+        "heading_tag": "h2",
+        "intro": "",
+        "source_note": "",
+        "accessibility_label": "Zootify brand statistics",
+        "frame": "full",
+        "max_width": 1840,
+        "align_d": "center",
+        "align_m": "center",
+        "mobile_layout": "row",
+        "visibility": "both",
+        "radius": 0,
+        "background": "#01161e",
+        "use_gradient": false,
+        "gradient": "linear-gradient(110deg, rgba(216, 216, 216, 1), rgba(233, 238, 235, 1) 100%)",
+        "outer_background": "#ffffff",
+        "number_color": "#ffffff",
+        "label_color": "#ffffff",
+        "detail_color": "#ffffff",
+        "heading_color": "#ffffff",
+        "eyebrow_color": "#68ba4e",
+        "note_color": "#ffffff",
+        "star_color": "#ffffff",
+        "dividers_d": true,
+        "dividers_m": true,
+        "divider_color": "#d8dede",
+        "divider_thickness": 1,
+        "divider_height_d": 104,
+        "divider_height_m": 84,
+        "divider_width_m": 40,
+        "border_style": "none",
+        "border_color": "#d8dede",
+        "border_thickness": 1,
+        "number_font_mode": "heading",
+        "number_font": "montserrat_n4",
+        "text_font_mode": "body",
+        "text_font": "montserrat_n4",
+        "number_size_d": 48,
+        "number_size_m": 26,
+        "number_weight_d": 700,
+        "number_weight_m": 600,
+        "label_size_d": 14,
+        "label_size_m": 10,
+        "label_weight_d": 500,
+        "label_weight_m": 500,
+        "detail_size_d": 12,
+        "detail_size_m": 11,
+        "detail_weight_d": 400,
+        "detail_weight_m": 400,
+        "heading_size_d": 28,
+        "heading_size_m": 22,
+        "heading_weight_d": 600,
+        "heading_weight_m": 600,
+        "eyebrow_size_d": 11,
+        "eyebrow_size_m": 10,
+        "eyebrow_weight_d": 500,
+        "eyebrow_weight_m": 500,
+        "note_size_d": 11,
+        "note_size_m": 10,
+        "note_weight_d": 400,
+        "note_weight_m": 400,
+        "advanced_type": false,
+        "number_tracking_d": -1,
+        "number_tracking_m": -0.5,
+        "label_tracking": 0,
+        "heading_tracking": -0.5,
+        "eyebrow_tracking": 1.5,
+        "number_line_height": 110,
+        "label_line_height": 140,
+        "text_line_height": 150,
+        "heading_line_height": 120,
+        "label_case": "none",
+        "suffix_scale": 55,
+        "star_size_d": 30,
+        "star_size_m": 18,
+        "value_gap_d": 5,
+        "value_gap_m": 3,
+        "outer_top_d": 28,
+        "outer_bottom_d": 0,
+        "panel_gutter_d": 32,
+        "pad_top_d": 32,
+        "pad_bottom_d": 32,
+        "pad_side_d": 32,
+        "stat_gap_d": 24,
+        "stat_pad_x_d": 20,
+        "stat_pad_y_d": 8,
+        "header_gap_d": 28,
+        "header_inner_gap_d": 10,
+        "label_gap_d": 8,
+        "detail_gap_d": 4,
+        "note_gap_d": 22,
+        "outer_top_m": 28,
+        "outer_bottom_m": 0,
+        "panel_gutter_m": 16,
+        "pad_top_m": 24,
+        "pad_bottom_m": 24,
+        "pad_side_m": 12,
+        "stat_gap_m": 22,
+        "stat_pad_x_m": 4,
+        "stat_pad_y_m": 6,
+        "header_gap_m": 22,
+        "header_inner_gap_m": 8,
+        "label_gap_m": 0,
+        "detail_gap_m": 0,
+        "note_gap_m": 4
+      }
+    },
     "offer_carousal_ti3KTi": {
       "type": "offer-carousal",
       "blocks": {
@@ -1038,8 +1369,8 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<h3><strong>SWITCH TO ZOOTIFY</strong></h3>",
-            "width": "fit-content",
+            "text": "<p><strong>CARRY IT YOUR WAY</strong></p>",
+            "width": "100%",
             "max_width": "normal",
             "alignment": "left",
             "enable_mobile_title_control": false,
@@ -1048,7 +1379,7 @@
             "mobile_use_full_width": true,
             "type_preset": "custom",
             "font": "var(--font-body--family)",
-            "font_size": "1rem",
+            "font_size": "1.25rem",
             "line_height": "normal",
             "letter_spacing": "normal",
             "case": "none",
@@ -1093,6 +1424,37 @@
         "overlay_style": "solid",
         "gradient_direction": "to top",
         "padding-block-start": 28,
+        "padding-block-end": 0
+      }
+    },
+    "blocks_gB4Bie": {
+      "type": "_blocks",
+      "name": "Heading and subheading",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
         "padding-block-end": 0
       }
     },
@@ -1257,6 +1619,7 @@
         "image_LizJmn",
         "group_9CiJkj"
       ],
+      "disabled": true,
       "settings": {
         "content_direction": "row",
         "vertical_on_mobile": false,
@@ -1525,7 +1888,7 @@
             "title": "",
             "title_color": "",
             "title_size_v2": 0,
-            "alignment": "center",
+            "alignment": "left",
             "instafeed_margin_top": 0,
             "instafeed_margin_bottom": 0,
             "instafeed_margin_sides": 0,
@@ -1571,6 +1934,7 @@
     }
   },
   "order": [
+    "blocks_RjdHY3",
     "hero_banner_KdECd7",
     "shop_by_category_MGfVXR",
     "zootify_best_sellers_text_prV8xc",
@@ -1578,8 +1942,10 @@
     "hero_banner_qCNr7E",
     "product_list_qz8xwq",
     "about_us_B4kgWw",
+    "zootify_trust_bar_fBAHKg",
     "offer_carousal_ti3KTi",
     "blocks_pNbrnU",
+    "blocks_gB4Bie",
     "177529975949e11fc1",
     "blocks_6t9XY4",
     "1780560771a7193e75",

@@ -16,6 +16,24 @@
         {%- assign show_sale_badge = true -%}
       {%- endif -%}
 
+      {%- assign show_new_badge = false -%}
+      {%- assign new_badge_until = product.metafields.custom.new_badge_until.value -%}
+
+      {%- if new_badge_until != blank -%}
+        {%- assign new_badge_end = new_badge_until | date: '%s' | plus: 86399 -%}
+        {%- assign current_time = 'now' | date: '%s' | plus: 0 -%}
+
+        {%- if current_time <= new_badge_end -%}
+          {%- assign show_new_badge = true -%}
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if show_new_badge -%}
+        <div class="product-badges__badge product-badges__badge--rectangle product-badges__badge--new">
+          NEW
+        </div>
+      {%- endif -%}
+
       {%- if product.available == false or show_sale_badge -%}
         <div
           class="
@@ -91,6 +109,28 @@
     display: none;
     padding-block: var(--badge-rectangle-padding-block);
     padding-inline: var(--badge-rectangle-padding-inline);
+  }
+
+
+  .product-badges__badge--new {
+    display: flex;
+    background: #B14F68;
+    color: #FFFFFF;
+    border-radius: 3px;
+    font-family: var(--font-body--family);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .product-badges__badge--new {
+      font-size: 13px;
+      padding: 5px 9px;
+    }
   }
 {% endstylesheet %}
 
