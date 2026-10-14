@@ -1,0 +1,186 @@
+{% doc %}
+  Page-only order summary. All amounts come from the current Shopify cart.
+  Compare-at savings are NOT subtracted from the cart a second time.
+  Shipping copy is informational; checkout owns shipping-method selection.
+  @param {string} section_id - Main cart section ID.
+  @param {object} config - Settings from the main-cart section.
+{% enddoc %}
+{%- liquid
+  assign is_us = false
+  if localization.country.iso_code == 'US' and cart.currency.iso_code == 'USD'
+    assign is_us = true
+  endif
+  assign show_free = false
+  if is_us and config.zc_free_shipping and cart.requires_shipping
+    assign show_free = true
+  endif
+  assign total_label = 'Estimated total'
+  if show_free or cart.requires_shipping == false
+    assign total_label = 'Total'
+  endif
+  assign checkout_label = config.zc_checkout_label | strip
+  assign normalized_checkout_label = checkout_label | downcase
+  if checkout_label == blank or normalized_checkout_label == 'continue to checkout'
+    assign checkout_label = 'Checkout'
+  endif
+  assign total_price = cart.total_price | money_with_currency
+  assign express_cents = config.zc_express_price | default: 10 | at_least: 0 | times: 100 | round
+  assign express_price = express_cents | money_without_trailing_zeros | strip_html
+  assign discount_codes = cart.cart_level_discount_applications | where: 'type', 'discount_code' | map: 'title'
+  for item in cart.items
+    for allocation in item.line_level_discount_allocations
+      if allocation.discount_application.type == 'discount_code'
+        assign line_code = item.line_level_discount_allocations | slice: forloop.index0, 1 | map: 'discount_application' | map: 'title'
+        assign discount_codes = discount_codes | concat: line_code
+      endif
+    endfor
+  endfor
+  assign discount_codes = discount_codes | uniq
+-%}
+<zootify-cart-summary
+  class="zc-summary"
+  id="ZcSummary-{{ section_id }}"
+  data-section-id="{{ section_id }}"
+  data-sticky-desktop="{{ config.zc_desktop_sticky }}"
+  style="
+    --zc-surface: {{ config.zc_surface }};
+    --zc-text: {{ config.zc_text }};
+    --zc-muted: {{ config.zc_muted }};
+    --zc-border: {{ config.zc_border }};
+    --zc-discount-surface: {{ config.zc_discount_surface }};
+    --zc-shipping-surface: {{ config.zc_shipping_surface }};
+    --zc-button-bg: {{ config.zc_button_bg }};
+    --zc-button-text: {{ config.zc_button_text }};
+    --zc-padding: {{ config.zc_summary_padding }}px;
+    --zc-mobile-padding: {{ config.zc_mobile_padding }}px;
+    --zc-radius: {{ config.zc_summary_radius }}px;
+    --zc-font: {% if config.zc_font == 'heading' %}var(--font-heading--family){% else %}var(--font-body--family){% endif %};
+    --zc-body-size: {{ config.zc_body_size }}px;
+    --zc-heading-size: {{ config.zc_heading_size }}px;
+    --zc-discount-size: {{ config.zc_discount_size }}px;
+    --zc-discount-weight: {{ config.zc_discount_weight }};
+    --zc-total-size: {{ config.zc_total_size }}px;
+    --zc-mobile-total-size: {{ config.zc_mobile_total_size }}px;
+    --zc-total-weight: {{ config.zc_total_weight }};
+    --zc-button-size: {{ config.zc_button_size }}px;
+    --zc-button-weight: {{ config.zc_button_weight }};
+    --zc-button-height: {{ config.zc_button_height }}px;
+    --zc-button-radius: {{ config.zc_button_radius }}px;
+  "
+>
+  <div class="zc-panel" data-zc-panel>
+    <h2 class="zc-heading">{{ config.zc_heading | escape }}</h2>
+
+    {% if settings.show_add_discount_code %}
+      <zootify-cart-discount
+        class="zc-discount"
+        id="ZcDiscount-{{ section_id }}"
+        data-section-id="{{ section_id }}"
+        data-cart-url="{{ routes.cart_url }}"
+        data-update-url="{{ routes.cart_update_url }}"
+      >
+        <details id="ZcDiscountDetails-{{ section_id }}"{% if discount_codes.size > 0 %} open{% endif %}>
+          <summary class="zc-discount-toggle">
+            <span class="zc-discount-title"><span class="zc-icon" aria-hidden="true">{{ 'icon-discount.svg' | inline_asset_content }}</span>{{ config.zc_discount_label | escape }}</span>
+            <span class="zc-plus" aria-hidden="true"></span>
+          </summary>
+          <div class="zc-discount-body">
+            <form class="zc-code-form" data-zc-code-form action="{{ routes.cart_url }}" method="post">
+              <label class="visually-hidden" for="ZcCode-{{ section_id }}">{{ 'content.discount_code' | t }}</label>
+              <input id="ZcCode-{{ section_id }}" name="discount" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="{{ 'content.discount_code' | t }}" required aria-describedby="ZcDiscountStatus-{{ section_id }}">
+              <button type="submit" class="zc-apply">{{ 'actions.apply' | t }}</button>
+            </form>
+            <p class="zc-code-status" id="ZcDiscountStatus-{{ section_id }}" data-zc-code-status role="status" aria-live="polite" hidden></p>
+            <ul class="zc-code-list" data-zc-code-list aria-label="{{ 'content.discounts' | t }}" role="list">
+              {% for code in discount_codes %}
+                <li class="zc-code" data-zc-code="{{ code | escape }}"><span>{{ code | escape }}</span><button type="button" data-zc-remove-code="{{ code | escape }}" aria-label="{{ 'actions.remove_discount' | t: code: code | escape }}"><span aria-hidden="true">×</span></button></li>
+              {% endfor %}
+            </ul>
+            <p class="zc-code-fallback zc-small">Apply or remove your discount code during checkout.</p>
+          </div>
+        </details>
+      </zootify-cart-discount>
+    {% endif %}
+
+    {% if settings.show_cart_note %}
+      <script type="module" src="{{ 'cart-note.js' | asset_url }}"></script>
+      <cart-note class="zc-note">
+        <details{% if settings.cart_note_open_by_default %} open{% endif %}>
+          <summary>{{ 'content.seller_note' | t }}<span class="zc-plus" aria-hidden="true"></span></summary>
+          <label class="visually-hidden" for="ZcNote-{{ section_id }}">{{ 'content.seller_note' | t }}</label>
+          <textarea id="ZcNote-{{ section_id }}" name="note" form="cart-form" on:input="/updateCartNote">{{ cart.note | escape }}</textarea>
+        </details>
+      </cart-note>
+    {% endif %}
+
+    <dl class="zc-breakdown" aria-label="Order price breakdown">
+      <div class="zc-price-row">
+        <dt>{{ 'content.cart_subtotal' | t }} <span class="zc-item-count">· {{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %}</span></dt>
+        <dd data-testid="cart-subtotal-value">{{ cart.original_total_price | money }}</dd>
+      </div>
+      {% if cart.total_discount > 0 %}
+        <div class="zc-price-row zc-savings"><dt>{{ 'content.discounts' | t }}</dt><dd>−{{ cart.total_discount | money }}</dd></div>
+      {% endif %}
+      {% if cart.requires_shipping %}
+        <div class="zc-price-row">
+          <dt>{% if show_free %}Standard shipping{% else %}Shipping{% endif %}</dt>
+          <dd>{% if show_free %}<span class="zc-free">FREE</span>{% else %}<span class="zc-small">Calculated at checkout</span>{% endif %}</dd>
+        </div>
+      {% endif %}
+    </dl>
+
+    <div class="zc-total-block">
+      <div class="zc-total-row" role="status" aria-live="polite" aria-atomic="true">
+        <span class="zc-total-label">{{ total_label }}</span>
+        <text-component ref="cartTotal" value="{{ total_price | strip_html | escape }}" class="zc-total-amount" data-testid="cart-total-value" data-cart-subtotal>{{ total_price }}</text-component>
+      </div>
+      {% if settings.show_installments %}
+        <div class="zc-installments">
+          {% form 'cart', cart %}{{ form | payment_terms }}{% endform %}
+        </div>
+      {% endif %}
+    </div>
+
+    {% if is_us and cart.requires_shipping and config.zc_show_express %}
+      <div class="zc-express">
+        <span class="zc-icon zc-express-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 7h11v10H3V7Zm11 4h4l3 3v3h-7v-6Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="7" cy="18" r="2" fill="var(--zc-shipping-surface)" stroke="currentColor" stroke-width="1.5"/><circle cx="18" cy="18" r="2" fill="var(--zc-shipping-surface)" stroke="currentColor" stroke-width="1.5"/><path d="M1 10h5M1 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+        <div><h3>{{ config.zc_express_title | escape }}</h3><p>{{ config.zc_express_text | replace: '[price]', express_price | escape }}</p></div>
+      </div>
+    {% endif %}
+
+    <div class="zc-actions">
+      <button type="submit" id="checkout" name="checkout" form="cart-form" class="button cart__checkout-button zc-checkout" data-zc-main-checkout{% if cart.empty? %} disabled{% endif %}>
+        <span class="button-text">{{ checkout_label | escape }}</span>
+      </button>
+      {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
+        <div class="zc-wallet-label"><span>{{ config.zc_wallet_label | escape }}</span></div>
+        <div class="additional-checkout-buttons zc-wallets{% if config.zc_wallet_layout == 'vertical' %} additional-checkout-buttons--vertical{% endif %}" data-zc-wallets>
+          {{ content_for_additional_checkout_buttons }}
+        </div>
+      {% endif %}
+    </div>
+
+    {% if config.zc_show_policies %}
+      <details class="zc-policies">
+        <summary>{{ config.zc_policy_label | escape }}<span class="zc-plus" aria-hidden="true"></span></summary>
+        <div class="zc-policy-content">
+          <p class="zc-policy-heading">Delivery</p>
+          <p>{% if show_free %}Free Standard shipping on US orders. {% endif %}{% if is_us and config.zc_show_express and cart.requires_shipping %}Express is available for {{ express_price }} extra. {% endif %}Choose your shipping method at checkout, where delivery estimates are shown for your address.</p>
+          <p class="zc-policy-heading">Returns</p>
+          <p>{{ config.zc_returns_text | escape | newline_to_br }}</p>
+          <div class="zc-policy-links">
+            {% if shop.shipping_policy.url != blank %}<a href="{{ shop.shipping_policy.url }}" target="_blank" rel="noopener">Shipping policy<span class="visually-hidden"> (opens in a new tab)</span></a>{% endif %}
+            {% if shop.refund_policy.url != blank %}<a href="{{ shop.refund_policy.url }}" target="_blank" rel="noopener">Returns policy<span class="visually-hidden"> (opens in a new tab)</span></a>{% endif %}
+          </div>
+        </div>
+      </details>
+    {% endif %}
+  </div>
+
+  {% if config.zc_mobile_sticky %}
+    <div class="zc-mobile-bar" data-zc-mobile-bar hidden>
+      <div class="zc-mobile-price"><span>{{ total_label }}</span><strong data-zc-mobile-total>{{ total_price }}</strong></div>
+      <button type="button" class="button zc-checkout zc-mobile-checkout" data-zc-mobile-checkout>{{ checkout_label | escape }}</button>
+    </div>
+  {% endif %}
+</zootify-cart-summary>

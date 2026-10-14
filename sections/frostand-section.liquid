@@ -512,7 +512,7 @@ Cards, progress and Discover content share one centered desktop alignment width.
           >
             <div class="fz-media fz-media--desktop" aria-hidden="true">
               {% if block.settings.video != blank %}
-                {{ block.settings.video | video_tag: image_size: '1400x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'fz-media-video' }}
+                {{ block.settings.video | video_tag: image_size: '1400x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'fz-media-video' | replace: '<img ', '<img alt="" ' }}
               {% elsif block.settings.image != blank %}
                 {{
                   block.settings.image
@@ -531,7 +531,7 @@ Cards, progress and Discover content share one centered desktop alignment width.
             {% if has_mobile_media %}
               <div class="fz-media fz-media--mobile" aria-hidden="true">
                 {% if block.settings.mobile_video != blank %}
-                  {{ block.settings.mobile_video | video_tag: image_size: '1000x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'fz-media-video' }}
+                  {{ block.settings.mobile_video | video_tag: image_size: '1000x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'fz-media-video'  | replace: '<img ', '<img alt="" '}}
                 {% elsif block.settings.mobile_image != blank %}
                   {{
                     block.settings.mobile_image

@@ -31,7 +31,11 @@
   {{ block.shopify_attributes }}
 >
   <div class="{{ cart_summary_inner_class }}">
-    {% render 'cart-summary', accelerated_checkout_buttons_layout: 'vertical', section_id: section.id %}
+    {% if section.settings.zc_enable and request.page_type == 'cart' %}
+      {% render 'zootify-cart-summary', section_id: section.id, config: section.settings %}
+    {% else %}
+      {% render 'cart-summary', accelerated_checkout_buttons_layout: 'vertical', section_id: section.id %}
+    {% endif %}
 
     {% if block_settings.show_trust_badges %}
       <div

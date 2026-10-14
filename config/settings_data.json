@@ -64,6 +64,13 @@
         "type": "shopify://apps/doran-shoppable-videos/blocks/app-embed/9f421243-1cc3-42c0-8a88-49922de1eacf",
         "disabled": false,
         "settings": {}
+      },
+      "14926935257333466880": {
+        "type": "shopify://apps/geos-geolocation/blocks/location-selector-core/3cd5a431-7aea-4ecd-a807-59b3321c525b",
+        "disabled": true,
+        "settings": {
+          "body_font": "sans_serif_n4"
+        }
       }
     },
     "color_schemes": {

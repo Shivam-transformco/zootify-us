@@ -9,58 +9,6 @@
  */
 {
   "sections": {
-    "blocks_RjdHY3": {
-      "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_e99c2a2_WcNdVB": {
-          "type": "ai_gen_block_e99c2a2",
-          "settings": {
-            "announcement_text": "Hello USA! We’ve officially arrived.",
-            "link_text": "",
-            "link_url": "",
-            "show_dismiss_button": true,
-            "background_color": "#000000",
-            "text_color": "#ffffff",
-            "font_size": 14,
-            "padding_vertical": 12,
-            "padding_horizontal": 20
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_e99c2a2_WcNdVB"
-      ],
-      "disabled": true,
-      "name": "Sticky announcement bar",
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
-    },
     "hero_banner_KdECd7": {
       "type": "hero-banner",
       "blocks": {
@@ -147,9 +95,9 @@
             "mobile_layout": "full",
             "mobile_top_type": "image",
             "mobile_bottom_type": "image",
-            "mobile_full_type": "image",
+            "mobile_full_type": "video",
             "mobile_full_image": "shopify://shop_images/ZOOTIFY_Mobile.webp",
-            "mobile_full_video": "shopify://files/videos/Frostand_v03_LOOK_APPROVAL_PREVIEW.mp4",
+            "mobile_full_video": "shopify://files/videos/Frostand_Mobile_10sec_FINAL_1080p.mp4",
             "button_label": "SHOP NOW",
             "button_link": "shopify://collections/frostand-magsafe-kickstand-cases"
           }
@@ -435,7 +383,7 @@
       "custom_css": [],
       "name": "Hero – Dynamic",
       "settings": {
-        "interval": 9000,
+        "interval_seconds": 10,
         "mobile_banner_height": 80
       }
     },
@@ -682,7 +630,7 @@
         "cards_max_width": 1200,
         "background_color": "#ffffff",
         "text_color": "#171714",
-        "muted_color": "#66645f",
+        "muted_color": "#575550",
         "side_padding": 100,
         "side_padding_mobile": 20,
         "padding_top": 48,
@@ -821,7 +769,7 @@
       ],
       "name": "Hero – Dynamic",
       "settings": {
-        "interval": 5000,
+        "interval_seconds": 6,
         "mobile_banner_height": 80
       }
     },
@@ -1241,17 +1189,17 @@
         "mobile_layout": "row",
         "visibility": "both",
         "radius": 0,
-        "background": "#01161e",
+        "background": "#ffffff",
         "use_gradient": false,
         "gradient": "linear-gradient(110deg, rgba(216, 216, 216, 1), rgba(233, 238, 235, 1) 100%)",
         "outer_background": "#ffffff",
-        "number_color": "#ffffff",
-        "label_color": "#ffffff",
-        "detail_color": "#ffffff",
-        "heading_color": "#ffffff",
+        "number_color": "#01161e",
+        "label_color": "#01161e",
+        "detail_color": "#01161e",
+        "heading_color": "#01161e",
         "eyebrow_color": "#68ba4e",
-        "note_color": "#ffffff",
-        "star_color": "#ffffff",
+        "note_color": "#01161e",
+        "star_color": "#01161e",
         "dividers_d": true,
         "dividers_m": true,
         "divider_color": "#d8dede",
@@ -1282,10 +1230,10 @@
         "heading_size_m": 22,
         "heading_weight_d": 600,
         "heading_weight_m": 600,
-        "eyebrow_size_d": 11,
-        "eyebrow_size_m": 10,
-        "eyebrow_weight_d": 500,
-        "eyebrow_weight_m": 500,
+        "eyebrow_size_d": 13,
+        "eyebrow_size_m": 13,
+        "eyebrow_weight_d": 700,
+        "eyebrow_weight_m": 600,
         "note_size_d": 11,
         "note_size_m": 10,
         "note_weight_d": 400,
@@ -1309,8 +1257,8 @@
         "outer_top_d": 28,
         "outer_bottom_d": 0,
         "panel_gutter_d": 32,
-        "pad_top_d": 32,
-        "pad_bottom_d": 32,
+        "pad_top_d": 8,
+        "pad_bottom_d": 4,
         "pad_side_d": 32,
         "stat_gap_d": 24,
         "stat_pad_x_d": 20,
@@ -1323,10 +1271,10 @@
         "outer_top_m": 28,
         "outer_bottom_m": 0,
         "panel_gutter_m": 16,
-        "pad_top_m": 24,
-        "pad_bottom_m": 24,
-        "pad_side_m": 12,
-        "stat_gap_m": 22,
+        "pad_top_m": 0,
+        "pad_bottom_m": 0,
+        "pad_side_m": 0,
+        "stat_gap_m": 0,
         "stat_pad_x_m": 4,
         "stat_pad_y_m": 6,
         "header_gap_m": 22,
@@ -1840,7 +1788,7 @@
       "disabled": true,
       "name": "Hero – Dynamic",
       "settings": {
-        "interval": 4000,
+        "interval_seconds": 6,
         "mobile_banner_height": 62
       }
     },
@@ -1934,7 +1882,6 @@
     }
   },
   "order": [
-    "blocks_RjdHY3",
     "hero_banner_KdECd7",
     "shop_by_category_MGfVXR",
     "zootify_best_sellers_text_prV8xc",

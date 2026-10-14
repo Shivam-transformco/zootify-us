@@ -1,18 +1,19 @@
 {% doc %}
   @prompt
-    Create a sticky announcement bar fixed to the very top of the viewport using position: fixed, top: 0, and a high z-index (e.g. 1000) so it always stays above the header while scrolling. Include customizable text, background color, text color, optional link, and a dismiss button. Also add padding-top to the body equal to the bar height so content is not hidden behind it.
+    Display an announcement bar in the normal page flow so it scrolls away with
+    the page. Include customizable text, background color, text color, optional
+    link, and a dismiss button. Do not fix the bar to the viewport, add body
+    padding, or change the theme header's positioning.
 {% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
 {% style %}
   .ai-announcement-bar-{{ ai_gen_id }} {
-    position: fixed;
-    top: 0;
-    left: 0;
+    position: relative;
     width: 100%;
+    box-sizing: border-box;
     background-color: {{ block.settings.background_color }};
     color: {{ block.settings.text_color }};
-    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -72,10 +73,6 @@
     height: 20px;
   }
 
-  body.ai-announcement-bar-active-{{ ai_gen_id }} {
-    padding-top: var(--ai-announcement-bar-height-{{ ai_gen_id }}, 0px);
-  }
-
   @media screen and (max-width: 749px) {
     .ai-announcement-bar-{{ ai_gen_id }} {
       padding: {{ block.settings.padding_vertical | times: 0.8 }}px {{ block.settings.padding_horizontal | times: 0.8 }}px;
@@ -133,48 +130,44 @@
 
 <script>
   (function() {
-    class AnnouncementBar{{ ai_gen_id }} extends HTMLElement {
+    const tagName = 'announcement-bar-{{ ai_gen_id }}';
+    if (customElements.get(tagName)) return;
+
+    class AnnouncementBar extends HTMLElement {
       constructor() {
         super();
-        this.barId = this.dataset.barId;
-        this.storageKey = `announcement-bar-dismissed-${this.barId}`;
+        this.handleClose = this.dismiss.bind(this);
       }
 
       connectedCallback() {
+        this.barId = this.dataset.barId;
+        this.storageKey = `announcement-bar-dismissed-${this.barId}`;
+
+        // Remove only this block's old fixed-bar state, if it is still present.
+        // The non-sticky bar does not add body padding or offset the header.
+        document.body.classList.remove(`ai-announcement-bar-active-${this.barId}`);
+        document.body.style.removeProperty(`--ai-announcement-bar-height-${this.barId}`);
+
         if (this.isDismissed()) {
           this.hide();
           return;
         }
 
-        this.setupCloseButton();
-        this.updateBodyPadding();
-        document.body.classList.add(`ai-announcement-bar-active-${this.barId}`);
-
-        window.addEventListener('resize', () => this.updateBodyPadding());
-      }
-
-      disconnectedCallback() {
-        document.body.classList.remove(`ai-announcement-bar-active-${this.barId}`);
-        document.body.style.removeProperty(`--ai-announcement-bar-height-${this.barId}`);
-      }
-
-      setupCloseButton() {
-        const closeButton = this.querySelector('.ai-announcement-bar-close-{{ ai_gen_id }}');
-        if (closeButton) {
-          closeButton.addEventListener('click', () => this.dismiss());
+        this.closeButton = this.querySelector('.ai-announcement-bar-close-{{ ai_gen_id }}');
+        if (this.closeButton) {
+          this.closeButton.addEventListener('click', this.handleClose);
         }
       }
 
-      updateBodyPadding() {
-        const height = this.offsetHeight;
-        document.body.style.setProperty(`--ai-announcement-bar-height-${this.barId}`, `${height}px`);
+      disconnectedCallback() {
+        if (this.closeButton) {
+          this.closeButton.removeEventListener('click', this.handleClose);
+        }
       }
 
       dismiss() {
         this.saveDismissed();
         this.hide();
-        document.body.classList.remove(`ai-announcement-bar-active-${this.barId}`);
-        document.body.style.removeProperty(`--ai-announcement-bar-height-${this.barId}`);
       }
 
       hide() {
@@ -198,7 +191,7 @@
       }
     }
 
-    customElements.define('announcement-bar-{{ ai_gen_id }}', AnnouncementBar{{ ai_gen_id }});
+    customElements.define(tagName, AnnouncementBar);
   })();
 </script>
 

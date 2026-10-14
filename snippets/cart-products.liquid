@@ -160,7 +160,11 @@
                         aria-label="{{ 'accessibility.nested_product' | t: product_title: item.product.title, parent_title: item.parent_relationship.parent.title | escape }}"
                       {% endif %}
                     >
-                      {{- item.product.title -}}
+                      {%- if request.page_type == 'cart' and section.settings.zc_enable and section.settings.zc_short_titles -%}
+                        {%- render 'zootify-cart-product-title', item: item -%}
+                      {%- else -%}
+                        {{- item.product.title -}}
+                      {%- endif -%}
                     </a>
                   </p>
                   {% if item.product.vendor and block_settings.vendor %}

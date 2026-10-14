@@ -1,0 +1,1512 @@
+{% comment %}
+  ZOOTIFY announcement bar | v1.0
+  File: sections/zootify-announcement-bar.liquid
+
+  Add this SECTION to the Header group and drag it ABOVE the Header section.
+  It deliberately stays in normal document flow on every screen size.
+  No fixed/sticky positioning, body padding, scroll handlers, header selectors,
+  external libraries, or dependencies on the previous AI-generated block.
+
+  Messages are local blocks belonging to this section. All styles are scoped.
+  Rotation is OFF by default. The default preset contains one shipping message.
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+  assign message_count = 0
+  for block in section.blocks
+    if block.settings.text != blank or block.settings.mobile_text != blank
+      assign message_count = message_count | plus: 1
+    endif
+  endfor
+
+  assign show_bar = s.enable_bar
+  if s.page_scope == 'home' and request.page_type != 'index'
+    assign show_bar = false
+  elsif s.page_scope == 'except_home' and request.page_type == 'index'
+    assign show_bar = false
+  endif
+  if message_count == 0
+    assign show_bar = false
+  endif
+
+  assign rail_slots = 0
+  assign rail_gaps = 0
+  if message_count > 1
+    assign rail_slots = 1
+    if s.auto_rotate or s.show_close
+      assign rail_slots = 2
+      assign rail_gaps = 1
+    endif
+  elsif s.show_close
+    assign rail_slots = 1
+  endif
+
+  assign custom_font = s.custom_font
+  assign custom_font_desktop = custom_font | font_modify: 'weight', s.weight_desktop | default: custom_font
+  assign custom_font_mobile = custom_font | font_modify: 'weight', s.weight_mobile | default: custom_font
+  assign custom_font_bold = custom_font | font_modify: 'weight', 'bold'
+  assign custom_font_italic = custom_font | font_modify: 'style', 'italic'
+  assign custom_font_bold_italic = custom_font_bold | font_modify: 'style', 'italic'
+  assign custom_font_link = custom_font | font_modify: 'weight', s.link_weight
+-%}
+
+{%- capture dismissal_content -%}
+  {{- s.dismiss_revision | json -}}|{{- localization.language.iso_code | json -}}|
+  {%- for block in section.blocks -%}
+    {{- block.id | json -}}|{{- block.settings.text | json -}}|
+    {{- block.settings.mobile_text | json -}}|{{- block.settings.link | json -}}|
+    {{- block.settings.link_label | json -}}|{{- block.settings.mobile_link_label | json -}}|
+  {%- endfor -%}
+{%- endcapture -%}
+{%- assign dismissal_hash = dismissal_content | sha256 | slice: 0, 20 -%}
+
+{% style %}
+  {% if s.font_source == 'custom' and show_bar %}
+    {{ custom_font_desktop | font_face: font_display: 'swap' }}
+    {% if custom_font_mobile != custom_font_desktop %}
+      {{ custom_font_mobile | font_face: font_display: 'swap' }}
+    {% endif %}
+    {% if custom_font_bold != blank %}{{ custom_font_bold | font_face: font_display: 'swap' }}{% endif %}
+    {% if custom_font_italic != blank %}{{ custom_font_italic | font_face: font_display: 'swap' }}{% endif %}
+    {% if custom_font_bold_italic != blank %}{{ custom_font_bold_italic | font_face: font_display: 'swap' }}{% endif %}
+    {% if custom_font_link != blank %}{{ custom_font_link | font_face: font_display: 'swap' }}{% endif %}
+  {% endif %}
+
+  #shopify-section-{{ section.id }} {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  #shopify-section-{{ section.id }}[hidden] { display: none !important; }
+
+  #ZootifyAnnouncement-{{ section.id }} {
+    --zab-background: {{ s.background_gradient | default: s.background_color }};
+    --zab-text: {{ s.text_color }};
+    --zab-link: {{ s.link_color }};
+    --zab-link-hover: {{ s.link_hover_color }};
+    --zab-icon: {{ s.icon_color }};
+    --zab-controls: {{ s.control_color }};
+    --zab-control-hover: {{ s.control_color | color_modify: 'alpha', 0.12 }};
+    --zab-border: {{ s.border_color }};
+    --zab-border-width: {{ s.border_width }}px;
+    --zab-size: {{ s.size_desktop }}px;
+    --zab-weight: {{ s.weight_desktop }};
+    --zab-leading: {{ s.line_height_desktop | divided_by: 10.0 }};
+    --zab-tracking: {{ s.letter_spacing_desktop }}px;
+    --zab-pad-top: {{ s.padding_top_desktop }}px;
+    --zab-pad-bottom: {{ s.padding_bottom_desktop }}px;
+    --zab-pad-side: {{ s.padding_side_desktop }}px;
+    --zab-min-height: {{ s.min_height_desktop }}px;
+    --zab-align: {{ s.align_desktop }};
+    --zab-justify: {% case s.align_desktop %}{% when 'left' %}flex-start{% when 'right' %}flex-end{% else %}center{% endcase %};
+    --zab-icon-size: {{ s.icon_size_desktop }}px;
+    --zab-icon-gap: {{ s.icon_gap }}px;
+    --zab-link-weight: {{ s.link_weight }};
+    --zab-content-width: {% if s.content_width == 'full' %}100%{% else %}{{ s.max_width }}px{% endif %};
+    --zab-rail-slots: {{ rail_slots }};
+    --zab-rail-gaps: {{ rail_gaps }};
+    --zab-control-size: 36px;
+    --zab-control-gap: 4px;
+    --zab-case: {% if s.uppercase %}uppercase{% else %}none{% endif %};
+    --zab-underline: {% if s.underline_links %}underline{% else %}none{% endif %};
+    {% case s.font_source %}
+      {% when 'custom' %}
+        --zab-family: {{ custom_font.family }}, {{ custom_font.fallback_families }};
+      {% when 'heading' %}
+        --zab-family: var(--font-heading--family, var(--font-heading-family, inherit));
+      {% else %}
+        --zab-family: var(--font-body--family, var(--font-body-family, inherit));
+    {% endcase %}
+  }
+
+  @media screen and (max-width: 749px) {
+    #ZootifyAnnouncement-{{ section.id }} {
+      --zab-size: {{ s.size_mobile }}px;
+      --zab-weight: {{ s.weight_mobile }};
+      --zab-leading: {{ s.line_height_mobile | divided_by: 10.0 }};
+      --zab-tracking: {{ s.letter_spacing_mobile }}px;
+      --zab-pad-top: {{ s.padding_top_mobile }}px;
+      --zab-pad-bottom: {{ s.padding_bottom_mobile }}px;
+      --zab-pad-side: {{ s.padding_side_mobile }}px;
+      --zab-min-height: {{ s.min_height_mobile }}px;
+      --zab-align: {{ s.align_mobile }};
+      --zab-justify: {% case s.align_mobile %}{% when 'left' %}flex-start{% when 'right' %}flex-end{% else %}center{% endcase %};
+      --zab-icon-size: {{ s.icon_size_mobile }}px;
+      --zab-control-size: 44px;
+      --zab-control-gap: 2px;
+    }
+    {% if s.devices == 'desktop' %}
+      #shopify-section-{{ section.id }} { display: none; }
+    {% endif %}
+  }
+  {% if s.devices == 'mobile' %}
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} { display: none; }
+    }
+  {% endif %}
+  {% unless show_bar %}
+    {% unless request.design_mode %}
+      #shopify-section-{{ section.id }} { display: none; }
+    {% endunless %}
+  {% endunless %}
+{% endstyle %}
+
+{%- if show_bar -%}
+  <zootify-announcement-v1
+    id="ZootifyAnnouncement-{{ section.id }}"
+    class="zab"
+    role="region"
+    aria-label="{{ s.region_label | default: 'Store announcements' | escape }}"
+    data-section-id="{{ section.id }}"
+    data-auto-rotate="{{ s.auto_rotate }}"
+    data-interval="{{ s.rotation_interval }}"
+    data-transition="{{ s.transition }}"
+    data-design-mode="{{ request.design_mode }}"
+    data-dismiss-mode="{{ s.dismiss_memory }}"
+    data-dismiss-days="{{ s.dismiss_days }}"
+    data-storage-key="zootify-announcement-v1:{{ shop.permanent_domain | escape }}:{{ section.id }}:{{ dismissal_hash }}"
+    data-pause-label="{{ s.pause_label | default: 'Pause announcements' | escape }}"
+    data-play-label="{{ s.play_label | default: 'Play announcements' | escape }}"
+    data-position-label="{{ s.position_label | escape }}"
+  >
+    <div class="zab__inner">
+      <div class="zab__layout">
+        <div class="zab__rail zab__rail--start">
+          {% if message_count > 1 %}
+            {% if s.auto_rotate %}
+              <button type="button" class="zab__button" data-action="toggle"
+                aria-label="{{ s.pause_label | default: 'Pause announcements' | escape }}"
+                aria-controls="ZootifyMessages-{{ section.id }}">
+                <svg class="zab__pause-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M8 5v14M16 5v14"/></svg>
+                <svg class="zab__play-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 5 11 7-11 7Z"/></svg>
+              </button>
+            {% endif %}
+            <button type="button" class="zab__button" data-action="previous"
+              aria-label="{{ s.previous_label | default: 'Previous announcement' | escape }}"
+              aria-controls="ZootifyMessages-{{ section.id }}">
+              <svg class="zab__direction-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m14 6-6 6 6 6"/></svg>
+            </button>
+          {% endif %}
+        </div>
+
+        <div id="ZootifyMessages-{{ section.id }}" class="zab__viewport" aria-live="off">
+          {%- assign message_index = 0 -%}
+          {%- for block in section.blocks -%}
+            {%- if block.settings.text != blank or block.settings.mobile_text != blank -%}
+              {%- liquid
+                assign message_index = message_index | plus: 1
+                assign desktop_text = block.settings.text | default: block.settings.mobile_text
+                assign mobile_text = block.settings.mobile_text | default: desktop_text
+                assign desktop_link_label = block.settings.link_label
+                assign mobile_link_label = block.settings.mobile_link_label | default: desktop_link_label
+                assign position_label = s.position_label | default: 'Announcement {current} of {total}' | replace: '{current}', message_index | replace: '{total}', message_count
+              -%}
+              <div class="zab__slide{% if message_index == 1 %} is-active{% endif %}"
+                data-message data-block-id="{{ block.id }}"
+                {% if message_count > 1 %}role="group" aria-label="{{ position_label | escape }}"{% endif %}
+                {{ block.shopify_attributes }}>
+                <div class="zab__message">
+                  {% if block.settings.icon != 'none' %}
+                    <svg class="zab__message-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      {% case block.settings.icon %}
+                        {% when 'truck' %}<path d="M3 6h11v11H3zM14 10h4l3 4v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>
+                        {% when 'package' %}<path d="m12 3 9 5v9l-9 5-9-5V8l9-5Zm-9 5 9 5 9-5M12 13v9M7.5 5.5l9 5"/>
+                        {% when 'shield' %}<path d="m12 3 8 3v6c0 5-8 9-8 9S4 17 4 12V6l8-3Z"/><path d="m8 12 3 3 5-6"/>
+                        {% when 'gift' %}<path d="M3 8h18v4H3zM5 12v9h14v-9M12 8v13"/><path d="M12 8H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"/>
+                        {% when 'sparkle' %}<path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/>
+                        {% when 'check' %}<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>
+                      {% endcase %}
+                    </svg>
+                  {% endif %}
+                  <p class="zab__copy">
+                    <span class="zab__desktop-copy">
+                      {{- desktop_text -}}
+                      {% if block.settings.link != blank and desktop_link_label != blank %}
+                        <a class="zab__cta" href="{{ block.settings.link | escape }}"{% if block.settings.new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ desktop_link_label | escape }}{% if block.settings.new_tab %}<span class="zab__sr-only"> ({{ s.new_tab_label | default: 'opens in a new tab' | escape }})</span>{% endif %}</a>
+                      {% endif %}
+                    </span>
+                    <span class="zab__mobile-copy">
+                      {{- mobile_text -}}
+                      {% if block.settings.link != blank and mobile_link_label != blank %}
+                        <a class="zab__cta" href="{{ block.settings.link | escape }}"{% if block.settings.new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ mobile_link_label | escape }}{% if block.settings.new_tab %}<span class="zab__sr-only"> ({{ s.new_tab_label | default: 'opens in a new tab' | escape }})</span>{% endif %}</a>
+                      {% endif %}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        <div class="zab__rail zab__rail--end">
+          {% if message_count > 1 %}
+            <button type="button" class="zab__button" data-action="next"
+              aria-label="{{ s.next_label | default: 'Next announcement' | escape }}"
+              aria-controls="ZootifyMessages-{{ section.id }}">
+              <svg class="zab__direction-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m10 6 6 6-6 6"/></svg>
+            </button>
+          {% endif %}
+          {% if s.show_close %}
+            <button type="button" class="zab__button" data-action="close"
+              aria-label="{{ s.close_label | default: 'Dismiss announcement bar' | escape }}"
+              {% if request.design_mode %}disabled title="Dismissal is disabled in the theme editor. Test it in the storefront preview."{% endif %}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg>
+            </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <span class="zab__sr-only" data-status role="status" aria-live="polite" aria-atomic="true"></span>
+  </zootify-announcement-v1>
+
+  {% if s.show_close and request.design_mode == false %}
+    <script>
+      // Apply saved dismissal before the following header is parsed.
+      // This only hides this section; it never edits the page or header offsets.
+      (() => {
+        const bar = document.getElementById({{ 'ZootifyAnnouncement-' | append: section.id | json }});
+        if (!bar) return;
+        try {
+          const mode = bar.dataset.dismissMode;
+          const key = bar.dataset.storageKey;
+          let dismissed = mode === 'session' && sessionStorage.getItem(key) === 'dismissed';
+          if (mode === 'days') {
+            const until = Number(localStorage.getItem(key));
+            dismissed = Number.isFinite(until) && until > Date.now();
+            if (until && !dismissed) localStorage.removeItem(key);
+          }
+          if (dismissed) {
+            bar.hidden = true;
+            const wrapper = bar.closest('.zootify-announcement-section');
+            if (wrapper) wrapper.hidden = true;
+          }
+        } catch (_) { /* Storage can be blocked; the bar still works. */ }
+      })();
+    </script>
+  {% endif %}
+
+  <noscript>
+    <style>
+      #ZootifyAnnouncement-{{ section.id }} .zab__layout { grid-template-columns: minmax(0, 1fr); }
+      #ZootifyAnnouncement-{{ section.id }} .zab__viewport { display: flex; flex-direction: column; }
+      #ZootifyAnnouncement-{{ section.id }} .zab__slide { visibility: visible; opacity: 1; pointer-events: auto; }
+      #ZootifyAnnouncement-{{ section.id }} .zab__rail { display: none; }
+    </style>
+  </noscript>
+{%- elsif request.design_mode -%}
+  <div class="zab-editor-note">
+    {% if s.enable_bar == false %}
+      ZOOTIFY announcement bar is turned off. Enable it in this section's settings.
+    {% elsif message_count == 0 %}
+      Add a Message block and enter announcement text to display this bar.
+    {% else %}
+      This bar is hidden on this page by its Pages setting.
+    {% endif %}
+    This note appears only in the theme editor.
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .zab, .zab *, .zab *::before, .zab *::after { box-sizing: border-box; }
+  .zab {
+    display: block;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--zab-background);
+    color: var(--zab-text);
+    border: 0;
+    border-bottom: var(--zab-border-width) solid var(--zab-border);
+    font-family: var(--zab-family);
+    font-size: var(--zab-size);
+    font-weight: var(--zab-weight);
+    line-height: var(--zab-leading);
+    letter-spacing: var(--zab-tracking);
+    text-transform: var(--zab-case);
+  }
+  .zab[hidden] { display: none !important; }
+  .zab .zab__inner {
+    display: block;
+    width: 100%;
+    max-width: var(--zab-content-width);
+    margin-inline: auto;
+    padding-inline: var(--zab-pad-side);
+  }
+  .zab .zab__layout {
+    display: grid;
+    --zab-rail: calc(var(--zab-control-size) * var(--zab-rail-slots) + var(--zab-control-gap) * var(--zab-rail-gaps));
+    grid-template-columns: var(--zab-rail) minmax(0, 1fr) var(--zab-rail);
+    align-items: center;
+    min-width: 0;
+    min-height: var(--zab-min-height);
+  }
+  .zab .zab__viewport {
+    display: grid;
+    min-width: 0;
+    width: 100%;
+  }
+  .zab .zab__slide {
+    grid-area: 1 / 1;
+    display: flex;
+    min-width: 0;
+    width: 100%;
+    align-items: center;
+    padding-block: var(--zab-pad-top) var(--zab-pad-bottom);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* Inactive messages still size the grid, so rotation does not move the header. */
+  .zab .zab__slide.is-active { visibility: visible; opacity: 1; pointer-events: auto; }
+  .zab[data-ready][data-transition='fade'] .zab__slide.is-active { animation: zab-message-in 180ms ease-out; }
+  .zab .zab__message {
+    display: flex;
+    align-items: center;
+    justify-content: var(--zab-justify);
+    gap: var(--zab-icon-gap);
+    width: 100%;
+    min-width: 0;
+  }
+  .zab .zab__copy {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    text-align: var(--zab-align);
+    text-transform: inherit;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+  }
+  .zab .zab__copy strong, .zab .zab__copy b { font-weight: bolder; }
+  .zab .zab__copy em, .zab .zab__copy i { font-style: italic; }
+  .zab .zab__copy a {
+    display: inline;
+    padding: 0;
+    min-height: 0;
+    min-width: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: var(--zab-link-weight);
+    line-height: inherit;
+    letter-spacing: inherit;
+    color: var(--zab-link);
+    text-decoration-line: var(--zab-underline);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    transition: color 160ms ease;
+  }
+  .zab .zab__copy .zab__cta { margin-inline-start: 0.45em; }
+  .zab .zab__copy a:hover { color: var(--zab-link-hover); text-decoration-line: underline; }
+  .zab .zab__copy a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .zab .zab__desktop-copy { display: inline; }
+  .zab .zab__mobile-copy { display: none; }
+  .zab .zab__message-icon {
+    display: block;
+    flex: 0 0 var(--zab-icon-size);
+    width: var(--zab-icon-size);
+    height: var(--zab-icon-size);
+    color: var(--zab-icon);
+  }
+  .zab .zab__rail {
+    display: flex;
+    visibility: hidden;
+    pointer-events: none;
+    align-items: center;
+    gap: var(--zab-control-gap);
+    min-width: 0;
+  }
+  .zab[data-ready] .zab__rail { visibility: visible; pointer-events: auto; }
+  .zab .zab__rail--start { justify-content: flex-end; }
+  .zab .zab__rail--end { justify-content: flex-start; }
+  .zab .zab__button {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-flex;
+    flex: 0 0 var(--zab-control-size);
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: var(--zab-control-size);
+    height: var(--zab-control-size);
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--zab-controls);
+    box-shadow: none;
+    font: inherit;
+    line-height: 1;
+    letter-spacing: 0;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 160ms ease;
+  }
+  .zab .zab__button::before, .zab .zab__button::after { content: none; }
+  .zab .zab__button:hover { background: var(--zab-control-hover); }
+  .zab .zab__button:focus-visible { outline: 2px solid currentColor; outline-offset: -3px; }
+  .zab .zab__button:disabled { opacity: 0.5; cursor: default; }
+  .zab .zab__button svg { display: block; width: 18px; height: 18px; flex: 0 0 18px; }
+  .zab .zab__button .zab__play-icon { display: none; }
+  .zab[data-paused] .zab__button .zab__pause-icon { display: none; }
+  .zab[data-paused] .zab__button .zab__play-icon { display: block; }
+  .zab:dir(rtl) .zab__direction-icon { transform: rotate(180deg); }
+  .zab .zab__sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+  }
+  .zab-editor-note {
+    margin: 0;
+    padding: 14px 20px;
+    border: 1px dashed #777;
+    background: #f4f4f4;
+    color: #222;
+    text-align: center;
+    font: 13px/1.5 sans-serif;
+  }
+  @media screen and (max-width: 749px) {
+    .zab .zab__desktop-copy { display: none; }
+    .zab .zab__mobile-copy { display: inline; }
+  }
+  @keyframes zab-message-in { from { opacity: 0; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .zab[data-ready][data-transition='fade'] .zab__slide.is-active { animation: none; }
+    .zab .zab__button, .zab .zab__copy a { transition: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (() => {
+    const tagName = 'zootify-announcement-v1';
+    if (customElements.get(tagName)) return;
+
+    class ZootifyAnnouncement extends HTMLElement {
+      connectedCallback() {
+        // Defer one frame so children also exist when inserted by the editor.
+        this.startFrame = requestAnimationFrame(() => this.initialize());
+      }
+
+      initialize() {
+        if (!this.isConnected || this.initialized) return;
+        this.initialized = true;
+        this.abortController = new AbortController();
+        this.wrapper = this.closest('.zootify-announcement-section');
+        this.slides = Array.from(this.querySelectorAll('[data-message]'));
+        if (!this.slides.length) return;
+        this.status = this.querySelector('[data-status]');
+        this.toggleButton = this.querySelector('[data-action="toggle"]');
+        this.isEditor = this.dataset.designMode === 'true' || !!window.Shopify?.designMode;
+        this.index = 0;
+        this.hovered = false;
+        this.inView = !('IntersectionObserver' in window);
+        this.timer = null;
+        this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        this.userPaused = this.reducedMotion.matches || this.isEditor;
+        this.interval = Math.max(5, Math.min(15, Number(this.dataset.interval) || 7)) * 1000;
+        this.autoRotate = this.dataset.autoRotate === 'true' && this.slides.length > 1;
+
+        if (this.isEditor) {
+          this.hidden = false;
+          if (this.wrapper) this.wrapper.hidden = false;
+        } else if (this.isStoredDismissal()) {
+          this.hidden = true;
+          if (this.wrapper) this.wrapper.hidden = true;
+        }
+
+        this.slides.forEach((slide, index) => {
+          slide.inert = index !== 0;
+          slide.setAttribute('aria-hidden', String(index !== 0));
+          slide.classList.toggle('is-active', index === 0);
+        });
+        this.setAttribute('data-ready', '');
+        this.updateToggle();
+
+        this.listen(this, 'pointerdown', (event) => {
+          const button = event.target.closest('button[data-action="toggle"]');
+          // Preserve the user's intended toggle before focusin pauses rotation.
+          this.pointerToggleIntent = button ? !this.userPaused : undefined;
+        });
+        this.listen(this, 'click', (event) => {
+          const button = event.target.closest('button[data-action]');
+          if (!button || !this.contains(button) || button.disabled) return;
+          switch (button.dataset.action) {
+            case 'previous': this.show(this.index - 1, true); break;
+            case 'next': this.show(this.index + 1, true); break;
+            case 'toggle':
+              this.userPaused = event.detail > 0 && typeof this.pointerToggleIntent === 'boolean'
+                ? this.pointerToggleIntent : !this.userPaused;
+              this.pointerToggleIntent = undefined;
+              this.updateToggle();
+              this.schedule();
+              break;
+            case 'close': this.dismiss(); break;
+          }
+        });
+        this.listen(this, 'pointerenter', (event) => {
+          if (event.pointerType === 'mouse') { this.hovered = true; this.stop(); }
+        });
+        this.listen(this, 'pointerleave', (event) => {
+          if (event.pointerType === 'mouse') { this.hovered = false; this.schedule(); }
+        });
+        this.listen(this, 'focusin', () => {
+          // Once keyboard focus enters, do not resume without an explicit Play.
+          this.userPaused = true;
+          this.updateToggle();
+          this.stop();
+        });
+        this.listen(document, 'visibilitychange', () => this.schedule());
+        this.listen(this.reducedMotion, 'change', (event) => {
+          if (event.matches) {
+            this.userPaused = true;
+            this.updateToggle();
+          }
+          this.schedule();
+        });
+
+        if ('IntersectionObserver' in window) {
+          this.observer = new IntersectionObserver((entries) => {
+            this.inView = entries.some((entry) => entry.isIntersecting && entry.intersectionRatio > 0);
+            this.schedule();
+          });
+          this.observer.observe(this);
+        }
+
+        if (this.isEditor) {
+          this.listen(document, 'shopify:block:select', (event) => {
+            const id = String(event.detail?.blockId || '');
+            const index = this.slides.findIndex((slide) => slide.dataset.blockId === id);
+            if (index !== -1) this.show(index, true);
+          });
+          this.listen(document, 'shopify:section:select', (event) => {
+            if (String(event.detail?.sectionId) === this.dataset.sectionId) {
+              this.userPaused = true;
+              this.stop();
+              this.updateToggle();
+            }
+          });
+        }
+        this.schedule();
+      }
+
+      listen(target, type, handler) {
+        target.addEventListener(type, handler, { signal: this.abortController.signal });
+      }
+
+      stop() {
+        if (this.timer) clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      schedule() {
+        this.stop();
+        if (!this.initialized || !this.autoRotate || this.userPaused || this.isEditor ||
+            this.hovered || !this.inView || this.hidden || !this.isConnected ||
+            document.hidden || !this.getClientRects().length) return;
+        this.timer = setTimeout(() => {
+          this.timer = null;
+          this.show(this.index + 1, false);
+        }, this.interval);
+      }
+
+      show(next, manual) {
+        if (!this.slides?.length) return;
+        const index = (next + this.slides.length) % this.slides.length;
+        if (manual) this.userPaused = true;
+        // A focused message must never be automatically removed from focus.
+        if (!manual && this.slides[this.index].contains(document.activeElement)) {
+          this.userPaused = true;
+          this.updateToggle();
+          this.stop();
+          return;
+        }
+        this.slides.forEach((slide, i) => {
+          const active = i === index;
+          slide.inert = !active;
+          slide.setAttribute('aria-hidden', String(!active));
+          slide.classList.toggle('is-active', active);
+        });
+        this.index = index;
+        this.updateToggle();
+        if (manual && this.status && !this.isEditor) {
+          const label = (this.dataset.positionLabel || 'Announcement {current} of {total}')
+            .replace('{current}', String(index + 1)).replace('{total}', String(this.slides.length));
+          // innerText includes only the currently visible desktop/mobile copy.
+          const text = this.slides[index].querySelector('.zab__copy')?.innerText.trim() || '';
+          this.status.textContent = `${label}: ${text}`;
+        }
+        this.schedule();
+      }
+
+      updateToggle() {
+        const paused = this.userPaused || this.isEditor;
+        this.toggleAttribute('data-paused', paused);
+        if (this.toggleButton) {
+          this.toggleButton.setAttribute('aria-label', paused ? this.dataset.playLabel : this.dataset.pauseLabel);
+          // Editor rotation stays off so a selected block can be edited reliably.
+          this.toggleButton.disabled = this.isEditor;
+        }
+      }
+
+      isStoredDismissal() {
+        if (!this.querySelector('[data-action="close"]')) return false;
+        try {
+          const key = this.dataset.storageKey;
+          if (this.dataset.dismissMode === 'session') return sessionStorage.getItem(key) === 'dismissed';
+          if (this.dataset.dismissMode === 'days') {
+            const until = Number(localStorage.getItem(key));
+            if (Number.isFinite(until) && until > Date.now()) return true;
+            if (until) localStorage.removeItem(key);
+          }
+        } catch (_) { /* Blocked storage does not prevent using the bar. */ }
+        return false;
+      }
+
+      dismiss() {
+        if (this.isEditor) return;
+        const hadFocus = this.contains(document.activeElement);
+        try {
+          const key = this.dataset.storageKey;
+          if (this.dataset.dismissMode === 'session') sessionStorage.setItem(key, 'dismissed');
+          if (this.dataset.dismissMode === 'days') {
+            const days = Math.max(1, Math.min(30, Number(this.dataset.dismissDays) || 7));
+            localStorage.setItem(key, String(Date.now() + days * 86400000));
+          }
+        } catch (_) { /* Dismiss for this page even when storage is blocked. */ }
+        this.stop();
+        this.hidden = true;
+        if (this.wrapper) this.wrapper.hidden = true;
+
+        // If the close button had keyboard focus, continue into the following
+        // section instead of leaving focus in a hidden element.
+        if (hadFocus && this.wrapper) {
+          let sibling = this.wrapper.nextElementSibling;
+          while (sibling) {
+            const focusable = Array.from(sibling.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]'))
+              .find((node) => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden');
+            if (focusable) { focusable.focus({ preventScroll: true }); break; }
+            sibling = sibling.nextElementSibling;
+          }
+        }
+      }
+
+      disconnectedCallback() {
+        if (this.startFrame) cancelAnimationFrame(this.startFrame);
+        this.stop();
+        this.abortController?.abort();
+        this.observer?.disconnect();
+        this.observer = null;
+        this.initialized = false;
+      }
+    }
+    customElements.define(tagName, ZootifyAnnouncement);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "ZOOTIFY announcement bar",
+  "tag": "div",
+  "class": "zootify-announcement-section",
+  "limit": 1,
+  "enabled_on": {
+    "groups": [
+      "header"
+    ]
+  },
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Placement and visibility"
+    },
+    {
+      "type": "paragraph",
+      "content": "Add this section to the Header group, ABOVE the Header section. It scrolls away normally on all devices; it never makes your logo or menu sticky."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_bar",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "page_scope",
+      "label": "Pages",
+      "options": [
+        {
+          "value": "all",
+          "label": "All storefront pages"
+        },
+        {
+          "value": "home",
+          "label": "Homepage only"
+        },
+        {
+          "value": "except_home",
+          "label": "All except homepage"
+        }
+      ],
+      "default": "all",
+      "info": "Applies to pages using this theme header, not checkout or external sales channels."
+    },
+    {
+      "type": "select",
+      "id": "devices",
+      "label": "Devices",
+      "options": [
+        {
+          "value": "both",
+          "label": "Desktop and mobile"
+        },
+        {
+          "value": "desktop",
+          "label": "Desktop only"
+        },
+        {
+          "value": "mobile",
+          "label": "Mobile only"
+        }
+      ],
+      "default": "both",
+      "info": "Mobile is below 750px. A hidden device preview will not show this section."
+    },
+    {
+      "type": "header",
+      "content": "Multiple messages"
+    },
+    {
+      "type": "paragraph",
+      "content": "Add Message blocks below this section. One message stays static. Two or more enable previous/next controls. Blank messages are skipped."
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Rotate messages automatically",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "rotation_interval",
+      "label": "Seconds per message",
+      "min": 5,
+      "max": 15,
+      "step": 1,
+      "default": 7,
+      "visible_if": "{{ section.settings.auto_rotate }}",
+      "unit": "s"
+    },
+    {
+      "type": "select",
+      "id": "transition",
+      "label": "Message transition",
+      "options": [
+        {
+          "value": "fade",
+          "label": "Subtle fade"
+        },
+        {
+          "value": "none",
+          "label": "No animation"
+        }
+      ],
+      "default": "fade"
+    },
+    {
+      "type": "paragraph",
+      "content": "Automatic rotation has a pause/play button. It pauses on hover, stops after focus or manual navigation, and does not auto-start for reduced-motion users. Rotation stays off in the theme editor."
+    },
+    {
+      "type": "header",
+      "content": "Font and links"
+    },
+    {
+      "type": "select",
+      "id": "font_source",
+      "label": "Font family",
+      "options": [
+        {
+          "value": "body",
+          "label": "Use theme body font"
+        },
+        {
+          "value": "heading",
+          "label": "Use theme heading font"
+        },
+        {
+          "value": "custom",
+          "label": "Choose a font"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "font_picker",
+      "id": "custom_font",
+      "label": "Custom font",
+      "default": "montserrat_n4",
+      "visible_if": "{{ section.settings.font_source == 'custom' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "uppercase",
+      "label": "Uppercase text",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "underline_links",
+      "label": "Underline links",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "link_weight",
+      "label": "Link font weight",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light (300)"
+        },
+        {
+          "value": "400",
+          "label": "Regular (400)"
+        },
+        {
+          "value": "500",
+          "label": "Medium (500)"
+        },
+        {
+          "value": "600",
+          "label": "Semibold (600)"
+        },
+        {
+          "value": "700",
+          "label": "Bold (700)"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "paragraph",
+      "content": "Choose supported font weights for the best result. Some fonts do not provide every weight; browsers may approximate missing weights."
+    },
+    {
+      "type": "header",
+      "content": "Desktop typography and spacing"
+    },
+    {
+      "type": "range",
+      "id": "size_desktop",
+      "label": "Desktop font size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "weight_desktop",
+      "label": "Desktop font weight",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light (300)"
+        },
+        {
+          "value": "400",
+          "label": "Regular (400)"
+        },
+        {
+          "value": "500",
+          "label": "Medium (500)"
+        },
+        {
+          "value": "600",
+          "label": "Semibold (600)"
+        },
+        {
+          "value": "700",
+          "label": "Bold (700)"
+        }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "line_height_desktop",
+      "label": "Desktop line height",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 15,
+      "info": "15 means 1.5 times the font size. Height expands to fit wrapped text."
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing_desktop",
+      "label": "Desktop letter spacing",
+      "min": -0.5,
+      "max": 2,
+      "step": 0.1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "align_desktop",
+      "label": "Desktop text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "min_height_desktop",
+      "label": "Desktop minimum height",
+      "min": 28,
+      "max": 80,
+      "step": 2,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Desktop top padding",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Desktop bottom padding",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_side_desktop",
+      "label": "Desktop side padding",
+      "min": 8,
+      "max": 64,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Mobile typography and spacing"
+    },
+    {
+      "type": "range",
+      "id": "size_mobile",
+      "label": "Mobile font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "weight_mobile",
+      "label": "Mobile font weight",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light (300)"
+        },
+        {
+          "value": "400",
+          "label": "Regular (400)"
+        },
+        {
+          "value": "500",
+          "label": "Medium (500)"
+        },
+        {
+          "value": "600",
+          "label": "Semibold (600)"
+        },
+        {
+          "value": "700",
+          "label": "Bold (700)"
+        }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "line_height_mobile",
+      "label": "Mobile line height",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 15,
+      "info": "15 means 1.5 times the font size. Long text wraps instead of being cut off."
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing_mobile",
+      "label": "Mobile letter spacing",
+      "min": -0.5,
+      "max": 2,
+      "step": 0.1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "align_mobile",
+      "label": "Mobile text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "min_height_mobile",
+      "label": "Mobile minimum height",
+      "min": 28,
+      "max": 80,
+      "step": 2,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Mobile top padding",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Mobile bottom padding",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_side_mobile",
+      "label": "Mobile side padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "paragraph",
+      "content": "Navigation and close buttons use 44px touch areas on mobile. When enabled, they can make the bar taller than its minimum height. Use short mobile copy to keep the bar compact."
+    },
+    {
+      "type": "header",
+      "content": "Width and colours"
+    },
+    {
+      "type": "select",
+      "id": "content_width",
+      "label": "Content width",
+      "options": [
+        {
+          "value": "contained",
+          "label": "Limited width, centred"
+        },
+        {
+          "value": "full",
+          "label": "Full width"
+        }
+      ],
+      "default": "contained"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum content width",
+      "min": 800,
+      "max": 2400,
+      "step": 40,
+      "default": 1440,
+      "visible_if": "{{ section.settings.content_width == 'contained' }}",
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Optional background gradient",
+      "info": "Leave empty to use the solid background colour. A gradient overrides the solid colour."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Links",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Link hover",
+      "default": "#7DC762"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Message icons",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "control_color",
+      "label": "Navigation and close icons",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Bottom border thickness",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Bottom border",
+      "default": "#222222"
+    },
+    {
+      "type": "header",
+      "content": "Optional message icons"
+    },
+    {
+      "type": "paragraph",
+      "content": "Choose an icon inside each Message block. Icons are decorative; the message must explain the offer in text."
+    },
+    {
+      "type": "range",
+      "id": "icon_size_desktop",
+      "label": "Desktop icon size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_size_mobile",
+      "label": "Mobile icon size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "icon_gap",
+      "label": "Gap between icon and text",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Optional close button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close",
+      "label": "Show close button",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "dismiss_memory",
+      "label": "Remember dismissal",
+      "options": [
+        {
+          "value": "page",
+          "label": "Until the next page load"
+        },
+        {
+          "value": "session",
+          "label": "For this browser-tab session"
+        },
+        {
+          "value": "days",
+          "label": "For a set number of days"
+        }
+      ],
+      "default": "session",
+      "visible_if": "{{ section.settings.show_close }}"
+    },
+    {
+      "type": "range",
+      "id": "dismiss_days",
+      "label": "Days to keep it dismissed",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 7,
+      "visible_if": "{{ section.settings.show_close and section.settings.dismiss_memory == 'days' }}"
+    },
+    {
+      "type": "text",
+      "id": "dismiss_revision",
+      "label": "Dismissal reset version",
+      "info": "Change this value to show the bar again to visitors who dismissed it. Changing message text or links also resets dismissal.",
+      "visible_if": "{{ section.settings.show_close }}",
+      "default": "1"
+    },
+    {
+      "type": "paragraph",
+      "content": "Dismissal is disabled in the theme editor. Test it in the storefront preview. Saved dismissal applies to that browser, not across a customer account. Blocked storage falls back to the current page."
+    },
+    {
+      "type": "header",
+      "content": "Accessibility labels"
+    },
+    {
+      "type": "text",
+      "id": "region_label",
+      "label": "Announcement region label",
+      "default": "Store announcements"
+    },
+    {
+      "type": "text",
+      "id": "previous_label",
+      "label": "Previous button label",
+      "default": "Previous announcement"
+    },
+    {
+      "type": "text",
+      "id": "next_label",
+      "label": "Next button label",
+      "default": "Next announcement"
+    },
+    {
+      "type": "text",
+      "id": "pause_label",
+      "label": "Pause button label",
+      "default": "Pause announcements"
+    },
+    {
+      "type": "text",
+      "id": "play_label",
+      "label": "Play button label",
+      "default": "Play announcements"
+    },
+    {
+      "type": "text",
+      "id": "close_label",
+      "label": "Close button label",
+      "default": "Dismiss announcement bar"
+    },
+    {
+      "type": "text",
+      "id": "position_label",
+      "label": "Message position label",
+      "info": "Keep {current} and {total}; the bar replaces them with message numbers.",
+      "default": "Announcement {current} of {total}"
+    },
+    {
+      "type": "text",
+      "id": "new_tab_label",
+      "label": "New-tab notice",
+      "default": "opens in a new tab"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Announcement text",
+          "default": "Free standard shipping on all orders. No minimum."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "mobile_text",
+          "label": "Mobile text (optional)",
+          "info": "Leave empty to reuse the main text. Shorter copy helps keep the mobile bar on one line."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Optional link"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link text (optional)",
+          "info": "Enter both a link and link text to show a call to action. You can also add a link directly in the announcement text."
+        },
+        {
+          "type": "text",
+          "id": "mobile_link_label",
+          "label": "Mobile link text (optional)",
+          "info": "Leave empty to use the main link text."
+        },
+        {
+          "type": "checkbox",
+          "id": "new_tab",
+          "label": "Open the optional link in a new tab",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Optional icon",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "truck",
+              "label": "Delivery truck"
+            },
+            {
+              "value": "package",
+              "label": "Package"
+            },
+            {
+              "value": "shield",
+              "label": "Shield"
+            },
+            {
+              "value": "gift",
+              "label": "Gift"
+            },
+            {
+              "value": "sparkle",
+              "label": "Sparkle"
+            },
+            {
+              "value": "check",
+              "label": "Check mark"
+            }
+          ],
+          "default": "none"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ZOOTIFY announcement bar",
+      "blocks": [
+        {
+          "type": "message",
+          "settings": {
+            "text": "Free standard shipping on all orders. No minimum.",
+            "mobile_text": "Free US shipping. No minimum.",
+            "icon": "none"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

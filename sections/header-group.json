@@ -11,6 +11,84 @@
   "type": "header",
   "name": "Header",
   "sections": {
+    "zootify_announcement_bar_q8K7U9": {
+      "type": "zootify-announcement-bar",
+      "blocks": {
+        "message_PB4cj3": {
+          "type": "message",
+          "settings": {
+            "text": "Free standard shipping on all orders.",
+            "mobile_text": "Free standard shipping on all orders.",
+            "link": "shopify://policies/shipping-policy",
+            "link_label": "",
+            "mobile_link_label": "",
+            "new_tab": false,
+            "icon": "truck"
+          }
+        }
+      },
+      "block_order": [
+        "message_PB4cj3"
+      ],
+      "name": "ZOOTIFY announcement bar",
+      "settings": {
+        "enable_bar": true,
+        "page_scope": "all",
+        "devices": "both",
+        "auto_rotate": false,
+        "rotation_interval": 7,
+        "transition": "fade",
+        "font_source": "body",
+        "custom_font": "montserrat_n4",
+        "uppercase": false,
+        "underline_links": true,
+        "link_weight": "500",
+        "size_desktop": 14,
+        "weight_desktop": "400",
+        "line_height_desktop": 15,
+        "letter_spacing_desktop": 0,
+        "align_desktop": "center",
+        "min_height_desktop": 36,
+        "padding_top_desktop": 8,
+        "padding_bottom_desktop": 8,
+        "padding_side_desktop": 24,
+        "size_mobile": 13,
+        "weight_mobile": "400",
+        "line_height_mobile": 15,
+        "letter_spacing_mobile": 0,
+        "align_mobile": "center",
+        "min_height_mobile": 40,
+        "padding_top_mobile": 8,
+        "padding_bottom_mobile": 8,
+        "padding_side_mobile": 12,
+        "content_width": "contained",
+        "max_width": 1440,
+        "background_color": "#000000",
+        "background_gradient": "",
+        "text_color": "#FFFFFF",
+        "link_color": "#FFFFFF",
+        "link_hover_color": "#7DC762",
+        "icon_color": "#FFFFFF",
+        "control_color": "#FFFFFF",
+        "border_width": 0,
+        "border_color": "#222222",
+        "icon_size_desktop": 16,
+        "icon_size_mobile": 16,
+        "icon_gap": 8,
+        "show_close": false,
+        "dismiss_memory": "session",
+        "dismiss_days": 7,
+        "dismiss_revision": "1",
+        "region_label": "Store announcements",
+        "previous_label": "Previous announcement",
+        "next_label": "Next announcement",
+        "pause_label": "Pause announcements",
+        "play_label": "Play announcements",
+        "close_label": "Dismiss announcement bar",
+        "position_label": "Announcement {current} of {total}",
+        "new_tab_label": "opens in a new tab"
+      }
+    },
     "header_section": {
       "type": "header",
       "blocks": {
@@ -83,6 +161,7 @@
     }
   },
   "order": [
+    "zootify_announcement_bar_q8K7U9",
     "header_section"
   ]
 }

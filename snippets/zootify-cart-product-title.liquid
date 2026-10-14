@@ -1,0 +1,30 @@
+{% doc %}
+  A display-only title for the cart page. No product data is rewritten.
+  @param {object} item - The Shopify cart line item.
+{% enddoc %}
+{%- liquid
+  assign original_title = item.product.title
+  assign title_parts = original_title | split: ' for iPhone '
+  assign display_title = original_title
+  assign model = ''
+  assign color = ''
+  if title_parts.size == 2 and item.product.has_only_default_variant and item.item_components.size == 0
+    assign display_title = title_parts.first
+    assign model = 'iPhone ' | append: title_parts.last
+    assign normalized_title = title_parts.first | replace: ' – ', ' - '
+    assign family_parts = normalized_title | split: ' - '
+    assign family_name = family_parts.first | downcase
+    if family_name == 'frostand' and normalized_title contains 'MagSafe'
+      assign candidate = family_parts.last | split: ' ' | first
+      assign known_colors = 'Orange,Blue,Grey,Gray,Purple,Black,Burgundy,Silver' | split: ','
+      if known_colors contains candidate
+        assign color = candidate
+        assign display_title = 'Frostand MagSafe Case'
+      endif
+    endif
+  endif
+-%}
+<span class="zc-product-title">{{- display_title | escape -}}</span>
+{%- if model != blank -%}
+  <span class="zc-product-spec">{{ model | escape }}{% if color != blank %}<span aria-hidden="true"> · </span>{{ color | escape }}{% endif %}</span>
+{%- endif -%}
