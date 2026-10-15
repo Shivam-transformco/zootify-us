@@ -6,6 +6,7 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
+
     <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -24,8 +25,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }, { once: true, passive: false, capture: true });
       }
     </script>
+
+    
     <!-- Geo redirect script: redirect Indian visitors to zootify.com -->
-    <style id="geo-redirect-hide">
+    {% comment %} <style id="geo-redirect-hide">
       html { visibility: hidden; }
     </style>
     <script>
@@ -104,7 +107,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               .catch(function(e) { console.warn('Geo redirect error:', e); showPage(); });
           });
       })();
-    </script>
+    </script> {% endcomment %}
+
 
     <script>
       function onCheckoutNow(e) {
