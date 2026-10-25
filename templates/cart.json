@@ -102,7 +102,7 @@
         "zc_express_text": "Express shipping is available for [price] extra.",
         "zc_show_policies": true,
         "zc_policy_label": "Delivery & returns",
-        "zc_returns_text": "Request an eligible return within 10 days of delivery. Items must be unused, undamaged and in their original packaging. Opened or used cases are not eligible. An $10 fee is deducted when a ZOOTIFY return label is used. See the full policy for exclusions and defective or incorrect items.",
+        "zc_returns_text": "Request an eligible return within 10 days of delivery. Items must be unused, undamaged and in their original packaging. Opened or used cases are not eligible. Return shipping charges may vary and will be communicated during the return approval process. Applicable charges will be deducted from your refund when a ZOOTIFY-provided return label is used. See our full Returns & Refunds Policy for exclusions and exceptions.",
         "zc_mobile_sticky": true,
         "zc_desktop_sticky": true,
         "zc_column_gap": 40,

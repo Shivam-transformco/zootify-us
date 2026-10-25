@@ -37,6 +37,47 @@
     }
   }
 
+  /* A hidden, zero-review badge must not leave an empty row between
+     the product title and price. Products with reviews keep their badge. */
+  .product-details > .group-block > .group-block-content > .shopify-app-block:has(
+    > .jdgm-preview-badge .jdgm-prev-badge[data-average-rating='0.00'][data-number-of-reviews='0']
+  ) {
+    display: none;
+  }
+
+  /* ZOOTIFY: match the existing mobile Add to Cart breakpoint.
+     The Details gap setting supplies the space between visible blocks. */
+  @media screen and (max-width: 768px) {
+    .product-details > .group-block > .group-block-content > div > :is(
+      .dsm-selector-wrap,
+      .new-custom-color-box,
+      .pincode-wrapper,
+      .offer-wrapper
+    ) {
+      margin-block: 0;
+    }
+
+    .product-details :is(
+      .dsm-label,
+      .othercolorproducttitle,
+      .pincode_header,
+      .offer-heading
+    ) {
+      margin-block: 0 8px;
+    }
+
+    /* An upsell block with no rendered content must not add another gap. */
+    .product-details > .group-block > .group-block-content > .zootify-custom-liquid--empty {
+      display: none;
+    }
+
+    /* The button itself already sits in a fixed bar. Remove only its empty
+       in-flow shell; real errors and customer fields still reserve space. */
+    .product-details > .group-block > .group-block-content > .buy-buttons-block:not(.quick-add-modal *, product-card *):has([data-testid='standalone-add-to-cart']):not(:has(.customlineitem, gift-card-recipient-form, .product-form-text__error:not(.hidden))) {
+      position: absolute;
+    }
+  }
+
   .view-product-title {
     display: none;
   }

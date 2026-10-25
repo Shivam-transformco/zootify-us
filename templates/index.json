@@ -12,6 +12,35 @@
     "hero_banner_KdECd7": {
       "type": "hero-banner",
       "blocks": {
+        "slide_jafzRT": {
+          "type": "slide",
+          "settings": {
+            "heading": "NEW! FORGECRAFT CASE",
+            "subtext": "Limited Edition for iPhone 18 Series.",
+            "content_alignment": "left",
+            "heading_color": "#fff0fd",
+            "subtext_color": "#f9f9f9",
+            "heading_size_desktop": 35,
+            "heading_size_mobile": 26,
+            "subtext_size_desktop": 16,
+            "subtext_size_mobile": 16,
+            "heading_font_weight": 700,
+            "subtext_font_weight": 400,
+            "heading_subtext_spacing": 2,
+            "desktop_layout": "full",
+            "desktop_left_type": "image",
+            "desktop_right_type": "image",
+            "desktop_full_type": "image",
+            "desktop_full_image": "shopify://shop_images/Gemini_Generated_Image_2arrjv2arrjv2arr_copy.png",
+            "mobile_layout": "full",
+            "mobile_top_type": "image",
+            "mobile_bottom_type": "image",
+            "mobile_full_type": "image",
+            "mobile_full_image": "shopify://shop_images/bannerforgemobile.png",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://products/forgecraft-burgundy-for-iphone-18-pro"
+          }
+        },
         "slide_VpfVbN": {
           "type": "slide",
           "disabled": true,
@@ -72,7 +101,7 @@
             "button_link": "shopify://collections/iphone-18-pro"
           }
         },
-        "slide_jafzRT": {
+        "slide_3QABPz": {
           "type": "slide",
           "settings": {
             "heading": "THE FROSTAND CASE",
@@ -367,9 +396,10 @@
         }
       },
       "block_order": [
+        "slide_jafzRT",
         "slide_VpfVbN",
         "slide_8J3biY",
-        "slide_jafzRT",
+        "slide_3QABPz",
         "slide_RUGfKG",
         "slide_nML68w",
         "slide_MmmeK8",
@@ -393,7 +423,7 @@
         "category_DX9Bra": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/fros_blue_car_3rd_thumb_11a890fd-112e-4b24-a4c2-eb234c483d31.png",
+            "image": "shopify://shop_images/FORGECRAFTCASE_THUMBNAIL.png",
             "title": "iPhone 18 Pro Max",
             "link": "shopify://collections/iphone-18-pro-max"
           }
@@ -696,39 +726,6 @@
     "hero_banner_qCNr7E": {
       "type": "hero-banner",
       "blocks": {
-        "slide_DW4AAE": {
-          "type": "slide",
-          "settings": {
-            "heading": "CASES MADE FOR EVERYDAY",
-            "subtext": "For people on the move.",
-            "content_alignment": "left",
-            "heading_color": "#ffffff",
-            "subtext_color": "#ffffff",
-            "heading_size_desktop": 30,
-            "heading_size_mobile": 20,
-            "subtext_size_desktop": 16,
-            "subtext_size_mobile": 14,
-            "heading_font_weight": 700,
-            "subtext_font_weight": 400,
-            "heading_subtext_spacing": 2,
-            "desktop_layout": "split",
-            "desktop_left_type": "image",
-            "desktop_left_image": "shopify://shop_images/Gemini_Generated_Image_xfg9fvxfg9fvxfg9_copy.png",
-            "desktop_right_type": "image",
-            "desktop_right_image": "shopify://shop_images/Gemini_Generated_Image_718xem718xem718x_copy_32f0d405-f860-496b-a083-46cd1f4047a8.png",
-            "desktop_full_type": "image",
-            "desktop_full_image": "shopify://shop_images/Group_4097.png",
-            "mobile_layout": "full",
-            "mobile_top_type": "image",
-            "mobile_top_image": "shopify://shop_images/Gemini_Generated_Image_409ynx409ynx409y.png",
-            "mobile_bottom_type": "image",
-            "mobile_bottom_image": "shopify://shop_images/Gemini_Generated_Image_7vsnhw7vsnhw7vsn_1_copy_d11ee27c-2799-40df-bae3-942b8d329250.png",
-            "mobile_full_type": "image",
-            "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_718xem718xem718x_copy_9dfd206e-a1c1-4548-bba2-3c435a04dd0a.png",
-            "button_label": "SHOP NOW",
-            "button_link": "shopify://products/ridge-orange-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro"
-          }
-        },
         "slide_YeQUye": {
           "type": "slide",
           "settings": {
@@ -761,11 +758,78 @@
             "button_label": "SHOP NOW",
             "button_link": "shopify://collections/frostand-magsafe-kickstand-cases"
           }
+        },
+        "slide_6zyJRq": {
+          "type": "slide",
+          "settings": {
+            "heading": "THE FORGECRAFT COLLECTION",
+            "subtext": "PRO. NOT PREDICTABLE.",
+            "content_alignment": "left",
+            "heading_color": "#ffffff",
+            "subtext_color": "#ffffff",
+            "heading_size_desktop": 30,
+            "heading_size_mobile": 20,
+            "subtext_size_desktop": 16,
+            "subtext_size_mobile": 14,
+            "heading_font_weight": 700,
+            "subtext_font_weight": 400,
+            "heading_subtext_spacing": 2,
+            "desktop_layout": "split",
+            "desktop_left_type": "image",
+            "desktop_left_image": "shopify://shop_images/Forgecraft_Blue_05_Leather_Cloth_Final.png",
+            "desktop_right_type": "image",
+            "desktop_right_image": "shopify://shop_images/Gemini_Generated_Image_6f10ts6f10ts6f10_copy_7150c10d-5010-405d-9a05-86d8595c0c76.png",
+            "desktop_full_type": "image",
+            "desktop_full_image": "shopify://shop_images/Group_4097.png",
+            "mobile_layout": "full",
+            "mobile_top_type": "image",
+            "mobile_top_image": "shopify://shop_images/Gemini_Generated_Image_409ynx409ynx409y.png",
+            "mobile_bottom_type": "image",
+            "mobile_bottom_image": "shopify://shop_images/Gemini_Generated_Image_7vsnhw7vsnhw7vsn_1_copy_d11ee27c-2799-40df-bae3-942b8d329250.png",
+            "mobile_full_type": "image",
+            "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_6f10ts6f10ts6f10_copy_7150c10d-5010-405d-9a05-86d8595c0c76.png",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://products/forgecraft-light-blue-for-iphone-18-pro"
+          }
+        },
+        "slide_DW4AAE": {
+          "type": "slide",
+          "settings": {
+            "heading": "CASES MADE FOR EVERYDAY",
+            "subtext": "For people on the move.",
+            "content_alignment": "left",
+            "heading_color": "#ffffff",
+            "subtext_color": "#ffffff",
+            "heading_size_desktop": 30,
+            "heading_size_mobile": 20,
+            "subtext_size_desktop": 16,
+            "subtext_size_mobile": 14,
+            "heading_font_weight": 700,
+            "subtext_font_weight": 400,
+            "heading_subtext_spacing": 2,
+            "desktop_layout": "split",
+            "desktop_left_type": "image",
+            "desktop_left_image": "shopify://shop_images/Gemini_Generated_Image_xfg9fvxfg9fvxfg9_copy.png",
+            "desktop_right_type": "image",
+            "desktop_right_image": "shopify://shop_images/Gemini_Generated_Image_718xem718xem718x_copy_32f0d405-f860-496b-a083-46cd1f4047a8.png",
+            "desktop_full_type": "image",
+            "desktop_full_image": "shopify://shop_images/Group_4097.png",
+            "mobile_layout": "full",
+            "mobile_top_type": "image",
+            "mobile_top_image": "shopify://shop_images/Gemini_Generated_Image_409ynx409ynx409y.png",
+            "mobile_bottom_type": "image",
+            "mobile_bottom_image": "shopify://shop_images/Gemini_Generated_Image_7vsnhw7vsnhw7vsn_1_copy_d11ee27c-2799-40df-bae3-942b8d329250.png",
+            "mobile_full_type": "image",
+            "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_718xem718xem718x_copy_9dfd206e-a1c1-4548-bba2-3c435a04dd0a.png",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://products/ridge-orange-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro"
+          }
         }
       },
       "block_order": [
-        "slide_DW4AAE",
-        "slide_YeQUye"
+        "slide_YeQUye",
+        "slide_6zyJRq",
+        "slide_DW4AAE"
       ],
       "name": "Hero – Dynamic",
       "settings": {

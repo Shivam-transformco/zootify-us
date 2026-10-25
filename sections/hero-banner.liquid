@@ -30,7 +30,7 @@
                 {% if block.settings.desktop_left_type == 'video' and block.settings.desktop_left_video != blank %}
                   {{ block.settings.desktop_left_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                 {% elsif block.settings.desktop_left_image != blank %}
-                  <img src="{{ block.settings.desktop_left_image | image_url }}" alt="">
+                  <img src="{{ block.settings.desktop_left_image | image_url }}" alt="{{ block.settings.desktop_left_image.alt | escape }}">
                 {% endif %}
               </div>
 
@@ -38,7 +38,7 @@
                 {% if block.settings.desktop_right_type == 'video' and block.settings.desktop_right_video != blank %}
                   {{ block.settings.desktop_right_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                 {% elsif block.settings.desktop_right_image != blank %}
-                  <img src="{{ block.settings.desktop_right_image | image_url }}" alt="">
+                  <img src="{{ block.settings.desktop_right_image | image_url }}" alt="{{ block.settings.desktop_right_image.alt | escape }}">
                 {% endif %}
               </div>
 
@@ -48,7 +48,7 @@
               {% if block.settings.desktop_full_type == 'video' and block.settings.desktop_full_video != blank %}
                 {{ block.settings.desktop_full_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
               {% elsif block.settings.desktop_full_image != blank %}
-                <img src="{{ block.settings.desktop_full_image | image_url }}" alt="">
+                <img src="{{ block.settings.desktop_full_image | image_url }}" alt="{{ block.settings.desktop_full_image.alt | escape }}">
               {% endif %}
             </div>
           {% endif %}
@@ -63,7 +63,7 @@
                 {% if block.settings.mobile_top_type == 'video' and block.settings.mobile_top_video != blank %}
                   {{ block.settings.mobile_top_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                 {% elsif block.settings.mobile_top_image != blank %}
-                  <img src="{{ block.settings.mobile_top_image | image_url }}" alt="">
+                  <img src="{{ block.settings.mobile_top_image | image_url }}" alt="{{ block.settings.mobile_top_image.alt | escape }}">
                 {% endif %}
               </div>
 
@@ -71,7 +71,7 @@
                 {% if block.settings.mobile_bottom_type == 'video' and block.settings.mobile_bottom_video != blank %}
                   {{ block.settings.mobile_bottom_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                 {% elsif block.settings.mobile_bottom_image != blank %}
-                  <img src="{{ block.settings.mobile_bottom_image | image_url }}" alt="">
+                  <img src="{{ block.settings.mobile_bottom_image | image_url }}" alt="{{ block.settings.mobile_bottom_image.alt | escape }}">
                 {% endif %}
               </div>
 
@@ -81,7 +81,7 @@
               {% if block.settings.mobile_full_type == 'video' and block.settings.mobile_full_video != blank %}
                 {{ block.settings.mobile_full_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
               {% elsif block.settings.mobile_full_image != blank %}
-                <img src="{{ block.settings.mobile_full_image | image_url }}" alt="">
+                <img src="{{ block.settings.mobile_full_image | image_url }}" alt="{{ block.settings.mobile_full_image.alt | escape }}">
               {% endif %}
             </div>
           {% endif %}

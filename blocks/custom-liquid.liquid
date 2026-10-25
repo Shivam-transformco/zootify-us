@@ -1,7 +1,12 @@
 
 
-<div>
+{%- capture custom_liquid_content -%}
   {{ block.settings.custom_liquid }}
+{%- endcapture -%}
+{%- assign custom_liquid_content_check = custom_liquid_content | strip -%}
+
+<div{% if custom_liquid_content_check == blank %} class="zootify-custom-liquid--empty"{% endif %}>
+  {{ custom_liquid_content }}
 </div>
 
 {% schema %}

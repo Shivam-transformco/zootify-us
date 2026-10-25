@@ -12,6 +12,32 @@
   assign plain_text = block_settings.text | strip_newlines | strip_html | strip
   assign text_width = width | default: block_settings.width
 
+  # SEO: when this text block is the main product or collection title, output it as the page's H1.
+  # The heading inherits the block's existing typography, so the look does not change.
+  assign rendered_text = block_settings.text
+  assign seo_h1 = false
+  if request.page_type == 'product' and product != blank
+    assign seo_title = product.title | strip_newlines | strip_html | strip
+    if plain_text == seo_title
+      assign seo_h1 = true
+    endif
+  elsif request.page_type == 'collection' and collection != blank
+    assign seo_title = collection.title | strip_newlines | strip_html | strip
+    if plain_text == seo_title
+      assign seo_h1 = true
+    endif
+  endif
+  if seo_h1
+    for lvl in (2..6)
+      assign open_tag = '<h' | append: lvl | append: '>'
+      if rendered_text contains open_tag
+        assign close_tag = '</h' | append: lvl | append: '>'
+        assign rendered_text = rendered_text | replace: open_tag, '<h1>' | replace: close_tag, '</h1>'
+        break
+      endif
+    endfor
+  endif
+
   if block_settings.font_size contains 'heading-lg' or block_settings.font_size contains 'heading-xl'
     assign type = 'display'
   elsif block_settings.font_size contains 'heading'
@@ -88,7 +114,7 @@
   </div>
 {% elsif plain_text != blank %}
   <{{ element }} {{ attributes | strip_newlines | strip }}>
-    {{ block.settings.text }}
+    {{ rendered_text }}
   </{{ element }}>
 {% endif %}
 
