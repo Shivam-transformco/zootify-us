@@ -1,3 +1,6 @@
+{% doc %}
+  Renders the linked colour options for the current product.
+{% enddoc %}
 {% assign option_text = 'Colour' %}
 
 {% if product.metafields.custom.select_screenguard != blank %}
@@ -52,7 +55,7 @@
     <div class="otherproductscolors">
       {% for color in product.metafields.custom.new_custom_color_variant.value %}
         <a href="{{ color.url }}" title="{{ color.name }}">
-          <img src="{{ color.featured_image | img_url:'master' }}">
+          {{ color.featured_image | image_url: width: 100 | image_tag: width: 50, loading: 'lazy', alt: color.title }}
           <div class="color-name">{{ color.metafields.custom.select_screenguard }}</div>
         </a>
       {% endfor %}
@@ -186,8 +189,9 @@
     {% for data in product.metafields.custom.new_custom_color_variant.value %}
 
       <a href="{{ data.url }}"
-         title="{{ data.metafields.custom.color_name }}"
-         class="color-swatch-link {% if data.handle == product.handle %}active{% endif %}">
+         title="{{ data.metafields.custom.color_name | escape }}"
+         class="color-swatch-link {% if data.handle == product.handle %}active{% endif %}"
+         {% if data.handle == product.handle %}aria-current="page"{% endif %}>
 
        {% assign custom_color = data.metafields.custom.color_code %}
 

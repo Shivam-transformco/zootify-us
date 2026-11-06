@@ -1,6 +1,32 @@
-
-
+{% doc %}
+  Renders the product information blocks and their shared presentation.
+{% enddoc %}
 {%- assign block_settings = block.settings -%}
+{%- assign zootify_product_medium_font = settings.type_body_font | font_modify: 'weight', '500' -%}
+{%- if zootify_product_medium_font -%}
+  {% style %}
+    @font-face {
+      font-family: 'Zootify Product Medium';
+      font-style: {{ zootify_product_medium_font.style }};
+      font-weight: 500;
+      font-display: swap;
+      src: url('{{ zootify_product_medium_font | font_url }}') format('woff2');
+    }
+  {% endstyle %}
+{%- endif -%}
+{%- assign zootify_product_semibold_font = settings.type_body_font | font_modify: 'weight', '600' -%}
+{%- if zootify_product_semibold_font -%}
+  {% style %}
+    @font-face {
+      font-family: 'Zootify Product SemiBold';
+      font-style: {{ zootify_product_semibold_font.style }};
+      font-weight: 600;
+      font-display: swap;
+      src: url('{{ zootify_product_semibold_font | font_url }}') format('woff2');
+    }
+  {% endstyle %}
+{%- endif -%}
+
 <div
   id="ProductInformation-{{ section.id }}"
   class="
@@ -102,6 +128,246 @@
 
     .full-height--desktop .group-block {
       align-self: var(--details-position, 'flex-start');
+    }
+  }
+
+  .product-details {
+    --product-ui-medium-family: 'Zootify Product Medium', var(--font-body--family);
+    --product-ui-heading-family: 'Zootify Product SemiBold', var(--font-body--family);
+    --product-ui-title-size: 22px;
+    --product-ui-price-size: 22px;
+    --product-ui-control-width: 520px;
+  }
+
+  .product-details > .group-block > .group-block-content > [class*='mobile-text-control--'] :is(.text-block, h1, h2, h3, h4, h5, h6) {
+    font-family: var(--font-body--family);
+    font-size: var(--product-ui-title-size) !important;
+    font-weight: 400;
+    line-height: 1.25 !important;
+    letter-spacing: normal;
+  }
+
+  .product-details product-price .price {
+    font-family: var(--product-ui-medium-family);
+    font-size: var(--product-ui-price-size) !important;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .product-details product-price .compare-at-price {
+    font-family: var(--font-body--family);
+    font-size: 13px !important;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #666;
+    opacity: 1;
+  }
+
+  .product-details .group-block-content product-price .tax-note {
+    font-family: var(--font-body--family);
+    font-size: 13px !important;
+    font-weight: 400;
+    line-height: 1.45;
+    color: #616161;
+    margin-block-start: 4px;
+  }
+
+  .product-details > .group-block > .group-block-content > div > :is(
+    .dsm-selector-wrap,
+    .new-custom-color-box,
+    .pincode-wrapper,
+    .offer-wrapper
+  ) {
+    width: 100%;
+    max-width: var(--product-ui-control-width);
+    margin-block: 0;
+    font-family: var(--font-body--family);
+  }
+
+  .product-details :is(.dsm-label, .othercolorproducttitle, .pincode_header, .offer-heading) {
+    margin-block: 0 8px;
+    padding-inline: 0;
+    font-family: var(--product-ui-heading-family);
+    font-size: 14px !important;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: normal;
+    color: var(--color-foreground);
+  }
+
+  .product-details .dsm-selected-box {
+    width: 100%;
+    min-height: 44px;
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    text-align: start;
+    border-radius: 8px;
+  }
+
+  .product-details .new-custom-color {
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .product-details .color-swatch-link {
+    flex: 0 0 auto;
+    align-items: flex-start;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: 72px;
+    text-decoration: none;
+    border-radius: 6px;
+  }
+
+  .product-details .color-swatch {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-width: 1px;
+    border-radius: 50%;
+    transition: border-color 150ms ease;
+  }
+
+  .product-details .color-swatch:hover {
+    transform: none;
+  }
+
+  .product-details .color-swatch-link:hover .color-swatch {
+    border-color: #666;
+  }
+
+  .product-details .color-swatch-link.active .color-swatch::after {
+    inset: -3px;
+    border: 2px solid #01161e;
+    border-radius: 50%;
+  }
+
+  .product-details .color-label {
+    max-width: 100%;
+    margin-top: 6px;
+    font-family: var(--font-body--family);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    text-align: start;
+    overflow-wrap: anywhere;
+  }
+
+  .product-details :is(.color-swatch-link, .dsm-selected-box):focus-visible {
+    outline: 2px solid #01161e;
+    outline-offset: 4px;
+  }
+
+  .product-details :is(.pincode-card, .offer-box) {
+    border-radius: 8px;
+  }
+
+  .product-details .pincode-card {
+    padding: 8px 12px;
+  }
+
+  .product-details .pincode-flex-wrapper {
+    gap: 12px;
+  }
+
+  .product-details .pincode-truck-icon {
+    align-self: center;
+    margin-bottom: 0;
+  }
+
+  .product-details .pincode-wrapper #pincodeVal {
+    height: 40px;
+    padding: 0 82px 4px 0;
+    border-bottom-width: 2px;
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: normal;
+  }
+
+  .product-details .pincode-wrapper #pincodeVal::placeholder {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: normal;
+    color: #616161;
+    opacity: 1;
+  }
+
+  .product-details .pincode-wrapper #checkButton {
+    min-width: 68px;
+    height: 32px;
+    bottom: 6px;
+    padding: 0 12px;
+    background: #52ad4d;
+    color: #fff;
+    font-family: var(--product-ui-medium-family);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: normal;
+  }
+
+  .product-details .pincode-wrapper #checkButton::after {
+    content: '';
+    position: absolute;
+    inset: -6px 0;
+  }
+
+  .product-details .pincode-wrapper #messageContainer {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .product-details .pincode-wrapper #messageContainer:empty {
+    margin-top: 0;
+  }
+
+  .product-details .offer-box {
+    padding: 14px 16px;
+  }
+
+  .product-details .offer-text {
+    font-family: var(--font-body--family);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: normal;
+  }
+
+  .product-details .offer-dots:empty {
+    margin-top: 0;
+  }
+
+  .product-details .accordion .details__header {
+    font-family: var(--product-ui-heading-family);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: normal;
+  }
+
+  .product-details .buy-buttons-block:not(.quick-add-modal *, product-card *) .product-form-buttons .add-to-cart-button[data-testid='standalone-add-to-cart'] {
+    font-family: var(--product-ui-medium-family);
+    font-weight: 500;
+  }
+
+  .product-details > .group-block > .group-block-content > .zootify-custom-liquid--empty {
+    display: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    .product-details {
+      --product-ui-title-size: 18px;
+      --product-ui-price-size: 20px;
+      --product-ui-control-width: 100%;
+    }
+
+    .product-details .pincode-wrapper #pincodeVal {
+      font-size: 16px;
     }
   }
 {% endstylesheet %}

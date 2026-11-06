@@ -18,6 +18,16 @@
 
   <div class="hero-slides" id="hero-track-{{ section.id }}">
     {% for block in section.blocks %}
+      {% liquid
+        # Speed: images load only when they are about to be seen; the version hidden on this screen size
+        # (mobile on desktop, desktop on mobile) is declared 1px wide so only a tiny thumbnail is fetched.
+        # the first slide of the first section is fetched with high priority.
+        if forloop.first and section.index == 1
+          assign hero_img_priority = 'high'
+        else
+          assign hero_img_priority = 'auto'
+        endif
+      %}
 
       <div class="hero-slide{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
 
@@ -30,7 +40,7 @@
                 {% if block.settings.desktop_left_type == 'video' and block.settings.desktop_left_video != blank %}
                   {{ block.settings.desktop_left_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                 {% elsif block.settings.desktop_left_image != blank %}
-                  <img src="{{ block.settings.desktop_left_image | image_url }}" alt="{{ block.settings.desktop_left_image.alt | escape }}">
+                  {{ block.settings.desktop_left_image | image_url: width: 1400 | image_tag: widths: '100, 480, 750, 1000, 1400', sizes: '(max-width: 768px) 1px, 50vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.desktop_left_image.alt }}
                 {% endif %}
               </div>
 
@@ -38,7 +48,7 @@
                 {% if block.settings.desktop_right_type == 'video' and block.settings.desktop_right_video != blank %}
                   {{ block.settings.desktop_right_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                 {% elsif block.settings.desktop_right_image != blank %}
-                  <img src="{{ block.settings.desktop_right_image | image_url }}" alt="{{ block.settings.desktop_right_image.alt | escape }}">
+                  {{ block.settings.desktop_right_image | image_url: width: 1400 | image_tag: widths: '100, 480, 750, 1000, 1400', sizes: '(max-width: 768px) 1px, 50vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.desktop_right_image.alt }}
                 {% endif %}
               </div>
 
@@ -48,7 +58,7 @@
               {% if block.settings.desktop_full_type == 'video' and block.settings.desktop_full_video != blank %}
                 {{ block.settings.desktop_full_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
               {% elsif block.settings.desktop_full_image != blank %}
-                <img src="{{ block.settings.desktop_full_image | image_url }}" alt="{{ block.settings.desktop_full_image.alt | escape }}">
+                {{ block.settings.desktop_full_image | image_url: width: 1920 | image_tag: widths: '100, 750, 1100, 1500, 1920', sizes: '(max-width: 768px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.desktop_full_image.alt }}
               {% endif %}
             </div>
           {% endif %}
@@ -63,7 +73,7 @@
                 {% if block.settings.mobile_top_type == 'video' and block.settings.mobile_top_video != blank %}
                   {{ block.settings.mobile_top_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                 {% elsif block.settings.mobile_top_image != blank %}
-                  <img src="{{ block.settings.mobile_top_image | image_url }}" alt="{{ block.settings.mobile_top_image.alt | escape }}">
+                  {{ block.settings.mobile_top_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.mobile_top_image.alt }}
                 {% endif %}
               </div>
 
@@ -71,7 +81,7 @@
                 {% if block.settings.mobile_bottom_type == 'video' and block.settings.mobile_bottom_video != blank %}
                   {{ block.settings.mobile_bottom_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
                 {% elsif block.settings.mobile_bottom_image != blank %}
-                  <img src="{{ block.settings.mobile_bottom_image | image_url }}" alt="{{ block.settings.mobile_bottom_image.alt | escape }}">
+                  {{ block.settings.mobile_bottom_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.mobile_bottom_image.alt }}
                 {% endif %}
               </div>
 
@@ -81,7 +91,7 @@
               {% if block.settings.mobile_full_type == 'video' and block.settings.mobile_full_video != blank %}
                 {{ block.settings.mobile_full_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
               {% elsif block.settings.mobile_full_image != blank %}
-                <img src="{{ block.settings.mobile_full_image | image_url }}" alt="{{ block.settings.mobile_full_image.alt | escape }}">
+                {{ block.settings.mobile_full_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.mobile_full_image.alt }}
               {% endif %}
             </div>
           {% endif %}

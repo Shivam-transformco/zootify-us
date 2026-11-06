@@ -1,9 +1,12 @@
+{% doc %}
+  Renders the current device and its linked model selection dialog.
+{% enddoc %}
 {% assign cover_model = product.metafields.custom.cover_model.value %}
 {% if cover_model %}
 
 <div class="dsm-selector-wrap">
   <p class="dsm-label">Select Device</p>
-  <div class="dsm-selected-box" id="dsm-trigger">
+  <button type="button" class="dsm-selected-box" id="dsm-trigger" aria-controls="dsm-overlay">
     <span id="dsm-current-label">
       {% assign current_title = product.title %}
       {% assign for_index = current_title | downcase | split: ' for ' %}
@@ -16,7 +19,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
-  </div>
+  </button>
 </div>
 
 <div class="dsm-overlay" id="dsm-overlay">

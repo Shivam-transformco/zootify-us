@@ -146,6 +146,7 @@
     {% endif %}
 
     {%- render 'meta-tags' -%}
+    {%- render 'hreflang' -%}
     {%- render 'stylesheets' -%}
     {%- render 'fonts' -%}
     {%- render 'scripts' -%}
@@ -254,5 +255,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
       </style>
     {% endif %}
+
+    {% render 'signup-popup' %}
   </body>
 </html>

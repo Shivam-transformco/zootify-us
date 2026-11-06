@@ -1,5 +1,24 @@
 
 
+{% comment %} ZOOTIFY: blog post title styled like the About Us headings (Montserrat, semi-bold, capitals). {% endcomment %}
+{%- assign zt_blog_semibold = settings.type_body_font | font_modify: 'weight', '600' -%}
+<style>
+  {%- if zt_blog_semibold -%}{{ zt_blog_semibold | font_face: font_display: 'swap' }}{%- endif -%}
+  main#MainContent[data-template='article'] header .text-block h1 {
+    font-family: Montserrat, var(--font-body--family), sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: normal;
+    color: #222222;
+    font-size: clamp(28px, 4.2vw, 44px);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  main#MainContent[data-template='article'] header time {
+    font-family: Montserrat, var(--font-body--family), sans-serif;
+    color: #666666;
+  }
+</style>
 <div class="blog-post-content rte">
   <rte-formatter>
     {{ article.content }}

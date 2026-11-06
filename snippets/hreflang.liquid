@@ -1,0 +1,27 @@
+{% comment %}
+  hreflang between us.zootify.com (en-US) and zootify.com (en-IN) – audit #6.
+  Tags are only output when the matching India page is known:
+  - Homepage: always paired with https://zootify.com/
+  - Products, collections and pages: paired only when the "India URL" field
+    (metafield custom.india_url) is filled in for that item in Shopify admin.
+  The India store must add the same tags pointing back here for Google to use them.
+{% endcomment %}
+{%- liquid
+  assign zt_in_url = blank
+  case request.page_type
+    when 'index'
+      assign zt_in_url = 'https://zootify.com/'
+    when 'product'
+      assign zt_in_url = product.metafields.custom.india_url.value
+    when 'collection'
+      if collection
+        assign zt_in_url = collection.metafields.custom.india_url.value
+      endif
+    when 'page'
+      assign zt_in_url = page.metafields.custom.india_url.value
+  endcase
+-%}
+{%- if zt_in_url != blank -%}
+  <link rel="alternate" hreflang="en-us" href="{{ canonical_url }}">
+  <link rel="alternate" hreflang="en-in" href="{{ zt_in_url }}">
+{%- endif -%}
