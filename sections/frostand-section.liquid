@@ -1,3 +1,13 @@
+{%- liquid
+  assign fz_render_section = true
+  if request.page_type == 'product'
+    assign fz_product_family = product.handle | split: '-' | first
+    if fz_product_family != 'frostand'
+      assign fz_render_section = false
+    endif
+  endif
+-%}
+{%- if fz_render_section -%}
 {% comment %}
 V9: preserves the original working mobile carousel exactly.
 Fixes desktop alignment and removes hard-coded Arc overrides so every visible size control works.
@@ -788,6 +798,10 @@ Cards, progress and Discover content share one centered desktop alignment width.
     });
   })();
 </script>
+
+{%- else -%}
+  {% style %}#shopify-section-{{ section.id }} { display: none; }{% endstyle %}
+{%- endif -%}
 
 {% schema %}
 {

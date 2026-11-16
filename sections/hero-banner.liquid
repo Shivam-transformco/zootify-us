@@ -1,41 +1,21 @@
 {% comment %}
-  Hero – Dynamic Slider
-  Desktop + Mobile
-  Image + Video (Shopify video upload)
-
-  CHANGE:
-  Added backend-controlled mobile banner height.
-  Desktop height remains unchanged.
-  Slide images/videos/text/buttons/settings remain unchanged.
+  Hero – Dynamic Slider. Existing media, appearance and editor controls preserved.
+  Fix 2026-11-12: ignore descendant transition events; a single slide never translates.
 {% endcomment %}
-
-{% comment %} CHANGE: Added --mobile-hero-height variable from section setting {% endcomment %}
-<section
-  id="hero-{{ section.id }}"
-  class="hero-dynamic"
-  style="--mobile-hero-height: {{ section.settings.mobile_banner_height | default: 62 }}vh;"
->
-
+<section id="hero-{{ section.id }}" class="hero-dynamic" style="--mobile-hero-height: {{ section.settings.mobile_banner_height | default: 62 }}vh;">
   <div class="hero-slides" id="hero-track-{{ section.id }}">
     {% for block in section.blocks %}
       {% liquid
-        # Speed: images load only when they are about to be seen; the version hidden on this screen size
-        # (mobile on desktop, desktop on mobile) is declared 1px wide so only a tiny thumbnail is fetched.
-        # the first slide of the first section is fetched with high priority.
         if forloop.first and section.index == 1
           assign hero_img_priority = 'high'
         else
           assign hero_img_priority = 'auto'
         endif
       %}
-
       <div class="hero-slide{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
-
-        <!-- DESKTOP -->
         <div class="hero-desktop">
           {% if block.settings.desktop_layout == 'split' %}
             <div class="hero-media hero-split">
-
               <div class="hero-side">
                 {% if block.settings.desktop_left_type == 'video' and block.settings.desktop_left_video != blank %}
                   <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.desktop_left_video.sources[0].url }}"></video>
@@ -43,7 +23,6 @@
                   {{ block.settings.desktop_left_image | image_url: width: 1400 | image_tag: widths: '100, 480, 750, 1000, 1400', sizes: '(max-width: 768px) 1px, 50vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.desktop_left_image.alt }}
                 {% endif %}
               </div>
-
               <div class="hero-side">
                 {% if block.settings.desktop_right_type == 'video' and block.settings.desktop_right_video != blank %}
                   <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.desktop_right_video.sources[0].url }}"></video>
@@ -51,7 +30,6 @@
                   {{ block.settings.desktop_right_image | image_url: width: 1400 | image_tag: widths: '100, 480, 750, 1000, 1400', sizes: '(max-width: 768px) 1px, 50vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.desktop_right_image.alt }}
                 {% endif %}
               </div>
-
             </div>
           {% else %}
             <div class="hero-media hero-full">
@@ -63,12 +41,9 @@
             </div>
           {% endif %}
         </div>
-
-        <!-- MOBILE -->
         <div class="hero-mobile">
           {% if block.settings.mobile_layout == 'split' %}
             <div class="hero-media hero-split">
-
               <div class="hero-side">
                 {% if block.settings.mobile_top_type == 'video' and block.settings.mobile_top_video != blank %}
                   <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.mobile_top_video.sources[0].url }}"></video>
@@ -76,7 +51,6 @@
                   {{ block.settings.mobile_top_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.mobile_top_image.alt }}
                 {% endif %}
               </div>
-
               <div class="hero-side">
                 {% if block.settings.mobile_bottom_type == 'video' and block.settings.mobile_bottom_video != blank %}
                   <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.mobile_bottom_video.sources[0].url }}"></video>
@@ -84,7 +58,6 @@
                   {{ block.settings.mobile_bottom_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.mobile_bottom_image.alt }}
                 {% endif %}
               </div>
-
             </div>
           {% else %}
             <div class="hero-media hero-full">
@@ -96,382 +69,92 @@
             </div>
           {% endif %}
         </div>
-
-        <!-- CONTENT -->
-        <div
-          class="hero-content content-align-{{ block.settings.content_alignment }}"
-          style="
-            --heading-color: {{ block.settings.heading_color }};
-            --subtext-color: {{ block.settings.subtext_color }};
-
-            --heading-size-desktop: {{ block.settings.heading_size_desktop }}px;
-            --heading-size-mobile: {{ block.settings.heading_size_mobile }}px;
-
-            --subtext-size-desktop: {{ block.settings.subtext_size_desktop }}px;
-            --subtext-size-mobile: {{ block.settings.subtext_size_mobile }}px;
-
-            --heading-font-weight: {{ block.settings.heading_font_weight }};
-            --subtext-font-weight: {{ block.settings.subtext_font_weight }};
-
-            --heading-subtext-spacing: {{ block.settings.heading_subtext_spacing }}px;
-          "
-        >
-
-          {% if block.settings.heading != blank %}
-            <h2 class="hero-heading">
-              {{ block.settings.heading }}
-            </h2>
+        <div class="hero-content content-align-{{ block.settings.content_alignment }}{% if block.settings.button_style_override %} hero-content--custom-cta{% endif %}" style="
+          --heading-color: {{ block.settings.heading_color }};
+          --subtext-color: {{ block.settings.subtext_color }};
+          --heading-size-desktop: {{ block.settings.heading_size_desktop }}px;
+          --heading-size-mobile: {{ block.settings.heading_size_mobile }}px;
+          --subtext-size-desktop: {{ block.settings.subtext_size_desktop }}px;
+          --subtext-size-mobile: {{ block.settings.subtext_size_mobile }}px;
+          --heading-font-weight: {{ block.settings.heading_font_weight }};
+          --subtext-font-weight: {{ block.settings.subtext_font_weight }};
+          --heading-subtext-spacing: {{ block.settings.heading_subtext_spacing }}px;
+          --hero-button-gap-desktop: {{ block.settings.button_gap_desktop | default: 18 }}px;
+          --hero-button-gap-mobile: {{ block.settings.button_gap_mobile | default: 18 }}px;
+          {% if block.settings.button_style_override %}
+            --hero-cta-bg: {{ block.settings.button_custom_background }};
+            --hero-cta-text: {{ block.settings.button_custom_text }};
+            --hero-cta-border: {{ block.settings.button_custom_border }};
+            --hero-cta-hover-bg: {{ block.settings.button_custom_hover_background }};
+            --hero-cta-hover-text: {{ block.settings.button_custom_hover_text }};
+            --hero-cta-hover-border: {{ block.settings.button_custom_hover_border }};
+            --hero-cta-radius: {{ block.settings.button_custom_radius }}px;
+            --hero-cta-border-width: {{ block.settings.button_custom_border_width }}px;
           {% endif %}
-
-          {% if block.settings.subtext != blank %}
-            <div class="hero-subtext">
-              {{ block.settings.subtext }}
-            </div>
-          {% endif %}
-
+        ">
+          {% if block.settings.heading != blank %}<h2 class="hero-heading">{{ block.settings.heading }}</h2>{% endif %}
+          {% if block.settings.subtext != blank %}<div class="hero-subtext">{{ block.settings.subtext }}</div>{% endif %}
           {% if block.settings.button_label != blank %}
-            <a href="{{ block.settings.button_link }}" class="button">
-              {{ block.settings.button_label }}
-            </a>
+            {% assign hero_button_url = block.settings.button_link %}
+            {% if hero_button_url contains '/collections/all' and hero_button_url contains 'view=black-friday' %}
+              {% unless hero_button_url contains 'sort_by=' %}{% capture hero_button_url %}{% render 'zootify-sale-url' %}{% endcapture %}{% endunless %}
+            {% endif %}
+            <a href="{{ hero_button_url | strip | escape }}" class="button hero-slide-cta">{{ block.settings.button_label }}</a>
           {% endif %}
-
         </div>
-
       </div>
     {% endfor %}
   </div>
-
-  <!-- DESKTOP NAVIGATION -->
   {% if section.blocks.size > 1 %}
-    <button
-      type="button"
-      class="hero-nav-button hero-nav-button--prev"
-      aria-label="Previous banner"
-      aria-controls="hero-track-{{ section.id }}"
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-
-    <button
-      type="button"
-      class="hero-nav-button hero-nav-button--next"
-      aria-label="Next banner"
-      aria-controls="hero-track-{{ section.id }}"
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
+    <button type="button" class="hero-nav-button hero-nav-button--prev" aria-label="Previous banner" aria-controls="hero-track-{{ section.id }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="hero-nav-button hero-nav-button--next" aria-label="Next banner" aria-controls="hero-track-{{ section.id }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   {% endif %}
-
-  <!-- DOTS -->
-  <div class="hero-dots">
-    {% for block in section.blocks %}
-      <span class="hero-dot{% if forloop.first %} is-active{% endif %}" data-slide="{{ forloop.index0 }}"></span>
-    {% endfor %}
-  </div>
-
+  <div class="hero-dots">{% for block in section.blocks %}<span class="hero-dot{% if forloop.first %} is-active{% endif %}" data-slide="{{ forloop.index0 }}"></span>{% endfor %}</div>
 </section>
-
 <style>
-
-.hero-dynamic {
-  position: relative;
-  height: 650px;
-  overflow: hidden;
-}
-
-.hero-slides {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  transform: translate3d(0, 0, 0);
-  transition: transform .8s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-.hero-slide {
-  position: relative;
-  flex: 0 0 100%;
-  width: 100%;
-  min-width: 100%;
-  height: 100%;
-  opacity: 1;
-}
-
-.hero-slide.is-active {
-  opacity: 1;
-  z-index: 1;
-}
-
-.hero-desktop,
-.hero-mobile,
-.hero-media,
-.hero-side,
-.hero-full {
-  width: 100%;
-  height: 100%;
-}
-
-.hero-media {
-  display: flex;
-}
-
-.hero-split .hero-side {
-  width: 50%;
-}
-
-.hero-side img,
-.hero-side video,
-.hero-full img,
-.hero-full video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* CONTENT */
-
-.hero-content {
-  position: absolute;
-  z-index: 3;
-  max-width: 700px;
-  padding: 20px;
-}
-
-.hero-heading {
-  margin: 0 0 var(--heading-subtext-spacing, 12px);
-  color: var(--heading-color, #fff);
-  font-size: var(--heading-size-desktop, 48px);
-  font-weight: var(--heading-font-weight, 700);
-  line-height: 1.1;
-}
-
-.hero-subtext {
-  margin-bottom: 18px;
-  color: var(--subtext-color, #fff);
-  font-size: var(--subtext-size-desktop, 16px);
-  font-weight: var(--subtext-font-weight, 400);
-  line-height: 1.5;
-}
-
-.hero-content .button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ALIGNMENTS */
-
-.content-align-left {
-  text-align: left;
-  align-items: flex-start;
-}
-
-.content-align-center {
-  text-align: center;
-  align-items: center;
-}
-
-.content-align-right {
-  text-align: right;
-  align-items: flex-end;
-}
-
-/* DESKTOP POSITION */
-
-@media (min-width: 769px) {
-
-  .hero-mobile {
-    display: none;
-  }
-
-  .hero-content {
-    bottom: 40px;
-    left: 40px;
-  }
-
-  .content-align-center {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .content-align-right {
-    left: auto;
-    right: 40px;
-  }
-
-}
-
-/* MOBILE */
-
-@media (max-width: 768px) {
-
-  /* CHANGE: Mobile hero height is now controlled from Shopify backend */
-  .hero-dynamic {
-    height: var(--mobile-hero-height, 62vh);
-  }
-
-  .hero-desktop {
-    display: none;
-  }
-
-  .hero-split {
-    flex-direction: column;
-  }
-
-  .hero-split .hero-side {
-    width: 100%;
-    height: 50%;
-  }
-
-  .hero-content {
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-    padding: 0;
-    max-width: calc(100% - 40px);
-  }
-
-  .hero-heading {
-    font-size: var(--heading-size-mobile, 28px);
-  }
-
-  .hero-subtext {
-    font-size: var(--subtext-size-mobile, 14px);
-  }
-
-  .content-align-center {
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-  }
-
-  .content-align-right {
-    left: auto;
-    right: 20px;
-    text-align: right;
-  }
-
-}
-
-/* DESKTOP NAVIGATION */
-
-.hero-nav-button {
-  position: absolute;
-  top: 50%;
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  padding: 0;
-  border: 1px solid rgba(1, 21, 30, 0.14);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  color: #01151E;
-  appearance: none;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-50%);
-  transition:
-    opacity 180ms ease,
-    transform 180ms ease,
-    background-color 180ms ease;
-}
-
-.hero-nav-button--prev {
-  left: 18px;
-}
-
-.hero-nav-button--next {
-  right: 18px;
-}
-
-.hero-nav-button svg {
-  width: 18px;
-  height: 18px;
-}
-
-.hero-dynamic:hover .hero-nav-button,
-.hero-dynamic:focus-within .hero-nav-button {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.hero-nav-button:hover {
-  background: #fff;
-  transform: translateY(-50%) scale(1.06);
-}
-
-.hero-nav-button:active {
-  transform: translateY(-50%) scale(0.96);
-}
-
-@media (max-width: 768px) {
-  .hero-nav-button {
-    display: none;
-  }
-
-  .hero-slides {
-    touch-action: pan-y;
-  }
-}
-
-/* DOTS */
-
-.hero-dots {
-  position: absolute;
-  bottom: 20px;
-  right: 16px;
-  display: flex;
-  gap: 6px;
-  z-index: 5;
-}
-
-.hero-dot {
-  width: 6px;
-  height: 6px;
-  background: rgba(0,0,0,.3);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: .3s ease;
-}
-
-.hero-dot.is-active {
-  width: 18px;
-  background: #000;
-  border-radius: 6px;
-}
-
+.hero-dynamic {position:relative;height:650px;overflow:hidden}
+.hero-slides {display:flex;width:100%;height:100%;transform:translate3d(0,0,0);transition:transform .8s cubic-bezier(.22,1,.36,1);will-change:transform}
+.hero-slide {position:relative;flex:0 0 100%;width:100%;min-width:100%;height:100%;opacity:1}
+.hero-slide.is-active {opacity:1;z-index:1}
+.hero-desktop,.hero-mobile,.hero-media,.hero-side,.hero-full {width:100%;height:100%}
+.hero-media {display:flex}
+.hero-split .hero-side {width:50%}
+.hero-side img,.hero-side video,.hero-full img,.hero-full video {width:100%;height:100%;object-fit:cover}
+.hero-content {position:absolute;z-index:3;max-width:700px;padding:20px}
+.hero-heading {margin:0 0 var(--heading-subtext-spacing,12px);color:var(--heading-color,#fff);font-size:var(--heading-size-desktop,48px);font-weight:var(--heading-font-weight,700);line-height:1.1}
+.hero-subtext {margin-bottom:var(--hero-button-gap-desktop,18px);color:var(--subtext-color,#fff);font-size:var(--subtext-size-desktop,16px);font-weight:var(--subtext-font-weight,400);line-height:1.5}
+.hero-content .button {display:inline-flex;align-items:center;justify-content:center}
+.hero-dynamic .hero-content--custom-cta .hero-slide-cta.button {background:var(--hero-cta-bg);color:var(--hero-cta-text);border:var(--hero-cta-border-width) solid var(--hero-cta-border);border-radius:var(--hero-cta-radius)}
+.hero-dynamic .hero-content--custom-cta .hero-slide-cta.button:hover {background:var(--hero-cta-hover-bg);color:var(--hero-cta-hover-text);border-color:var(--hero-cta-hover-border)}
+.content-align-left {text-align:left;align-items:flex-start}
+.content-align-center {text-align:center;align-items:center}
+.content-align-right {text-align:right;align-items:flex-end}
+@media(min-width:769px){.hero-mobile{display:none}.hero-content{bottom:40px;left:40px}.content-align-center{left:50%;transform:translateX(-50%)}.content-align-right{left:auto;right:40px}}
+@media(max-width:768px){.hero-dynamic{height:var(--mobile-hero-height,62vh)}.hero-desktop{display:none}.hero-split{flex-direction:column}.hero-split .hero-side{width:100%;height:50%}.hero-content{bottom:20px;left:20px;right:20px;padding:0;max-width:calc(100% - 40px)}.hero-heading{font-size:var(--heading-size-mobile,28px)}.hero-subtext{font-size:var(--subtext-size-mobile,14px);margin-bottom:var(--hero-button-gap-mobile,18px)}.content-align-center{left:50%;transform:translateX(-50%);text-align:center}.content-align-right{left:auto;right:20px;text-align:right}}
+.hero-nav-button{position:absolute;top:50%;z-index:6;display:flex;align-items:center;justify-content:center;width:38px;height:38px;padding:0;border:1px solid rgba(1,21,30,.14);border-radius:50%;background:rgba(255,255,255,.92);color:#01151E;appearance:none;box-shadow:0 4px 14px rgba(0,0,0,.10);cursor:pointer;opacity:0;pointer-events:none;transform:translateY(-50%);transition:opacity 180ms ease,transform 180ms ease,background-color 180ms ease}
+.hero-nav-button--prev{left:18px}.hero-nav-button--next{right:18px}.hero-nav-button svg{width:18px;height:18px}
+.hero-dynamic:hover .hero-nav-button,.hero-dynamic:focus-within .hero-nav-button{opacity:1;pointer-events:auto}
+.hero-nav-button:hover{background:#fff;transform:translateY(-50%) scale(1.06)}.hero-nav-button:active{transform:translateY(-50%) scale(.96)}
+@media(max-width:768px){.hero-nav-button{display:none}.hero-slides{touch-action:pan-y}}
+.hero-dots{position:absolute;bottom:20px;right:16px;display:flex;gap:6px;z-index:5}
+.hero-dot{width:6px;height:6px;background:rgba(0,0,0,.3);border-radius:50%;cursor:pointer;transition:.3s ease}
+.hero-dot.is-active{width:18px;background:#000;border-radius:6px}
 </style>
-
 <script>
 (() => {
   const sectionId = 'hero-{{ section.id }}';
-
   function initHeroSlider() {
     const section = document.getElementById(sectionId);
     if (!section || section.dataset.sliderInitialized === 'true') return;
-
     const track = section.querySelector('.hero-slides');
     const slides = Array.from(section.querySelectorAll('.hero-slide:not(.hero-slide-clone)'));
     const dots = Array.from(section.querySelectorAll('.hero-dot'));
     const prevButton = section.querySelector('.hero-nav-button--prev');
     const nextButton = section.querySelector('.hero-nav-button--next');
-
     if (!track || slides.length === 0) return;
-
     section.dataset.sliderInitialized = 'true';
-
     const slideCount = slides.length;
     const interval = {{ section.settings.interval_seconds | default: 6 | times: 1000 }};
-
     let index = 0;
     let physicalIndex = slideCount > 1 ? 1 : 0;
     let isTransitioning = false;
@@ -479,87 +162,49 @@
     let touchStartX = 0;
     let touchStartY = 0;
     let touchStartTime = 0;
-
     function prepareClone(slide, cloneClass) {
       const clone = slide.cloneNode(true);
-
       clone.classList.remove('is-active');
       clone.classList.add('hero-slide-clone', cloneClass);
       clone.removeAttribute('data-index');
       clone.removeAttribute('data-shopify-editor-block');
       clone.setAttribute('aria-hidden', 'true');
-
-      clone.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach(element => {
-        element.setAttribute('tabindex', '-1');
-      });
-
+      clone.querySelectorAll('a, button, input, select, textarea, [tabindex]').forEach(element => element.setAttribute('tabindex', '-1'));
       return clone;
     }
-
     if (slideCount > 1) {
-      const lastSlideClone = prepareClone(slides[slideCount - 1], 'hero-slide-clone--last');
-      const firstSlideClone = prepareClone(slides[0], 'hero-slide-clone--first');
-
-      track.insertBefore(lastSlideClone, track.firstChild);
-      track.appendChild(firstSlideClone);
+      track.insertBefore(prepareClone(slides[slideCount - 1], 'hero-slide-clone--last'), track.firstChild);
+      track.appendChild(prepareClone(slides[0], 'hero-slide-clone--first'));
     }
-
     function updateActiveState(activeIndex) {
-      slides.forEach((slide, slideIndex) => {
-        slide.classList.toggle('is-active', slideIndex === activeIndex);
-      });
-
-      dots.forEach((dot, dotIndex) => {
-        dot.classList.toggle('is-active', dotIndex === activeIndex);
-      });
+      slides.forEach((slide, slideIndex) => slide.classList.toggle('is-active', slideIndex === activeIndex));
+      dots.forEach((dot, dotIndex) => dot.classList.toggle('is-active', dotIndex === activeIndex));
     }
-
     function moveTo(targetPhysicalIndex, animate = true) {
-      if (!animate) {
+      // A one-slide hero is static. Hover/focus transitions must never translate it.
+      if (slideCount < 2) {
+        physicalIndex = 0;
         track.style.transition = 'none';
-      } else {
-        track.style.removeProperty('transition');
+        track.style.transform = 'translate3d(0, 0, 0)';
+        return;
       }
-
+      if (!animate) track.style.transition = 'none';
+      else track.style.removeProperty('transition');
       track.style.transform = `translate3d(-${targetPhysicalIndex * 100}%, 0, 0)`;
     }
-
     function goTo(targetIndex, direction = 'direct') {
       if (slideCount < 2 || isTransitioning) return;
-
       const normalizedIndex = (targetIndex + slideCount) % slideCount;
-
       isTransitioning = true;
       index = normalizedIndex;
-
-      if (direction === 'next' && normalizedIndex === 0) {
-        physicalIndex = slideCount + 1;
-      } else if (direction === 'prev' && normalizedIndex === slideCount - 1) {
-        physicalIndex = 0;
-      } else {
-        physicalIndex = normalizedIndex + 1;
-      }
-
+      if (direction === 'next' && normalizedIndex === 0) physicalIndex = slideCount + 1;
+      else if (direction === 'prev' && normalizedIndex === slideCount - 1) physicalIndex = 0;
+      else physicalIndex = normalizedIndex + 1;
       updateActiveState(index);
       moveTo(physicalIndex, true);
     }
-
-    function next() {
-      if (index === slideCount - 1) {
-        goTo(0, 'next');
-      } else {
-        goTo(index + 1, 'next');
-      }
-    }
-
-    function prev() {
-      if (index === 0) {
-        goTo(slideCount - 1, 'prev');
-      } else {
-        goTo(index - 1, 'prev');
-      }
-    }
-
+    function next() { goTo(index === slideCount - 1 ? 0 : index + 1, 'next'); }
+    function prev() { goTo(index === 0 ? slideCount - 1 : index - 1, 'prev'); }
     function stopAutoplay() {
       if (autoplayTimer) {
         window.clearInterval(autoplayTimer);
@@ -567,19 +212,16 @@
         section.heroAutoplayTimer = null;
       }
     }
-
     function startAutoplay() {
       stopAutoplay();
-
       if (slideCount < 2) return;
-
       autoplayTimer = window.setInterval(next, interval);
       section.heroAutoplayTimer = autoplayTimer;
     }
-
     track.addEventListener('transitionend', event => {
-      if (event.propertyName !== 'transform') return;
-
+      // transitionend bubbles from buttons and other descendants. Only this track's
+      // own completed transform may run the looping-slide reset.
+      if (event.target !== track || event.propertyName !== 'transform' || slideCount < 2) return;
       if (physicalIndex === slideCount + 1) {
         physicalIndex = 1;
         moveTo(physicalIndex, false);
@@ -591,94 +233,43 @@
         track.offsetHeight;
         track.style.removeProperty('transition');
       }
-
       isTransitioning = false;
     });
-
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        const targetIndex = Number(dot.dataset.slide);
-
-        if (targetIndex === index || isTransitioning) return;
-
-        if (index === slideCount - 1 && targetIndex === 0) {
-          goTo(0, 'next');
-        } else if (index === 0 && targetIndex === slideCount - 1) {
-          goTo(slideCount - 1, 'prev');
-        } else {
-          goTo(targetIndex, 'direct');
-        }
-
-        startAutoplay();
-      });
-    });
-
-    if (prevButton) {
-      prevButton.addEventListener('click', () => {
-        prev();
-        startAutoplay();
-      });
-    }
-
-    if (nextButton) {
-      nextButton.addEventListener('click', () => {
-        next();
-        startAutoplay();
-      });
-    }
-
+    dots.forEach(dot => dot.addEventListener('click', () => {
+      const targetIndex = Number(dot.dataset.slide);
+      if (targetIndex === index || isTransitioning) return;
+      if (index === slideCount - 1 && targetIndex === 0) goTo(0, 'next');
+      else if (index === 0 && targetIndex === slideCount - 1) goTo(slideCount - 1, 'prev');
+      else goTo(targetIndex, 'direct');
+      startAutoplay();
+    }));
+    if (prevButton) prevButton.addEventListener('click', () => { prev(); startAutoplay(); });
+    if (nextButton) nextButton.addEventListener('click', () => { next(); startAutoplay(); });
     track.addEventListener('touchstart', event => {
       if (slideCount < 2 || !window.matchMedia('(max-width: 768px)').matches) return;
-
       const touch = event.changedTouches[0];
       if (!touch) return;
-
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
       touchStartTime = Date.now();
-
       stopAutoplay();
-    }, { passive: true });
-
+    }, {passive: true});
     track.addEventListener('touchend', event => {
       if (slideCount < 2 || !window.matchMedia('(max-width: 768px)').matches) return;
-
       const touch = event.changedTouches[0];
-      if (!touch) {
-        startAutoplay();
-        return;
-      }
-
+      if (!touch) { startAutoplay(); return; }
       const deltaX = touch.clientX - touchStartX;
       const deltaY = touch.clientY - touchStartY;
       const elapsed = Date.now() - touchStartTime;
-      const horizontalDistance = Math.abs(deltaX);
-      const verticalDistance = Math.abs(deltaY);
-
-      const isHorizontalSwipe =
-        horizontalDistance >= 45 &&
-        horizontalDistance > verticalDistance * 1.15 &&
-        elapsed <= 900;
-
-      if (isHorizontalSwipe && !isTransitioning) {
-        if (deltaX < 0) {
-          next();
-        } else {
-          prev();
-        }
-      }
-
+      const isHorizontalSwipe = Math.abs(deltaX) >= 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.15 && elapsed <= 900;
+      if (isHorizontalSwipe && !isTransitioning) { if (deltaX < 0) next(); else prev(); }
       startAutoplay();
-    }, { passive: true });
-
-    track.addEventListener('touchcancel', () => {
-      startAutoplay();
-    }, { passive: true });
+    }, {passive: true});
+    track.addEventListener('touchcancel', startAutoplay, {passive: true});
 
     /* ── Load video sources only for the visible viewport ── */
     const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
     const visibleContainer = isMobile() ? '.hero-mobile' : '.hero-desktop';
-
     section.querySelectorAll(`${visibleContainer} video[data-hero-video]`).forEach(video => {
       const src = video.dataset.videoSrc;
       if (src && !video.getAttribute('src')) {
@@ -708,374 +299,21 @@
     updateActiveState(0);
     moveTo(physicalIndex, false);
     track.offsetHeight;
-    track.style.removeProperty('transition');
-
+    if (slideCount > 1) track.style.removeProperty('transition');
     startAutoplay();
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initHeroSlider);
-  } else {
-    initHeroSlider();
-  }
-
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHeroSlider);
+  else initHeroSlider();
   document.addEventListener('shopify:section:load', event => {
-    const loadedSection =
-      event.target.id === sectionId
-        ? event.target
-        : event.target.querySelector(`#${sectionId}`);
-
-    if (loadedSection) {
-      delete loadedSection.dataset.sliderInitialized;
-      initHeroSlider();
-    }
+    const loadedSection = event.target.id === sectionId ? event.target : event.target.querySelector(`#${sectionId}`);
+    if (loadedSection) { delete loadedSection.dataset.sliderInitialized; initHeroSlider(); }
   });
-
   document.addEventListener('shopify:section:unload', event => {
-    const unloadedSection =
-      event.target.id === sectionId
-        ? event.target
-        : event.target.querySelector(`#${sectionId}`);
-
-    if (unloadedSection && unloadedSection.heroAutoplayTimer) {
-      window.clearInterval(unloadedSection.heroAutoplayTimer);
-    }
+    const unloadedSection = event.target.id === sectionId ? event.target : event.target.querySelector(`#${sectionId}`);
+    if (unloadedSection && unloadedSection.heroAutoplayTimer) window.clearInterval(unloadedSection.heroAutoplayTimer);
   });
 })();
 </script>
-
 {% schema %}
-{
-  "name": "Hero – Dynamic",
-  "settings": [
-    {
-      "type": "range",
-      "id": "interval_seconds",
-      "label": "Slide interval",
-      "min": 4,
-      "max": 15,
-      "step": 0.5,
-      "unit": "s",
-      "default": 6
-    },
-    {
-      "type": "range",
-      "id": "mobile_banner_height",
-      "label": "Mobile banner height",
-      "min": 45,
-      "max": 95,
-      "step": 1,
-      "unit": "vh",
-      "default": 62
-    }
-  ],
-  "blocks": [
-    {
-      "type": "slide",
-      "name": "Slide",
-      "settings": [
-
-        {
-          "type": "header",
-          "content": "Content"
-        },
-
-        {
-          "type": "text",
-          "id": "heading",
-          "label": "Heading"
-        },
-
-        {
-          "type": "textarea",
-          "id": "subtext",
-          "label": "Sub text"
-        },
-
-        {
-          "type": "select",
-          "id": "content_alignment",
-          "label": "Content alignment",
-          "options": [
-            {
-              "value": "left",
-              "label": "Left"
-            },
-            {
-              "value": "center",
-              "label": "Center"
-            },
-            {
-              "value": "right",
-              "label": "Right"
-            }
-          ],
-          "default": "left"
-        },
-
-        {
-          "type": "color",
-          "id": "heading_color",
-          "label": "Heading color",
-          "default": "#ffffff"
-        },
-
-        {
-          "type": "color",
-          "id": "subtext_color",
-          "label": "Sub text color",
-          "default": "#ffffff"
-        },
-
-        {
-          "type": "range",
-          "id": "heading_size_desktop",
-          "label": "Heading size desktop",
-          "min": 16,
-          "max": 100,
-          "step": 1,
-          "default": 48
-        },
-
-        {
-          "type": "range",
-          "id": "heading_size_mobile",
-          "label": "Heading size mobile",
-          "min": 12,
-          "max": 80,
-          "step": 1,
-          "default": 28
-        },
-
-        {
-          "type": "range",
-          "id": "subtext_size_desktop",
-          "label": "Sub text size desktop",
-          "min": 10,
-          "max": 60,
-          "step": 1,
-          "default": 16
-        },
-
-        {
-          "type": "range",
-          "id": "subtext_size_mobile",
-          "label": "Sub text size mobile",
-          "min": 10,
-          "max": 40,
-          "step": 1,
-          "default": 14
-        },
-
-        {
-          "type": "range",
-          "id": "heading_font_weight",
-          "label": "Heading font weight",
-          "min": 100,
-          "max": 900,
-          "step": 100,
-          "default": 700
-        },
-
-        {
-          "type": "range",
-          "id": "subtext_font_weight",
-          "label": "Subtext font weight",
-          "min": 100,
-          "max": 900,
-          "step": 100,
-          "default": 400
-        },
-
-        {
-          "type": "range",
-          "id": "heading_subtext_spacing",
-          "label": "Spacing between heading & subtext",
-          "min": 0,
-          "max": 60,
-          "step": 1,
-          "default": 12
-        },
-
-        {
-          "type": "select",
-          "id": "desktop_layout",
-          "label": "Desktop layout",
-          "options": [
-            { "value": "split", "label": "Split" },
-            { "value": "full", "label": "Full" }
-          ],
-          "default": "split"
-        },
-
-        {
-          "type": "select",
-          "id": "desktop_left_type",
-          "label": "Desktop left media type",
-          "options": [
-            { "value": "image", "label": "Image" },
-            { "value": "video", "label": "Video" }
-          ],
-          "default": "image"
-        },
-
-        {
-          "type": "image_picker",
-          "id": "desktop_left_image",
-          "label": "Desktop left image"
-        },
-
-        {
-          "type": "video",
-          "id": "desktop_left_video",
-          "label": "Desktop left video"
-        },
-
-        {
-          "type": "select",
-          "id": "desktop_right_type",
-          "label": "Desktop right media type",
-          "options": [
-            { "value": "image", "label": "Image" },
-            { "value": "video", "label": "Video" }
-          ],
-          "default": "image"
-        },
-
-        {
-          "type": "image_picker",
-          "id": "desktop_right_image",
-          "label": "Desktop right image"
-        },
-
-        {
-          "type": "video",
-          "id": "desktop_right_video",
-          "label": "Desktop right video"
-        },
-
-        {
-          "type": "select",
-          "id": "desktop_full_type",
-          "label": "Desktop full media type",
-          "options": [
-            { "value": "image", "label": "Image" },
-            { "value": "video", "label": "Video" }
-          ],
-          "default": "image"
-        },
-
-        {
-          "type": "image_picker",
-          "id": "desktop_full_image",
-          "label": "Desktop full image"
-        },
-
-        {
-          "type": "video",
-          "id": "desktop_full_video",
-          "label": "Desktop full video"
-        },
-
-        {
-          "type": "select",
-          "id": "mobile_layout",
-          "label": "Mobile layout",
-          "options": [
-            { "value": "full", "label": "Full" },
-            { "value": "split", "label": "Split" }
-          ],
-          "default": "full"
-        },
-
-        {
-          "type": "select",
-          "id": "mobile_top_type",
-          "label": "Mobile top media type",
-          "options": [
-            { "value": "image", "label": "Image" },
-            { "value": "video", "label": "Video" }
-          ],
-          "default": "image"
-        },
-
-        {
-          "type": "image_picker",
-          "id": "mobile_top_image",
-          "label": "Mobile top image"
-        },
-
-        {
-          "type": "video",
-          "id": "mobile_top_video",
-          "label": "Mobile top video"
-        },
-
-        {
-          "type": "select",
-          "id": "mobile_bottom_type",
-          "label": "Mobile bottom media type",
-          "options": [
-            { "value": "image", "label": "Image" },
-            { "value": "video", "label": "Video" }
-          ],
-          "default": "image"
-        },
-
-        {
-          "type": "image_picker",
-          "id": "mobile_bottom_image",
-          "label": "Mobile bottom image"
-        },
-
-        {
-          "type": "video",
-          "id": "mobile_bottom_video",
-          "label": "Mobile bottom video"
-        },
-
-        {
-          "type": "select",
-          "id": "mobile_full_type",
-          "label": "Mobile full media type",
-          "options": [
-            { "value": "image", "label": "Image" },
-            { "value": "video", "label": "Video" }
-          ],
-          "default": "image"
-        },
-
-        {
-          "type": "image_picker",
-          "id": "mobile_full_image",
-          "label": "Mobile full image"
-        },
-
-        {
-          "type": "video",
-          "id": "mobile_full_video",
-          "label": "Mobile full video"
-        },
-
-        {
-          "type": "text",
-          "id": "button_label",
-          "label": "Button label"
-        },
-
-        {
-          "type": "url",
-          "id": "button_link",
-          "label": "Button link"
-        }
-
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Hero – Dynamic"
-    }
-  ]
-}
+{"name":"Hero – Dynamic","settings":[{"type":"range","id":"interval_seconds","label":"Slide interval","min":4,"max":15,"step":0.5,"unit":"s","default":6},{"type":"range","id":"mobile_banner_height","label":"Mobile banner height","min":45,"max":95,"step":1,"unit":"vh","default":62}],"blocks":[{"type":"slide","name":"Slide","settings":[{"type":"header","content":"Content"},{"type":"text","id":"heading","label":"Heading"},{"type":"textarea","id":"subtext","label":"Sub text"},{"type":"select","id":"content_alignment","label":"Content alignment","options":[{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}],"default":"left"},{"type":"color","id":"heading_color","label":"Heading color","default":"#ffffff"},{"type":"color","id":"subtext_color","label":"Sub text color","default":"#ffffff"},{"type":"range","id":"heading_size_desktop","label":"Heading size desktop","min":16,"max":100,"step":1,"default":48},{"type":"range","id":"heading_size_mobile","label":"Heading size mobile","min":12,"max":80,"step":1,"default":28},{"type":"range","id":"subtext_size_desktop","label":"Sub text size desktop","min":10,"max":60,"step":1,"default":16},{"type":"range","id":"subtext_size_mobile","label":"Sub text size mobile","min":10,"max":40,"step":1,"default":14},{"type":"range","id":"heading_font_weight","label":"Heading font weight","min":100,"max":900,"step":100,"default":700},{"type":"range","id":"subtext_font_weight","label":"Subtext font weight","min":100,"max":900,"step":100,"default":400},{"type":"range","id":"heading_subtext_spacing","label":"Spacing between heading & subtext","min":0,"max":60,"step":1,"default":12},{"type":"select","id":"desktop_layout","label":"Desktop layout","options":[{"value":"split","label":"Split"},{"value":"full","label":"Full"}],"default":"split"},{"type":"select","id":"desktop_left_type","label":"Desktop left media type","options":[{"value":"image","label":"Image"},{"value":"video","label":"Video"}],"default":"image"},{"type":"image_picker","id":"desktop_left_image","label":"Desktop left image"},{"type":"video","id":"desktop_left_video","label":"Desktop left video"},{"type":"select","id":"desktop_right_type","label":"Desktop right media type","options":[{"value":"image","label":"Image"},{"value":"video","label":"Video"}],"default":"image"},{"type":"image_picker","id":"desktop_right_image","label":"Desktop right image"},{"type":"video","id":"desktop_right_video","label":"Desktop right video"},{"type":"select","id":"desktop_full_type","label":"Desktop full media type","options":[{"value":"image","label":"Image"},{"value":"video","label":"Video"}],"default":"image"},{"type":"image_picker","id":"desktop_full_image","label":"Desktop full image"},{"type":"video","id":"desktop_full_video","label":"Desktop full video"},{"type":"select","id":"mobile_layout","label":"Mobile layout","options":[{"value":"full","label":"Full"},{"value":"split","label":"Split"}],"default":"full"},{"type":"select","id":"mobile_top_type","label":"Mobile top media type","options":[{"value":"image","label":"Image"},{"value":"video","label":"Video"}],"default":"image"},{"type":"image_picker","id":"mobile_top_image","label":"Mobile top image"},{"type":"video","id":"mobile_top_video","label":"Mobile top video"},{"type":"select","id":"mobile_bottom_type","label":"Mobile bottom media type","options":[{"value":"image","label":"Image"},{"value":"video","label":"Video"}],"default":"image"},{"type":"image_picker","id":"mobile_bottom_image","label":"Mobile bottom image"},{"type":"video","id":"mobile_bottom_video","label":"Mobile bottom video"},{"type":"select","id":"mobile_full_type","label":"Mobile full media type","options":[{"value":"image","label":"Image"},{"value":"video","label":"Video"}],"default":"image"},{"type":"image_picker","id":"mobile_full_image","label":"Mobile full image"},{"type":"video","id":"mobile_full_video","label":"Mobile full video"},{"type":"text","id":"button_label","label":"Button label"},{"type":"url","id":"button_link","label":"Button link"},{"type":"header","content":"Button spacing"},{"type":"range","id":"button_gap_desktop","label":"Desktop gap: subheading to button","min":0,"max":100,"step":2,"unit":"px","default":18,"info":"Change the vertical space between the subheading and the button."},{"type":"range","id":"button_gap_mobile","label":"Mobile gap: subheading to button","min":0,"max":100,"step":2,"unit":"px","default":18},{"type":"header","content":"Button appearance (this slide only)"},{"type":"checkbox","id":"button_style_override","label":"Use custom button colors for this slide","default":false,"info":"When off, the slide uses the website's primary button style. When on, these colors apply only to this slide."},{"type":"color","id":"button_custom_background","label":"Button background color","default":"#111111","visible_if":"{{ block.settings.button_style_override }}"},{"type":"color","id":"button_custom_text","label":"Button text color","default":"#FFFFFF","visible_if":"{{ block.settings.button_style_override }}"},{"type":"color","id":"button_custom_border","label":"Button border color","default":"#111111","visible_if":"{{ block.settings.button_style_override }}"},{"type":"color","id":"button_custom_hover_background","label":"Button hover background","default":"#333333","visible_if":"{{ block.settings.button_style_override }}"},{"type":"color","id":"button_custom_hover_text","label":"Button hover text color","default":"#FFFFFF","visible_if":"{{ block.settings.button_style_override }}"},{"type":"color","id":"button_custom_hover_border","label":"Button hover border color","default":"#333333","visible_if":"{{ block.settings.button_style_override }}"},{"type":"range","id":"button_custom_radius","label":"Custom corner radius","min":0,"max":40,"step":1,"unit":"px","default":8,"visible_if":"{{ block.settings.button_style_override }}"},{"type":"range","id":"button_custom_border_width","label":"Custom border thickness","min":0,"max":4,"step":1,"unit":"px","default":1,"visible_if":"{{ block.settings.button_style_override }}"}]}],"presets":[{"name":"Hero – Dynamic"}]}
 {% endschema %}
