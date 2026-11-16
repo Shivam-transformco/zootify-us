@@ -510,39 +510,73 @@ Cards, progress and Discover content share one centered desktop alignment width.
             data-fz-card
             {{ block.shopify_attributes }}
           >
-            <div class="fz-media fz-media--desktop" aria-hidden="true">
-              {% if block.settings.video != blank %}
-                {{ block.settings.video | video_tag: image_size: '1400x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'fz-media-video' | replace: '<img ', '<img alt="" ' }}
-              {% elsif block.settings.image != blank %}
-                {{
-                  block.settings.image
-                  | image_url: width: 1600
-                  | image_tag:
-                    widths: '420, 640, 900, 1200, 1600',
-                    sizes: '(min-width: 1100px) 25vw, (min-width: 750px) 50vw, 90vw',
-                    loading: 'lazy',
-                    alt: block.settings.heading
-                }}
-              {% else %}
-                {{ 'product-1' | placeholder_svg_tag: 'fz-placeholder' }}
-              {% endif %}
-            </div>
+            {% liquid
+              assign has_desktop_video = false
+              assign has_mobile_video = false
+              assign desktop_video_url = ''
+              assign mobile_video_url = ''
+              if block.settings.video != blank
+                assign has_desktop_video = true
+                assign desktop_video_url = block.settings.video.sources[0].url
+              endif
+              if block.settings.mobile_video != blank
+                assign has_mobile_video = true
+                assign mobile_video_url = block.settings.mobile_video.sources[0].url
+              endif
+            %}
 
-            {% if has_mobile_media %}
-              <div class="fz-media fz-media--mobile" aria-hidden="true">
-                {% if block.settings.mobile_video != blank %}
-                  {{ block.settings.mobile_video | video_tag: image_size: '1000x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata', class: 'fz-media-video'  | replace: '<img ', '<img alt="" '}}
-                {% elsif block.settings.mobile_image != blank %}
+            {% if has_desktop_video or has_mobile_video %}
+              {%- comment -%}
+                Single <video> element per card. JS picks the right source URL
+                based on viewport width and loads it only when the card is near
+                the viewport (IntersectionObserver). This avoids downloading
+                both desktop AND mobile videos simultaneously.
+              {%- endcomment -%}
+              <div class="fz-media" aria-hidden="true">
+                <video
+                  class="fz-media-video"
+                  loop
+                  muted
+                  playsinline
+                  preload="none"
+                  {% if has_desktop_video %}data-desktop-src="{{ desktop_video_url }}"{% endif %}
+                  {% if has_mobile_video %}data-mobile-src="{{ mobile_video_url }}"{% endif %}
+                ></video>
+              </div>
+            {% elsif block.settings.image != blank or block.settings.mobile_image != blank %}
+              <div class="fz-media fz-media--desktop" aria-hidden="true">
+                {% if block.settings.image != blank %}
                   {{
-                    block.settings.mobile_image
-                    | image_url: width: 1200
+                    block.settings.image
+                    | image_url: width: 1600
                     | image_tag:
-                      widths: '360, 540, 750, 1000, 1200',
-                      sizes: '90vw',
+                      widths: '420, 640, 900, 1200, 1600',
+                      sizes: '(min-width: 1100px) 25vw, (min-width: 750px) 50vw, 90vw',
                       loading: 'lazy',
                       alt: block.settings.heading
                   }}
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'fz-placeholder' }}
                 {% endif %}
+              </div>
+              {% if has_mobile_media %}
+                <div class="fz-media fz-media--mobile" aria-hidden="true">
+                  {% if block.settings.mobile_image != blank %}
+                    {{
+                      block.settings.mobile_image
+                      | image_url: width: 1200
+                      | image_tag:
+                        widths: '360, 540, 750, 1000, 1200',
+                        sizes: '90vw',
+                        loading: 'lazy',
+                        alt: block.settings.heading
+                    }}
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% else %}
+              <div class="fz-media fz-media--desktop" aria-hidden="true">
+                {{ 'product-1' | placeholder_svg_tag: 'fz-placeholder' }}
               </div>
             {% endif %}
 
@@ -655,9 +689,10 @@ Cards, progress and Discover content share one centered desktop alignment width.
     const track = root.querySelector('[data-fz-track]');
     const progress = root.querySelector('[data-fz-progress]');
     const progressBar = root.querySelector('[data-fz-progress-bar]');
-    const videos = Array.from(root.querySelectorAll('video'));
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const MOBILE_BREAKPOINT = 749;
 
+    /* ── Scroll progress bar ── */
     const updateProgress = () => {
       if (!track || !progress || !progressBar) return;
       const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
@@ -679,6 +714,24 @@ Cards, progress and Discover content share one centered desktop alignment width.
     window.addEventListener('resize', requestProgress);
     requestProgress();
 
+    /* ── Lazy-load videos: pick correct source per viewport, load on scroll ── */
+    const getVideoSrc = (video) => {
+      const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+      const mobileSrc = video.dataset.mobileSrc;
+      const desktopSrc = video.dataset.desktopSrc;
+      return (isMobile && mobileSrc) ? mobileSrc : (desktopSrc || mobileSrc || '');
+    };
+
+    const loadVideo = (video) => {
+      const src = getVideoSrc(video);
+      if (!src || video.dataset.fzLoaded === src) return;
+      video.dataset.fzLoaded = src;
+      video.src = src;
+      video.load();
+    };
+
+    const videos = Array.from(root.querySelectorAll('video[data-desktop-src], video[data-mobile-src]'));
+
     if (reducedMotion) {
       videos.forEach((video) => {
         video.pause();
@@ -689,18 +742,44 @@ Cards, progress and Discover content share one centered desktop alignment width.
         (entries) => {
           entries.forEach((entry) => {
             const video = entry.target;
-            if (entry.isIntersecting && entry.intersectionRatio > 0.25) {
-              const playPromise = video.play();
-              if (playPromise?.catch) playPromise.catch(() => {});
+            if (entry.isIntersecting) {
+              loadVideo(video);
+              if (entry.intersectionRatio > 0.25) {
+                const playPromise = video.play();
+                if (playPromise?.catch) playPromise.catch(() => {});
+              }
             } else {
               video.pause();
             }
           });
         },
-        { threshold: [0, 0.25, 0.6] }
+        { rootMargin: '200px 0px', threshold: [0, 0.25, 0.6] }
       );
       videos.forEach((video) => observer.observe(video));
+    } else {
+      /* Fallback: load all immediately if no IntersectionObserver */
+      videos.forEach(loadVideo);
     }
+
+    /* Re-evaluate video source on resize (e.g. orientation change) */
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        videos.forEach((video) => {
+          const newSrc = getVideoSrc(video);
+          if (newSrc && video.dataset.fzLoaded !== newSrc) {
+            video.dataset.fzLoaded = newSrc;
+            video.src = newSrc;
+            video.load();
+            if (!video.paused || document.visibilityState === 'visible') {
+              const p = video.play();
+              if (p?.catch) p.catch(() => {});
+            }
+          }
+        });
+      }, 250);
+    });
 
     document.addEventListener('shopify:block:select', (event) => {
       if (!root.contains(event.target)) return;
