@@ -1,901 +1,231 @@
-{% if product.metafields.custom.upsell_products.value != blank %}
-
-<style>
-.buy-together-container{
-  width:100%;
-  margin-top:22px;
-}
-
-.buy-together-heading{
-  font-size:18px;
-  font-weight:700;
-  margin-bottom:14px;
-  color:#111;
-  margin-left:2px;
-}
-
-@media screen and (max-width: 749px) {
-  .buy-together-heading {
-    font-size: 16px !important;
-  }
-}
-
-.buy-together-list{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.buy-together-row{
-  width:100%;
-  border:1px solid #e2e2e2;
-  border-radius:14px;
-  background:#fff;
-  padding:18px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-}
-
-.buy-together-left{
-  display:flex;
-  align-items:center;
-  gap:18px;
-  flex:1;
-  min-width:0;
-}
-
-.buy-together-image{
-  width:105px;
-  height:105px;
-  border-radius:10px;
-  overflow:hidden;
-  background:#f5f5f5;
-  flex-shrink:0;
-}
-
-.buy-together-image img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  padding:10px;
-}
-
-.buy-together-info{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  min-width:0;
-  flex:1;
-}
-
-.buy-together-title{     /* current change */
-  font-size:16px;
-  font-weight:500;
-  line-height:1.3;
-  color:#111;
-  max-width:420px;
-}
-
-.buy-together-swatches{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.buy-together-swatch{
-  width:24px;
-  height:24px;
-  border-radius:50%;
-  border:1px solid #d5d5d5;
-  cursor:pointer;
-  padding:0;
-  transition:.2s ease;
-}
-
-.buy-together-swatch.active{
-  border:2px solid #111;
-  transform:scale(1.08);
-}
-
-.buy-together-price{  /* current change */
-  font-size:16px;
-  font-weight:600;
-  color:#000;
-}
-
-.buy-together-btn{
-  min-width:110px;
-  height:42px;
-  border:1.5px solid #111;
-  background:#fff;
-  color:#111;
-  border-radius:6px;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:.2s ease;
-}
-
-.buy-together-btn:hover{
-  background:#111;
-  color:#fff;
-}
-
-/* POPUP */
-.upsell-popup-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:99999;
-}
-
-.upsell-popup-overlay.active{
-  display:flex;
-}
-
-.upsell-popup{
-  width:920px;
-  max-width:94%;
-  background:#fff;
-  border-radius:10px;
-  padding:28px;
-  display:flex;
-  gap:30px;
-  position:relative;
-}
-
-.upsell-popup-left{
-  width:52%;
-  background:#f7f7f7;
-  border-radius:8px;
-  padding:30px;
-}
-
-.popup-slider-wrapper{
-  width:100%;
-  position:relative;
-  overflow:hidden;
-}
-
-.popup-slider{
-  display:flex;
-  transition:transform .35s ease;
-}
-
-.popup-slide{
-  min-width:100%;
-}
-
-.popup-slide img{
-  width:100%;
-  max-height:420px;
-  object-fit:contain;
-}
-
-.popup-arrow{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  border:none;
-  background:rgba(255,255,255,.95);
-  box-shadow:0 2px 10px rgba(0,0,0,.08);
-  font-size:28px;
-  cursor:pointer;
-  z-index:5;
-}
-
-.popup-prev{
-  left:10px;
-}
-
-.popup-next{
-  right:10px;
-}
-
-.popup-dots{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  margin-top:14px;
-}
-
-.popup-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#cfcfcf;
-}
-
-.popup-dot.active{
-  background:#111;
-}
-
-.upsell-popup-right{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-}
-
-.upsell-popup-heading{
-  font-size:15px;
-  font-weight:700;
-  margin-bottom:16px;
-}
-
-.upsell-popup-title{
-  font-size:20px;
-  line-height:1.3;
-  margin-bottom:10px;
-}
-
-.upsell-popup-price{
-  font-size:18px;
-  font-weight:700;
-  margin-bottom:20px;
-}
-
-.popup-swatches{
-  display:flex;
-  gap:12px;
-  margin-bottom:28px;
-  flex-wrap:wrap;
-}
-
-.popup-swatch{
-  width:46px;
-  height:46px;
-  border-radius:50%;
-  border:2px solid #e5e5e5;
-  cursor:pointer;
-  overflow:hidden;
-  background:#fff;
-  padding:4px;
-  transition:.2s ease;
-}
-
-.popup-swatch img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:50%;
-}
-
-.popup-swatch.active{
-  border-color:#111;
-  transform:scale(1.05);
-}
-
-.popup-cart-btn{
-  width:100%;
-  height:56px;
-  border:none;
-  background:#01161E;
-  color:#6AC857;
-  font-size:18px;
-  font-weight:300;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-.popup-know-more{
-  width:100%;
-  height:56px;
-  border:1.5px solid #111;
-  background:#fff;
-  color:#111;
-  font-size:17px;
-  font-weight:300;
-  border-radius:6px;
-  cursor:pointer;
-  margin-top:14px;
-  text-decoration:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:.2s ease;
-}
-
-.popup-know-more:hover{
-  background:#111;
-  color:#fff;
-}
-
-.upsell-close{
-  position:absolute;
-  top:14px;
-  right:18px;
-  border:none;
-  background:none;
-  font-size:34px;
-  cursor:pointer;
-}
-
-@media(max-width:768px){
-
-  .buy-together-row{
-    padding:14px;
-    gap:12px;
-    align-items:flex-start;
-  }
-
-  .buy-together-left{
-    gap:12px;
-  }
-
-  .buy-together-image{
-    width:82px;
-    height:82px;
-  }
-
-  .buy-together-title{
-    font-size:14px;
-  }
-
-  .buy-together-price{
-    font-size:15px;
-  }
-
-  .buy-together-btn{
-    min-width:84px;
-    height:38px;
-    font-size:13px;
-  }
-
-  .buy-together-swatch{
-    width:18px;
-    height:18px;
-  }
-
-  .upsell-popup{
-    flex-direction:column;
-    padding:18px;
-  }
-
-  .upsell-popup-left{
-    width:100%;
-  }
-
-  .popup-swatch{
-    width:38px;
-    height:38px;
-  }
-}
-</style>
-
-<div class="buy-together-container">
-
-  <div class="buy-together-heading">
-    Pair Up With
-  </div>
-
-  <div class="buy-together-list">
-
-    {% assign wallet_found = false %}
-
-    {% for upsell_product in product.metafields.custom.upsell_products.value %}
-
-      {% assign title_lower = upsell_product.title | downcase %}
-
-      {% if title_lower contains 'magsafe wallet' or title_lower contains 'wallet' %}
-
-        {% unless wallet_found %}
-
-          {% assign wallet_found = true %}
-
-          <div class="buy-together-row">
-
-            <div class="buy-together-left">
-
-              <div class="buy-together-image">
-                <img
-                  id="walletMainImage"
-                  src="{{ upsell_product.featured_image | image_url: width: 600 }}"
-                  alt="{{ upsell_product.title }}"
-                >
-              </div>
-
-              <div class="buy-together-info">
-
-                <div class="buy-together-title" id="walletTitle">
-                  {{ upsell_product.title }}
-                </div>
-
-                <div class="buy-together-swatches">
-
-                  {% for wallet in product.metafields.custom.upsell_products.value %}
-
-                    {% assign wallet_title = wallet.title | downcase %}
-
-                    {% if wallet_title contains 'magsafe wallet' or wallet_title contains 'wallet' %}
-
-                      {% assign swatch = '#d9d9d9' %}
-
-                      {% if wallet_title contains 'sky blue' %}
-                        {% assign swatch = '#8ecfff' %}
-                      {% elsif wallet_title contains 'blue' %}
-                        {% assign swatch = '#1C253D' %}
-                      {% elsif wallet_title contains 'black' %}
-                        {% assign swatch = '#000000' %}
-                      {% elsif wallet_title contains 'pink' %}
-                        {% assign swatch = '#ead6d6' %}
-                      {% elsif wallet_title contains 'green' %}
-                        {% assign swatch = '#314842' %}
-                      {% elsif wallet_title contains 'navy' %}
-                        {% assign swatch = '#1f2d50' %}
-                      {% elsif wallet_title contains 'brown' %}
-                        {% assign swatch = '#8b5e3c' %}
-                      {% elsif wallet_title contains 'tan' %}
-                        {% assign swatch = '#c69c6d' %}
-                      {% elsif wallet_title contains 'white' %}
-                        {% assign swatch = '#ffffff' %}
-                      {% elsif wallet_title contains 'grey' or wallet_title contains 'gray' %}
-                        {% assign swatch = '#8b8b8b' %}
-                      {% endif %}
-
-                      <button
-                        type="button"
-                        class="buy-together-swatch walletSwatch {% if forloop.first %}active{% endif %}"
-                        style="background:{{ swatch }};"
-                        data-id="{{ wallet.selected_or_first_available_variant.id }}"
-                        data-title="{{ wallet.title }}"
-                        data-price="{{ wallet.price | money }}"
-                        data-image="{{ wallet.featured_image | image_url: width: 900 }}"
-                        data-url="{{ wallet.url }}"
-                        data-images='[
-                          {% for image in wallet.images %}
-                            "{{ image | image_url: width: 1400 }}"{% unless forloop.last %},{% endunless %}
-                          {% endfor %}
-                        ]'
-                      ></button>
-
-                    {% endif %}
-
-                  {% endfor %}
-
-                </div>
-
-                <div class="buy-together-price" id="walletPrice">
-                  {{ upsell_product.price | money }}
-                </div>
-
-              </div>
-
+{% doc %}
+  Renders product pairing rows and an exact product selection dialog.
+  @param {product} [product] - Current product.
+  @param {string} [context] - Product or cart placement.
+  @param {object} [pairing_settings] - Optional pairing block settings.
+  @param {object} [offer_settings] - Optional offer block settings.
+  @param {string} [presentation] - Optional offer-only presentation.
+  @param {string} [component_id] - Unique component identifier.
+  @param {string} [section_id] - Cart refresh section.
+  @param {string} [editor_attributes] - Theme editor block attributes.
+  @param {boolean} [force_empty] - Render an empty cart state.
+{% enddoc %}
+{%- if settings.zp_enabled or settings.zp_offer_enabled or settings.zp_discount_code != blank -%}
+  {%- liquid
+    assign pairing_context = context | default: 'product'
+    assign pairing_id = component_id | default: section_id | default: 'pair-up'
+    assign eligible_collection = settings.zp_eligible_collection
+    assign catalog_collection = eligible_collection | default: collections.all
+    assign offer_code = settings.zp_discount_code | strip
+    assign normalized_code = offer_code | downcase
+    assign row_limit = pairing_settings.max_products | default: settings.zp_max_products | default: 2
+    assign pairing_products = pairing_settings.products
+    if pairing_products == blank and pairing_context == 'product'
+      assign pairing_products = product.metafields.custom.upsell_products.value
+    endif
+    if pairing_products == blank
+      assign pairing_products = settings.zp_products
+    endif
+    assign pairing_heading = pairing_settings.heading | default: settings.zp_heading
+    if pairing_heading == blank
+      assign pairing_heading = 'zootify_pairing.heading' | t
+    endif
+    assign product_model = product.metafields.custom.filter.value | default: ''
+    assign cart_product_ids = cart.items | map: 'product_id'
+    assign show_pairing = settings.zp_enabled
+    if pairing_context == 'product' and settings.zp_show_product == false
+      assign show_pairing = false
+    elsif pairing_context == 'cart' and settings.zp_show_cart == false
+      assign show_pairing = false
+    endif
+    if pairing_settings.enabled == false or presentation == 'offer'
+      assign show_pairing = false
+    endif
+    assign offer_quantity = 0
+    assign offer_saving = 0
+    assign product_eligible = false
+    if product != blank
+      assign current_collection_ids = product.collections | map: 'id'
+      if current_collection_ids contains eligible_collection.id
+        assign product_eligible = true
+      endif
+    endif
+    unless force_empty
+      for item in cart.items
+        assign item_collection_ids = item.product.collections | map: 'id'
+        if item_collection_ids contains eligible_collection.id and item.selling_plan_allocation == blank
+          assign offer_quantity = offer_quantity | plus: item.quantity
+          if normalized_code != blank
+            for allocation in item.line_level_discount_allocations
+              assign allocation_title = allocation.discount_application.title | downcase
+              if allocation_title == normalized_code
+                assign offer_saving = offer_saving | plus: allocation.amount
+              endif
+            endfor
+          endif
+        endif
+      endfor
+    endunless
+    assign offer_state = 'empty'
+    if offer_quantity == 1
+      assign offer_state = 'one'
+    elsif offer_quantity >= 2
+      assign offer_state = 'ready'
+      if offer_saving > 0
+        assign offer_state = 'applied'
+      endif
+    endif
+    assign show_offer = settings.zp_offer_enabled
+    if pairing_settings.show_offer == false
+      assign show_offer = false
+    endif
+    if pairing_context == 'product' and product_eligible == false
+      assign show_offer = false
+    endif
+    if offer_settings.enabled == false
+      assign show_offer = false
+    endif
+    if pairing_context == 'product' and settings.zoffer_show_product == false
+      assign show_offer = false
+    elsif pairing_context == 'cart' and settings.zoffer_show_cart == false
+      assign show_offer = false
+    endif
+    assign show_offer_panel = show_offer
+    if presentation == 'pairing'
+      assign show_offer_panel = false
+    endif
+    assign offer_background = settings.zoffer_background
+    assign offer_text_color = settings.zoffer_text
+    assign offer_muted_color = settings.zoffer_muted
+    assign offer_space_bottom = offer_settings.space_bottom | default: settings.zoffer_space_bottom | default: 0
+    if pairing_context == 'cart'
+      assign offer_background = settings.zoffer_cart_background
+      assign offer_text_color = settings.zoffer_cart_text
+      assign offer_muted_color = settings.zoffer_cart_muted
+      assign offer_space_bottom = settings.zoffer_cart_space_bottom | default: 24
+    endif
+    assign rendered_rows = 0
+  -%}
+  {% paginate catalog_collection.products by 250 %}
+    {%- capture pairing_rows -%}
+      {%- if show_pairing -%}
+      {%- for recommendation in pairing_products -%}
+        {%- liquid
+          assign paired_product = recommendation
+          if pairing_context == 'product' and product_model != blank
+            assign recommendation_family = recommendation.metafields.custom.cover_model.value | downcase | replace: '–', '-' | replace: '—', '-' | replace: '  ', ' ' | strip
+            if recommendation_family != blank
+              for sibling in catalog_collection.products
+                assign sibling_family = sibling.metafields.custom.cover_model.value | downcase | replace: '–', '-' | replace: '—', '-' | replace: '  ', ' ' | strip
+                if sibling_family == recommendation_family and sibling.metafields.custom.filter.value == product_model and sibling.available
+                  assign paired_product = sibling
+                  break
+                endif
+              endfor
+            endif
+          endif
+          assign show_row = paired_product.available
+          if paired_product.id == product.id and pairing_context == 'product'
+            assign show_row = false
+          endif
+          if pairing_context == 'cart' and force_empty != true
+            if cart_product_ids contains paired_product.id
+              assign show_row = false
+            endif
+          endif
+          assign row_title = paired_product.metafields.custom.cover_model.value | default: paired_product.title
+          assign row_model = paired_product.metafields.custom.filter.value
+          assign row_color = paired_product.metafields.custom.color_name.value
+        -%}
+        {%- if show_row and rendered_rows < row_limit -%}
+          {%- capture row_data -%}{% render 'zootify-pairing-product-data', pairing_product: paired_product, include_colors: true, include_display: true %}{%- endcapture -%}
+          <article class="zp-row" data-zp-row data-zp-handle="{{ paired_product.handle | escape }}" data-zp-product="{{ row_data | strip | escape }}">
+            <a class="zp-product-link" href="{{ paired_product.url }}" aria-label="{{ paired_product.title | escape }}">
+              {% if paired_product.featured_image != blank %}{{ paired_product.featured_image | image_url: width: 320 | image_tag: class: 'zp-image', loading: 'lazy', widths: '160,240,320', sizes: '(max-width: 360px) 64px, (max-width: 749px) 72px, 84px', alt: paired_product.featured_image.alt }}{% endif %}
+            </a>
+            <div class="zp-info">
+              <a class="zp-title" href="{{ paired_product.url }}">{{ row_title | escape }}</a>
+              {% if row_model != blank %}<p class="zp-meta">{{ row_model | escape }}</p>{% elsif row_color != blank %}<p class="zp-meta">{{ row_color | escape }}</p>{% endif %}
+              <p class="zp-price">{{ paired_product.price | money }}</p>
             </div>
-
-            <button
-              type="button"
-              class="buy-together-btn addToCartBtn"
-              id="walletAddBtn"
-              data-id="{{ upsell_product.selected_or_first_available_variant.id }}"
-              data-url="{{ upsell_product.url }}"
-              data-title="{{ upsell_product.title }}"
-              data-price="{{ upsell_product.price | money }}"
-              data-image="{{ upsell_product.featured_image | image_url: width: 900 }}"
-              data-images='[
-                {% for image in upsell_product.images %}
-                  "{{ image | image_url: width: 1400 }}"{% unless forloop.last %},{% endunless %}
-                {% endfor %}
-              ]'
-            >
-              + ADD
+            <button type="button" class="zp-open" data-zp-open aria-haspopup="dialog" aria-controls="ZpDialog-{{ pairing_context }}-{{ pairing_id }}" aria-label="{{ 'zootify_pairing.preview_product' | t: product: paired_product.title | escape }}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              <span>{{ 'zootify_pairing.add' | t }}</span>
             </button>
-
-          </div>
-
-        {% endunless %}
-
-      {% else %}
-
-        <div class="buy-together-row">
-
-          <div class="buy-together-left">
-
-            <div class="buy-together-image">
-              <img
-                src="{{ upsell_product.featured_image | image_url: width: 600 }}"
-                alt="{{ upsell_product.title }}"
-              >
-            </div>
-
-            <div class="buy-together-info">
-
-              <div class="buy-together-title">
-                {{ upsell_product.title }}
-              </div>
-
-              <div class="buy-together-price">
-                {{ upsell_product.price | money }}
-              </div>
-
-            </div>
-
-          </div>
-
-          <button
-            type="button"
-            class="buy-together-btn addToCartBtn"
-            data-id="{{ upsell_product.selected_or_first_available_variant.id }}"
-            data-url="{{ upsell_product.url }}"
-            data-title="{{ upsell_product.title }}"
-            data-price="{{ upsell_product.price | money }}"
-            data-image="{{ upsell_product.featured_image | image_url: width: 900 }}"
-            data-images='[
-              {% for image in upsell_product.images %}
-                "{{ image | image_url: width: 1400 }}"{% unless forloop.last %},{% endunless %}
-              {% endfor %}
-            ]'
-          >
-            + ADD
-          </button>
-
-        </div>
-
+          </article>
+          {%- assign rendered_rows = rendered_rows | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- endif -%}
+    {%- endcapture -%}
+    {% if show_pairing %}{{ 'zootify-pairing.css' | asset_url | stylesheet_tag }}{% endif %}
+    {{ 'zootify-case-offer.css' | asset_url | stylesheet_tag }}
+    <script type="module" src="{{ 'zootify-pairing.js' | asset_url }}"></script>
+    <zootify-pairing
+      class="zp-pairing zp-pairing--{{ pairing_context }}"
+      data-context="{{ pairing_context }}"
+      data-section-id="{{ section_id }}"
+      data-zp-state="{{ offer_state }}"
+      data-zp-presentation="{% if show_pairing %}pairing{% else %}offer{% endif %}"
+      {% unless show_pairing or show_offer_panel %}hidden{% endunless %}
+      style="--zp-heading-size: {{ pairing_settings.heading_size | default: settings.zp_heading_size | default: 18 }}px; --zp-heading-size-mobile: {{ pairing_settings.heading_size_mobile | default: settings.zp_heading_size_mobile | default: 16 }}px; --zp-heading-weight: {{ pairing_settings.heading_weight | default: settings.zp_heading_weight | default: '600' }}; --zp-space-top: {{ pairing_settings.space_top | default: settings.zp_space_top | default: 24 }}px; --zp-space-bottom: {{ pairing_settings.space_bottom | default: settings.zp_space_bottom | default: 0 }}px; --zp-gap: {{ pairing_settings.row_gap | default: settings.zp_row_gap | default: 12 }}px; --zp-radius: {{ pairing_settings.corner_radius | default: settings.zp_corner_radius | default: 12 }}px; --zp-text-color: {{ pairing_settings.text_color | default: settings.zp_text_color | default: '#01151e' }}; --zp-muted-color: {{ pairing_settings.muted_color | default: settings.zp_muted_color | default: '#68716e' }}; --zp-card-bg: {{ pairing_settings.card_background | default: settings.zp_card_background | default: '#ffffff' }}; --zp-border-color: {{ pairing_settings.border_color | default: settings.zp_border_color | default: '#e6e8e6' }}; --zp-accent-color: {{ pairing_settings.accent_color | default: settings.zp_accent_color | default: '#507c38' }}; --zp-button-bg: {{ pairing_settings.button_background | default: settings.zp_button_background | default: '#01151e' }}; --zp-button-text: {{ pairing_settings.button_text | default: settings.zp_button_text | default: '#6ac857' }}; --zo-background: {{ offer_background | default: '#01161e' }}; --zo-text: {{ offer_text_color | default: '#ffffff' }}; --zo-muted: {{ offer_muted_color | default: '#d0dcdf' }}; --zo-accent: {{ settings.zoffer_accent | default: '#6ac857' }}; --zo-border: {{ settings.zoffer_cart_border | default: '#dae1da' }}; --zo-progress: {{ settings.zoffer_cart_progress | default: '#39732b' }}; --zo-radius: {{ settings.zoffer_radius | default: 12 }}px; --zo-heading-size: {{ settings.zoffer_heading_size | default: 20 }}px; --zo-heading-mobile: {{ settings.zoffer_heading_mobile | default: 18 }}px; --zo-heading-weight: {{ settings.zoffer_heading_weight | default: '600' }}; --zo-value-size: {{ settings.zoffer_value_size | default: 42 }}px; --zo-value-mobile: {{ settings.zoffer_value_mobile | default: 36 }}px; --zo-padding: {{ settings.zoffer_padding | default: 16 }}px; --zo-space-top: {{ offer_settings.space_top | default: settings.zoffer_space_top | default: 0 }}px; --zo-space-bottom: {{ offer_space_bottom }}px;"
+      {{ editor_attributes }}
+    >
+      {% if show_offer_panel %}
+        {% render 'zootify-case-offer', context: pairing_context, component_id: pairing_id, offer_settings: offer_settings, offer_state: offer_state, offer_quantity: offer_quantity, offer_saving: offer_saving %}
       {% endif %}
-
-    {% endfor %}
-
-  </div>
-
-</div>
-
-<!-- POPUP -->
-<div class="upsell-popup-overlay" id="upsellPopup">
-
-  <div class="upsell-popup">
-
-    <button class="upsell-close" id="upsellClose">
-      ×
-    </button>
-
-    <div class="upsell-popup-left">
-
-      <div class="popup-slider-wrapper">
-
-        <div class="popup-slider" id="popupSlider"></div>
-
-        <button class="popup-arrow popup-prev" id="popupPrev">
-          ‹
-        </button>
-
-        <button class="popup-arrow popup-next" id="popupNext">
-          ›
-        </button>
-
-        <div class="popup-dots" id="popupDots"></div>
-
-      </div>
-
-    </div>
-
-    <div class="upsell-popup-right">
-
-      <div class="upsell-popup-heading">
-        STACK-ON ACCESSORIES
-      </div>
-
-      <div class="upsell-popup-title" id="popupTitle"></div>
-
-      <div class="upsell-popup-price" id="popupPrice"></div>
-
-      <div class="popup-swatches" id="popupSwatches"></div>
-
-      <button id="popupAddBtn" class="popup-cart-btn">
-        ADD TO CART
-      </button>
-
-      <a
-        id="popupKnowMore"
-        class="popup-know-more"
-        href="#"
-      >
-        KNOW MORE
-      </a>
-
-    </div>
-
-  </div>
-
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-
-  let currentSlide = 0;
-
-  const walletSwatches = document.querySelectorAll('.walletSwatch');
-  const walletImage = document.getElementById('walletMainImage');
-  const walletTitle = document.getElementById('walletTitle');
-  const walletPrice = document.getElementById('walletPrice');
-  const walletAddBtn = document.getElementById('walletAddBtn');
-
-  /* MAIN WALLET SWATCH CHANGE */
-  if(walletSwatches.length){
-
-    walletSwatches.forEach((swatch)=>{
-
-      swatch.addEventListener('click', function(){
-
-        walletSwatches.forEach(item=>{
-          item.classList.remove('active');
-        });
-
-        this.classList.add('active');
-
-        if(walletImage){
-          walletImage.src = this.dataset.image;
-        }
-
-        if(walletTitle){
-          walletTitle.innerHTML = this.dataset.title;
-        }
-
-        if(walletPrice){
-          walletPrice.innerHTML = this.dataset.price;
-        }
-
-        if(walletAddBtn){
-          walletAddBtn.dataset.id = this.dataset.id;
-          walletAddBtn.dataset.url = this.dataset.url;
-          walletAddBtn.dataset.title = this.dataset.title;
-          walletAddBtn.dataset.price = this.dataset.price;
-          walletAddBtn.dataset.image = this.dataset.image;
-          walletAddBtn.dataset.images = this.dataset.images;
-        }
-
-      });
-
-    });
-
-  }
-
-  /* OPEN POPUP */
-  document.querySelectorAll('.addToCartBtn').forEach((btn)=>{
-
-    btn.addEventListener('click', function(){
-
-      const popup = document.getElementById('upsellPopup');
-
-      popup.classList.add('active');
-
-      document.getElementById('popupTitle').innerHTML =
-        this.dataset.title;
-
-      document.getElementById('popupPrice').innerHTML =
-        this.dataset.price;
-
-      document.getElementById('popupKnowMore').href =
-        this.dataset.url;
-
-      document.getElementById('popupAddBtn')
-        .dataset.id = this.dataset.id;
-
-      const popupSlider =
-        document.getElementById('popupSlider');
-
-      const popupDots =
-        document.getElementById('popupDots');
-
-      popupSlider.innerHTML = '';
-      popupDots.innerHTML = '';
-
-      const images =
-        JSON.parse(this.dataset.images || '[]');
-
-      if(images.length){
-
-        images.forEach((img,index)=>{
-
-          popupSlider.innerHTML += `
-            <div class="popup-slide">
-              <img src="${img}">
-            </div>
-          `;
-
-          popupDots.innerHTML += `
-            <div class="popup-dot ${index === 0 ? 'active' : ''}"></div>
-          `;
-
-        });
-
-      }
-
-      currentSlide = 0;
-
-      popupSlider.style.transform =
-        `translateX(0%)`;
-
-      /* POPUP SWATCHES */
-      const popupSwatches =
-        document.getElementById('popupSwatches');
-
-      popupSwatches.innerHTML = '';
-
-      const row =
-        this.closest('.buy-together-row');
-
-      const rowSwatches =
-        row.querySelectorAll('.walletSwatch');
-
-      if(rowSwatches.length){
-
-        rowSwatches.forEach((swatch)=>{
-
-          const popupBtn =
-            document.createElement('button');
-
-          popupBtn.className =
-            'popup-swatch ' +
-            (swatch.classList.contains('active')
-              ? 'active'
-              : '');
-
-          popupBtn.innerHTML =
-            `<img src="${swatch.dataset.image}">`;
-
-          popupBtn.dataset.id =
-            swatch.dataset.id;
-
-          popupBtn.dataset.title =
-            swatch.dataset.title;
-
-          popupBtn.dataset.price =
-            swatch.dataset.price;
-
-          popupBtn.dataset.url =
-            swatch.dataset.url;
-
-          popupBtn.dataset.images =
-            swatch.dataset.images;
-
-          popupBtn.addEventListener('click', function(){
-
-            document.querySelectorAll('.popup-swatch')
-              .forEach(item=>{
-                item.classList.remove('active');
-              });
-
-            this.classList.add('active');
-
-            document.getElementById('popupTitle').innerHTML =
-              this.dataset.title;
-
-            document.getElementById('popupPrice').innerHTML =
-              this.dataset.price;
-
-            document.getElementById('popupKnowMore').href =
-              this.dataset.url;
-
-            document.getElementById('popupAddBtn')
-              .dataset.id = this.dataset.id;
-
-            const newImages =
-              JSON.parse(this.dataset.images || '[]');
-
-            popupSlider.innerHTML = '';
-            popupDots.innerHTML = '';
-
-            newImages.forEach((img,index)=>{
-
-              popupSlider.innerHTML += `
-                <div class="popup-slide">
-                  <img src="${img}">
-                </div>
-              `;
-
-              popupDots.innerHTML += `
-                <div class="popup-dot ${index === 0 ? 'active' : ''}"></div>
-              `;
-
-            });
-
-            currentSlide = 0;
-
-            popupSlider.style.transform =
-              `translateX(0%)`;
-
-          });
-
-          popupSwatches.appendChild(popupBtn);
-
-        });
-
-      }
-
-    });
-
-  });
-
-  /* SLIDER */
-  function updateSlider(){
-
-    const slider =
-      document.getElementById('popupSlider');
-
-    const dots =
-      document.querySelectorAll('.popup-dot');
-
-    slider.style.transform =
-      `translateX(-${currentSlide * 100}%)`;
-
-    dots.forEach(dot=>{
-      dot.classList.remove('active');
-    });
-
-    if(dots[currentSlide]){
-      dots[currentSlide].classList.add('active');
-    }
-
-  }
-
-  document.getElementById('popupPrev').onclick = function(){
-
-    const slides =
-      document.querySelectorAll('.popup-slide');
-
-    if(!slides.length) return;
-
-    currentSlide =
-      (currentSlide - 1 + slides.length) %
-      slides.length;
-
-    updateSlider();
-
-  };
-
-  document.getElementById('popupNext').onclick = function(){
-
-    const slides =
-      document.querySelectorAll('.popup-slide');
-
-    if(!slides.length) return;
-
-    currentSlide =
-      (currentSlide + 1) %
-      slides.length;
-
-    updateSlider();
-
-  };
-
-  /* CLOSE */
-  document.getElementById('upsellClose').onclick = function(){
-
-    document.getElementById('upsellPopup')
-      .classList.remove('active');
-
-  };
-
-  /* FINAL ADD TO CART */
-  document.getElementById('popupAddBtn').onclick = function(){
-
-    const variantId = this.dataset.id;
-
-    fetch('/cart/add.js', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json'
-      },
-      body:JSON.stringify({
-        id: variantId,
-        quantity:1
-      })
-    })
-    .then(response=>response.json())
-    .then(()=>{
-      location.reload();
-    });
-
-  };
-
-});
-</script>
-
-{% endif %}
+      {% if rendered_rows > 0 %}
+        <div class="zp-heading-row">
+          <h2 class="zp-heading">{{ pairing_heading | escape }}</h2>
+          {% if show_offer and pairing_context == 'product' %}<span class="zp-offer-badge">{{ settings.zp_offer_badge | escape }}</span>{% endif %}
+        </div>
+        {% if pairing_settings.subheading != blank %}<p class="zp-subheading">{{ pairing_settings.subheading | escape }}</p>
+        {% elsif show_offer and pairing_context == 'product' %}<p class="zp-subheading">{{ settings.zp_offer_message | escape }}</p>{% endif %}
+        <div class="zp-rows">{{ pairing_rows }}</div>
+      {% endif %}
+      <p class="zp-feedback" data-zp-status role="status" aria-live="polite"></p>
+      {% if show_pairing %}
+      <dialog class="zp-dialog" id="ZpDialog-{{ pairing_context }}-{{ pairing_id }}" data-zp-dialog aria-labelledby="ZpTitle-{{ pairing_context }}-{{ pairing_id }}">
+        <div class="zp-dialog__inner">
+          <button type="button" class="zp-close" data-zp-close aria-label="{{ 'zootify_pairing.close' | t }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+          <div class="zp-gallery">
+            <div class="zp-gallery__track" data-zp-gallery></div>
+            <button type="button" class="zp-gallery__arrow zp-gallery__arrow--prev" data-zp-prev aria-label="{{ 'zootify_pairing.previous_image' | t }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 5-7 7 7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button type="button" class="zp-gallery__arrow zp-gallery__arrow--next" data-zp-next aria-label="{{ 'zootify_pairing.next_image' | t }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 5 7 7-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="zp-gallery__dots" data-zp-dots></div>
+          </div>
+          <div class="zp-detail">
+            <p class="zp-modal-heading">{{ pairing_heading | escape }}</p>
+            <h2 class="zp-modal-title" id="ZpTitle-{{ pairing_context }}-{{ pairing_id }}" data-zp-title>{{ 'zootify_pairing.loading' | t }}</h2>
+            <p class="zp-modal-price" data-zp-price></p>
+            <form class="zp-form" data-zp-form>
+              <div class="zp-field" data-zp-model-wrap hidden>
+                <label for="ZpModel-{{ pairing_context }}-{{ pairing_id }}">{{ 'zootify_pairing.model_label' | t }}</label>
+                <select class="zp-model-select" id="ZpModel-{{ pairing_context }}-{{ pairing_id }}" data-zp-model><option value="">{{ 'zootify_pairing.choose_model' | t }}</option></select>
+              </div>
+              <div class="zp-field" data-zp-color-wrap hidden>
+                <span class="zp-label">{{ 'zootify_pairing.color_label' | t }}</span>
+                <div class="zp-colors" data-zp-colors role="group" aria-label="{{ 'zootify_pairing.color_label' | t }}"></div>
+              </div>
+              <div class="zp-options" data-zp-options></div>
+              <button class="zp-add" type="submit" data-zp-add disabled>{{ 'zootify_pairing.add_to_cart' | t }}</button>
+              <p class="zp-feedback zp-feedback--error" data-zp-error role="alert"></p>
+            </form>
+            <a class="zp-full-link" data-zp-full-link href="{{ routes.all_products_collection_url }}">{{ 'zootify_pairing.view_product' | t }}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
+        </div>
+      </dialog>
+      {% endif %}
+      {%- capture pairing_config -%}
+        {"context":{{ pairing_context | json }},"sectionId":{{ section_id | json }},"cartUrl":{{ routes.cart_url | json }},"addUrl":{{ routes.cart_add_url | append: '.js' | json }},"updateUrl":{{ routes.cart_update_url | append: '.js' | json }},"campaignEnabled":{{ settings.zp_offer_enabled | json }},"discountCode":{{ offer_code | json }},"moneyFormat":{{ shop.money_format | json }},"currency":{{ cart.currency.iso_code | default: shop.currency | json }},"currentModel":{{ product_model | json }},
+        "eligibleProductIds":[{% if eligible_collection != blank %}{% for case_product in eligible_collection.products %}{{ case_product.id | append: '' | json }}{% unless forloop.last %},{% endunless %}{% endfor %}{% endif %}],
+        "catalog":[{% if show_pairing %}{% for case_product in catalog_collection.products %}{% render 'zootify-pairing-product-data', pairing_product: case_product %}{% unless forloop.last %},{% endunless %}{% endfor %}{% endif %}],
+        "strings":{
+          "offerMessage":{{ settings.zp_offer_message | json }},"cartHeadingEmpty":{{ settings.zoffer_cart_heading_empty | json }},"cartHeadingOne":{{ settings.zoffer_cart_heading_one | json }},"cartHeadingApplied":{{ settings.zoffer_cart_heading_applied | json }},"cartHeadingReady":{{ settings.zoffer_cart_heading_ready | json }},
+          "loading":{{ 'zootify_pairing.loading' | t | json }},"loadError":{{ 'zootify_pairing.load_error' | t | json }},"chooseModel":{{ 'zootify_pairing.choose_model' | t | json }},"modelLabel":{{ 'zootify_pairing.model_label' | t | json }},"colorLabel":{{ 'zootify_pairing.color_label' | t | json }},"chooseOption":{{ 'zootify_pairing.choose_option' | t | json }},"addToCart":{{ 'zootify_pairing.add_to_cart' | t | json }},"adding":{{ 'zootify_pairing.adding' | t | json }},"added":{{ 'zootify_pairing.added' | t | json }},"addError":{{ 'zootify_pairing.add_error' | t | json }},"unavailable":{{ 'zootify_pairing.unavailable' | t | json }},"viewProduct":{{ 'zootify_pairing.view_product' | t | json }},"close":{{ 'zootify_pairing.close' | t | json }},"previousImage":{{ 'zootify_pairing.previous_image' | t | json }},"nextImage":{{ 'zootify_pairing.next_image' | t | json }},"imageOf":{{ 'zootify_pairing.image_of' | t: current: '__current__', total: '__total__' | json }},"discountApplying":{{ 'zootify_pairing.discount_applying' | t | json }},"discountApplied":{{ 'zootify_pairing.discount_applied' | t | json }},"saved":{{ 'zootify_pairing.saved' | t: amount: '__amount__' | json }},"discountReady":{{ 'zootify_pairing.discount_ready' | t | json }},"discountError":{{ 'zootify_pairing.discount_error' | t | json }},"oneMore":{{ settings.zp_one_more_message | json }},"continueShopping":{{ 'zootify_pairing.continue_shopping' | t | json }},"variantUnavailable":{{ 'zootify_pairing.variant_unavailable' | t | json }},"optionUnavailable":{{ 'zootify_pairing.option_unavailable' | t | json }},"alreadyInCart":{{ 'zootify_pairing.already_in_cart' | t | json }},"busy":{{ 'zootify_pairing.busy' | t | json }},"uncertain":{{ 'zootify_pairing.uncertain' | t | json }},"discountInactive":{{ 'zootify_pairing.discount_inactive' | t | json }}
+        }}
+      {%- endcapture -%}
+      <script type="application/json" data-zp-config>{{ pairing_config | strip | replace: '</', '<\/' }}</script>
+    </zootify-pairing>
+  {% endpaginate %}
+{%- endif -%}

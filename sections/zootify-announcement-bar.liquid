@@ -1,14 +1,17 @@
 {% comment %}
-  ZOOTIFY announcement bar | v1.0
+  ZOOTIFY announcement bar | v1.1 — optional sticky positioning
   File: sections/zootify-announcement-bar.liquid
 
-  Add this SECTION to the Header group and drag it ABOVE the Header section.
-  It deliberately stays in normal document flow on every screen size.
-  No fixed/sticky positioning, body padding, scroll handlers, header selectors,
-  external libraries, or dependencies on the previous AI-generated block.
+  Keep this existing SECTION in the Header group, ABOVE the Header section.
+  Sticky behavior is optional and controlled by the section's checkbox.
+  OFF retains the original scrolling behavior.
 
-  Messages are local blocks belonging to this section. All styles are scoped.
-  Rotation is OFF by default. The default preset contains one shipping message.
+  The existing message blocks (including their text, links, icons and order)
+  live in sections/header-group.json. Replacing ONLY this section's Liquid code
+  retains those existing blocks and settings. No block recreation is needed.
+
+  Existing rotation, dismissal, responsive typography and accessibility remain.
+  No extra snippets or external libraries are needed.
 {% endcomment %}
 
 {%- liquid
@@ -88,6 +91,22 @@
     box-shadow: none;
     overflow: visible;
   }
+
+  {% if s.sticky_bar and show_bar %}
+    /* Sticky is opt-in. Stay in natural flow, then pin to the top on scroll. */
+    #shopify-section-{{ section.id }} {
+      position: sticky;
+      top: 0;
+      z-index: calc(var(--layer-sticky, 20) + 1);
+    }
+
+    /* The existing Horizon header is already sticky. Keep it just below the bar.
+       Height is measured by this section's component, including wrapped mobile text. */
+    #shopify-section-{{ section.id }} ~ .header-section:has(> #header-component[sticky='always']),
+    #shopify-section-{{ section.id }} ~ .header-section:has(> #header-component[sticky='scroll-up'][data-sticky-state='active']) {
+      top: calc(var(--zab-sticky-height, 0px) - 1px);
+    }
+  {% endif %}
 
   #shopify-section-{{ section.id }}[hidden] { display: none !important; }
 
@@ -170,6 +189,7 @@
     role="region"
     aria-label="{{ s.region_label | default: 'Store announcements' | escape }}"
     data-section-id="{{ section.id }}"
+    data-sticky="{{ s.sticky_bar }}"
     data-auto-rotate="{{ s.auto_rotate }}"
     data-interval="{{ s.rotation_interval }}"
     data-transition="{{ s.transition }}"
@@ -297,14 +317,16 @@
     </script>
   {% endif %}
 
-  <noscript>
-    <style>
-      #ZootifyAnnouncement-{{ section.id }} .zab__layout { grid-template-columns: minmax(0, 1fr); }
-      #ZootifyAnnouncement-{{ section.id }} .zab__viewport { display: flex; flex-direction: column; }
-      #ZootifyAnnouncement-{{ section.id }} .zab__slide { visibility: visible; opacity: 1; pointer-events: auto; }
-      #ZootifyAnnouncement-{{ section.id }} .zab__rail { display: none; }
-    </style>
-  </noscript>
+  {% unless request.design_mode %}
+    <noscript>
+      <style>
+        #ZootifyAnnouncement-{{ section.id }}:not([data-ready]) .zab__layout { grid-template-columns: minmax(0, 1fr); }
+        #ZootifyAnnouncement-{{ section.id }}:not([data-ready]) .zab__viewport { display: flex; flex-direction: column; }
+        #ZootifyAnnouncement-{{ section.id }}:not([data-ready]) .zab__slide { visibility: visible; opacity: 1; pointer-events: auto; }
+        #ZootifyAnnouncement-{{ section.id }}:not([data-ready]) .zab__rail { display: none; }
+      </style>
+    </noscript>
+  {% endunless %}
 {%- elsif request.design_mode -%}
   <div class="zab-editor-note">
     {% if s.enable_bar == false %}
@@ -554,6 +576,9 @@
           if (this.wrapper) this.wrapper.hidden = true;
         }
 
+        // This works with Shopify's section lifecycle, including editor reloads.
+        this.setupStickyOffset();
+
         this.slides.forEach((slide, index) => {
           slide.inert = index !== 0;
           slide.setAttribute('aria-hidden', String(index !== 0));
@@ -627,6 +652,38 @@
           });
         }
         this.schedule();
+      }
+
+      setupStickyOffset() {
+        if (this.dataset.sticky !== 'true' || !this.wrapper) return;
+
+        const update = () => {
+          this.stickyFrame = 0;
+          if (!this.isConnected || !this.wrapper?.isConnected) return;
+          const visible = !this.hidden && !this.wrapper.hidden &&
+            getComputedStyle(this.wrapper).display !== 'none' &&
+            getComputedStyle(this).display !== 'none';
+          const height = visible ? Math.ceil(this.wrapper.getBoundingClientRect().height) : 0;
+          document.documentElement.style.setProperty('--zab-sticky-height', `${height}px`);
+        };
+        this.scheduleSticky = () => {
+          if (!this.stickyFrame) this.stickyFrame = requestAnimationFrame(update);
+        };
+
+        if ('ResizeObserver' in window) {
+          this.stickyResizeObserver = new ResizeObserver(this.scheduleSticky);
+          this.stickyResizeObserver.observe(this.wrapper);
+          this.stickyResizeObserver.observe(this);
+        }
+        this.stickyMutationObserver = new MutationObserver(this.scheduleSticky);
+        this.stickyMutationObserver.observe(this.wrapper, {
+          attributes: true, attributeFilter: ['hidden', 'style', 'class']
+        });
+        this.stickyMutationObserver.observe(this, {
+          attributes: true, attributeFilter: ['hidden', 'style', 'class']
+        });
+        this.listen(window, 'resize', this.scheduleSticky);
+        this.scheduleSticky();
       }
 
       listen(target, type, handler) {
@@ -736,6 +793,12 @@
         this.abortController?.abort();
         this.observer?.disconnect();
         this.observer = null;
+        if (this.stickyFrame) cancelAnimationFrame(this.stickyFrame);
+        this.stickyResizeObserver?.disconnect();
+        this.stickyMutationObserver?.disconnect();
+        if (this.dataset.sticky === 'true') {
+          document.documentElement.style.removeProperty('--zab-sticky-height');
+        }
         this.initialized = false;
       }
     }
@@ -762,13 +825,20 @@
     },
     {
       "type": "paragraph",
-      "content": "Add this section to the Header group, ABOVE the Header section. It scrolls away normally on all devices; it never makes your logo or menu sticky."
+      "content": "Keep this section above the Header. Optional sticky mode keeps announcements visible while scrolling, with the existing sticky header underneath. OFF leaves the original behavior unchanged."
     },
     {
       "type": "checkbox",
       "id": "enable_bar",
       "label": "Show announcement bar",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_bar",
+      "label": "Keep announcement bar sticky on scroll",
+      "default": false,
+      "info": "When on, the announcement bar stays at the top as you scroll. The sticky header sits underneath it. Turn off for normal scrolling."
     },
     {
       "type": "select",
@@ -1500,9 +1570,26 @@
         {
           "type": "message",
           "settings": {
-            "text": "Free standard shipping on all orders. No minimum.",
-            "mobile_text": "Free US shipping. No minimum.",
+            "text": "10% off your first order – use code WELCOME10",
+            "mobile_text": "10% off first order: WELCOME10",
             "icon": "none"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "text": "Buy any 2 cases, save 20%",
+            "mobile_text": "",
+            "icon": "none"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "text": "Free standard shipping on all orders.",
+            "mobile_text": "Free standard shipping on all orders.",
+            "link": "shopify://policies/shipping-policy",
+            "icon": "truck"
           }
         }
       ]
@@ -1510,3 +1597,4 @@
   ]
 }
 {% endschema %}
+

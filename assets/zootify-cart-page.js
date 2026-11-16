@@ -6,6 +6,29 @@ const normalizeCode = (code) => String(code || '').trim().toLocaleLowerCase('en-
 const uniqueCodes = (codes) => [...new Map(codes.filter(Boolean).map((code) => [normalizeCode(code), String(code).trim()])).values()];
 const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
 
+function zootifyCartQueue() {
+  return window.__zootifyCartQueueV1 ||= {
+    tail: Promise.resolve(), pending: 0,
+    run(task) {
+      this.pending += 1;
+      document.dispatchEvent(new CustomEvent('zootify:cart-transaction'));
+      const operation = this.tail.catch(() => {}).then(task);
+      this.tail = operation.catch(() => {});
+      return operation.finally(() => {
+        this.pending -= 1;
+        document.dispatchEvent(new CustomEvent('zootify:cart-transaction'));
+      });
+    },
+  };
+}
+
+function pairingCode() {
+  const configured = window.__zootifyPairingControllerV1?.config?.discountCode;
+  if (configured) return configured;
+  try { return JSON.parse(document.querySelector('zootify-pairing [data-zp-config]')?.textContent || '{}').discountCode || ''; }
+  catch { return ''; }
+}
+
 function cartEndpoint(path) {
   const url = new URL(path, window.location.origin);
   if (url.origin !== window.location.origin) throw new Error('Invalid cart endpoint.');
@@ -30,10 +53,10 @@ async function fetchCartJSON(url, options = {}) {
   }
 }
 
-/** Returns only codes Shopify currently marks applicable; automatic discounts aren't codes. */
-function codesFromCart(cart, fallback = []) {
+/** UI shows applicable codes; mutations retain every entered code, including inactive codes. */
+function codesFromCart(cart, fallback = [], includeInactive = false) {
   if (Array.isArray(cart.discount_codes)) {
-    return uniqueCodes(cart.discount_codes.filter((entry) => entry.applicable === true).map((entry) => entry.code));
+    return uniqueCodes(cart.discount_codes.filter((entry) => includeInactive || entry.applicable === true).map((entry) => entry.code));
   }
   const result = [...fallback];
   for (const discount of cart.cart_level_discount_applications || []) {
@@ -134,7 +157,7 @@ class ZootifyCartDiscount extends HTMLElement {
   paintCodes(codes) {
     const list = this.querySelector('[data-zc-code-list]');
     if (!list) return;
-    const children = uniqueCodes(codes).map((code) => {
+    const children = uniqueCodes(codes).filter((code) => normalizeCode(code) !== normalizeCode(pairingCode())).map((code) => {
       const li = document.createElement('li');
       li.className = 'zc-code';
       li.dataset.zcCode = code;
@@ -177,13 +200,17 @@ class ZootifyCartDiscount extends HTMLElement {
     const cartURL = cartEndpoint(this.dataset.cartUrl);
     const inputDraft = this.querySelector('input[name="discount"]')?.value || '';
     let activeComponent = this;
+    return zootifyCartQueue().run(async () => {
     try {
       // Read first so applying a code cannot silently drop a previously accepted shipping code.
       const currentCart = await fetchCartJSON(cartURL);
-      const existing = codesFromCart(currentCart, this.#domCodes());
+      const existing = codesFromCart(currentCart, this.#domCodes(), true);
       if (operation === 'apply' && existing.some((value) => normalizeCode(value) === normalizeCode(code))) {
-        this.paintCodes(existing);
-        this.setStatus('This code is already applied.');
+        const applicable = codesFromCart(currentCart, this.#domCodes());
+        this.paintCodes(applicable);
+        this.setStatus(applicable.some((value) => normalizeCode(value) === normalizeCode(code))
+          ? 'This code is already applied.'
+          : 'This code is saved, but it does not currently apply to your cart or combine with its other offer.');
         return;
       }
       const desired = operation === 'apply'
@@ -200,7 +227,9 @@ class ZootifyCartDiscount extends HTMLElement {
       let html = data.sections?.[sectionId];
       if (typeof html !== 'string' || !html.includes(`shopify-section-${sectionId}`)) {
         // Cart changes can succeed while bundled section rendering returns null.
-        html = await sectionRenderer.getSectionHTML(sectionId, false);
+        const freshURL = new URL(window.location.href);
+        freshURL.searchParams.set('_zc_revision', `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+        html = await sectionRenderer.getSectionHTML(sectionId, false, freshURL);
       }
       const fragment = new DOMParser().parseFromString(html, 'text/html');
       const freshComponent = fragment.getElementById(componentId);
@@ -249,6 +278,7 @@ class ZootifyCartDiscount extends HTMLElement {
       summary?.setDiscountBusy(false);
       activeComponent.closest('zootify-cart-summary')?.setDiscountBusy(false);
     }
+    });
   }
 }
 
@@ -266,7 +296,7 @@ class ZootifyCartSummary extends HTMLElement {
   #abort;
 
   get isBusy() {
-    return this.#discountBusy || Date.now() < this.#quantityPendingUntil || Boolean(this.#cartItems?.classList.contains('cart-items-disabled'));
+    return this.#discountBusy || Boolean(window.__zootifyCartQueueV1?.pending) || Date.now() < this.#quantityPendingUntil || Boolean(this.#cartItems?.classList.contains('cart-items-disabled'));
   }
 
   setDiscountBusy(busy) {
@@ -286,6 +316,7 @@ class ZootifyCartSummary extends HTMLElement {
     document.addEventListener('focusin', this.#schedule, { signal });
     document.addEventListener('focusout', this.#schedule, { signal });
     document.addEventListener(ThemeEvents.quantitySelectorUpdate, this.#onQuantity, { signal });
+    document.addEventListener('zootify:cart-transaction', this.#onTransaction, { signal });
     this.addEventListener('click', this.#onClick, { signal });
     this.addEventListener('toggle', this.#schedule, { capture: true, signal });
     this.#cartItems?.addEventListener('submit', this.#guardSubmit, { capture: true, signal });
@@ -331,6 +362,11 @@ class ZootifyCartSummary extends HTMLElement {
     this.#schedule();
   };
 
+  #onTransaction = () => {
+    this.#syncControls();
+    this.#schedule();
+  };
+
   #guardSubmit = (event) => {
     if (this.isBusy && event.target instanceof HTMLFormElement) {
       event.preventDefault();
@@ -356,7 +392,8 @@ class ZootifyCartSummary extends HTMLElement {
     const wallet = this.querySelector('[data-zc-wallets]');
     if (wallet && wallet.inert !== busy) wallet.inert = busy;
     const items = this.closest('.zootify-cart-page--v3')?.querySelector('.cart-page__items');
-    if (items && items.inert !== this.#discountBusy) items.inert = this.#discountBusy;
+    const lockItems = this.#discountBusy || Boolean(window.__zootifyCartQueueV1?.pending);
+    if (items && items.inert !== lockItems) items.inert = lockItems;
     const ariaBusy = String(busy);
     if (this.getAttribute('aria-busy') !== ariaBusy) this.setAttribute('aria-busy', ariaBusy);
   }
@@ -426,3 +463,4 @@ class ZootifyCartSummary extends HTMLElement {
 
 if (!customElements.get('zootify-cart-discount')) customElements.define('zootify-cart-discount', ZootifyCartDiscount);
 if (!customElements.get('zootify-cart-summary')) customElements.define('zootify-cart-summary', ZootifyCartSummary);
+

@@ -124,9 +124,8 @@
             "mobile_layout": "full",
             "mobile_top_type": "image",
             "mobile_bottom_type": "image",
-            "mobile_full_type": "video",
+            "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/ZOOTIFY_Mobile.webp",
-            "mobile_full_video": "shopify://files/videos/Frostand_Mobile_10sec_FINAL_1080p.mp4",
             "button_label": "SHOP NOW",
             "button_link": "shopify://collections/frostand-magsafe-kickstand-cases"
           }
@@ -763,7 +762,7 @@
           "type": "slide",
           "settings": {
             "heading": "THE FORGECRAFT COLLECTION",
-            "subtext": "PRO. NOT PREDICTABLE.",
+            "subtext": "The Ultimate Luxury.",
             "content_alignment": "left",
             "heading_color": "#ffffff",
             "subtext_color": "#ffffff",

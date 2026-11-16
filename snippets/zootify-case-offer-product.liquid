@@ -1,0 +1,17 @@
+{% doc %}
+  Displays the case offer beside the existing product purchase controls.
+  @param {product} product - The current product.
+{% enddoc %}
+{%- liquid
+  assign offer_collection = settings.zb_case_collection
+  assign collection_ids = product.collections | map: 'id'
+-%}
+{%- if settings.zb_enabled and collection_ids contains offer_collection.id -%}
+  {{ 'zootify-case-offer.css' | asset_url | stylesheet_tag }}
+  <div class="zb-product-offer">
+    <p class="zb-product-offer__title">{{ 'zootify_bundle.product_title' | t }}</p>
+    <p class="zb-product-offer__text">{{ 'zootify_bundle.product_text' | t }}</p>
+    <a class="zb-product-offer__link" href="{{ offer_collection.url }}">{{ 'zootify_bundle.browse' | t }}<span aria-hidden="true"> →</span></a>
+    {% if settings.zb_test_mode %}<p class="zb-product-offer__test">{{ 'zootify_bundle.test_note' | t }}</p>{% endif %}
+  </div>
+{%- endif -%}

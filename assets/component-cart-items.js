@@ -10,6 +10,22 @@ import {
 } from '@theme/events';
 import { cartPerformance } from '@theme/performance';
 
+function zootifyCartQueue() {
+  return window.__zootifyCartQueueV1 ||= {
+    tail: Promise.resolve(), pending: 0,
+    run(task) {
+      this.pending += 1;
+      document.dispatchEvent(new CustomEvent('zootify:cart-transaction'));
+      const operation = this.tail.catch(() => {}).then(task);
+      this.tail = operation.catch(() => {});
+      return operation.finally(() => {
+        this.pending -= 1;
+        document.dispatchEvent(new CustomEvent('zootify:cart-transaction'));
+      });
+    },
+  };
+}
+
 /** @typedef {import('./utilities').TextComponent} TextComponent */
 
 /**
@@ -37,6 +53,7 @@ class CartItemsComponent extends Component {
     super.disconnectedCallback();
 
     document.removeEventListener(ThemeEvents.cartUpdate, this.#handleCartUpdate);
+    document.removeEventListener(ThemeEvents.discountUpdate, this.handleDiscountUpdate);
     document.removeEventListener(ThemeEvents.quantitySelectorUpdate, this.#debouncedOnChange);
   }
 
@@ -80,6 +97,8 @@ class CartItemsComponent extends Component {
       action: 'clear',
     });
 
+    if (this.querySelector('zootify-pairing')) return;
+
     const cartItemRowToRemove = this.refs.cartItemRows[line - 1];
 
     if (!cartItemRowToRemove) return;
@@ -116,6 +135,7 @@ class CartItemsComponent extends Component {
 
     this.#disableCartItems();
 
+    return zootifyCartQueue().run(() => {
     const { line, quantity } = config;
     const { cartTotal } = this.refs;
 
@@ -131,16 +151,16 @@ class CartItemsComponent extends Component {
       line: line,
       quantity: quantity,
       sections: Array.from(sectionsToUpdate).join(','),
-      sections_url: window.location.pathname,
+      sections_url: `${window.location.pathname}${window.location.search}`,
     });
 
     cartTotal?.shimmer();
 
-    fetch(`${Theme.routes.cart_change_url}`, fetchConfig('json', { body }))
+    return fetch(`${Theme.routes.cart_change_url}`, fetchConfig('json', { body }))
       .then((response) => {
         return response.text();
       })
-      .then((responseText) => {
+      .then(async (responseText) => {
         const parsedResponseText = JSON.parse(responseText);
 
         resetShimmer(this);
@@ -162,7 +182,10 @@ class CartItemsComponent extends Component {
         // Update data-cart-quantity for all matching variants
         this.#updateQuantitySelectors(parsedResponseText);
 
-        this.dispatchEvent(
+        await morphSection(this.sectionId, parsedResponseText.sections[this.sectionId]);
+
+        const current = this.isConnected ? this : document.getElementById(`shopify-section-${this.sectionId}`)?.querySelector('cart-items-component');
+        (current || document).dispatchEvent(
           new CartUpdateEvent(parsedResponseText, this.sectionId, {
             itemCount: newCartItemCount,
             source: 'cart-items-component',
@@ -170,14 +193,12 @@ class CartItemsComponent extends Component {
           })
         );
 
-        morphSection(this.sectionId, parsedResponseText.sections[this.sectionId]);
-
         this.#updateCartQuantitySelectorButtonStates();
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => {
+      });
+    }).finally(() => {
         this.#enableCartItems();
         cartPerformance.measureFromMarker(cartPerformaceUpdateMarker);
       });
@@ -221,6 +242,7 @@ class CartItemsComponent extends Component {
    * @param {DiscountUpdateEvent | CartUpdateEvent | CartAddEvent} event
    */
   #handleCartUpdate = (event) => {
+    if (event.detail?.data?.sectionsRendered) return;
     if (event instanceof DiscountUpdateEvent) {
       sectionRenderer.renderSection(this.sectionId, { cache: false });
       return;
@@ -303,3 +325,4 @@ class CartItemsComponent extends Component {
 if (!customElements.get('cart-items-component')) {
   customElements.define('cart-items-component', CartItemsComponent);
 }
+

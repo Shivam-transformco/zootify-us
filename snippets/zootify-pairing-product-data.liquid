@@ -1,0 +1,13 @@
+{% doc %}
+  Serializes an exact product choice using the store's model and colour metadata.
+  @param {product} pairing_product - Product to serialize.
+  @param {boolean} [include_colors] - Include direct linked colour records.
+  @param {boolean} [include_display] - Include initial card image and price.
+{% enddoc %}
+{%- liquid
+  assign product_family = pairing_product.metafields.custom.cover_model.value | default: ''
+  assign product_model = pairing_product.metafields.custom.filter.value | default: ''
+  assign product_color = pairing_product.metafields.custom.color_name.value | default: ''
+  assign product_color_code = pairing_product.metafields.custom.color_code.value | default: ''
+-%}
+{"id":{{ pairing_product.id | append: '' | json }},"handle":{{ pairing_product.handle | json }},"url":{{ pairing_product.url | json }},"family":{{ product_family | json }},"model":{{ product_model | json }},"color":{{ product_color | json }},"colorCode":{{ product_color_code | json }},"available":{{ pairing_product.available | json }},"linkedColorIds":[{% for color_product in pairing_product.metafields.custom.new_custom_color_variant.value %}{{ color_product.id | append: '' | json }}{% unless forloop.last %},{% endunless %}{% endfor %}]{% if include_display %},"title":{{ pairing_product.title | json }},"price":{{ pairing_product.price | json }},"priceFormatted":{{ pairing_product.price | money_with_currency | strip_html | json }},"image":{% if pairing_product.featured_image != blank %}{{ pairing_product.featured_image | image_url: width: 600 | json }}{% else %}null{% endif %}{% endif %}{% if include_colors %},"linkedColors":[{% for color_product in pairing_product.metafields.custom.new_custom_color_variant.value %}{% render 'zootify-pairing-product-data', pairing_product: color_product, include_display: true %}{% unless forloop.last %},{% endunless %}{% endfor %}]{% endif %}}

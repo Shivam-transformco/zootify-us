@@ -9,6 +9,7 @@
   <script type="module" src="{{ 'zootify-cart-page.js' | asset_url }}"></script>
 {% endif %}
 
+
 {% capture cart_page_more_blocks_content %}
   <div class="cart-page__more-blocks">
     {%- content_for 'blocks' -%}
@@ -33,6 +34,7 @@
           {%- content_for 'block', id: 'cart-page-title', type: '_cart-title', force_empty: true %}
         </div>
         <div class="cart-page__items">
+          {% render 'upsell-products', context: 'cart', section_id: section.id, component_id: section.id, force_empty: true %}
           {%- content_for 'block', id: 'cart-page-items', type: '_cart-products', force_empty: true %}
         </div>
         {{ cart_page_more_blocks_content }}
@@ -58,6 +60,7 @@
       </div>
 
       <div class="cart-page__items">
+        {% render 'upsell-products', context: 'cart', section_id: section.id, component_id: section.id %}
         {%- content_for 'block', id: 'cart-page-items', type: '_cart-products' %}
       </div>
 
@@ -441,7 +444,7 @@
       "type": "textarea",
       "id": "zc_express_text",
       "label": "Express explanation",
-      "default": "Express shipping is available for [price] extra.",
+      "default": "Express shipping is available at checkout",
       "info": "Use [price] to insert the surcharge above. Do not promise arrival times unless confirmed by your fulfillment setup."
     },
     {
@@ -771,3 +774,4 @@
   ]
 }
 {% endschema %}
+

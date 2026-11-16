@@ -2292,135 +2292,658 @@
     ]
   },
   {
- "name": "Gokwik",
- "settings": [
-   {
-     "type": "text",
-     "id": "mid",
-     "label": "Merchant Id"
-   },
-   {
-     "type": "header",
-     "content": "Select environment"
-   },
-   {
-     "type": "select",
-     "id": "envType",
-     "options": [
-       { "value": "qa", "label": "QA" },
-       { "value": "sandbox", "label": "Sandbox" },
-       { "value": "production", "label": "Production" }
-     ]
-   },
-   {
-     "type": "checkbox",
-     "id": "hideFlow",
-     "label": "Button hide without disable",
-     "info": "To hide only button without disable Gokwik flow",
-     "default": false
-   },
-   {
-     "type": "header",
-     "content": "Data Tracking"
-   },
-   {
-     "type": "text",
-     "id": "ga4Gokwik",
-     "label": "Enter Google Analytics ID (GA4)",
-     "placeholder": "Starts with GA- ...."
-   },
-   {
-     "type": "text",
-     "id": "fbpixel",
-     "label": "FB Pixel"
-   },
-   {
-     "type": "text",
-     "id": "snapPixel",
-     "label": "Snapchat Pixel"
-   },
-   {
-     "type": "header",
-     "content": "Checkout Button"
-   },
-   {
-     "type": "checkbox",
-     "id": "goEnable",
-     "label": "Enable Checkout Button",
-     "info": "To insert button use {% include 'gokwik-checkout'%}"
-   },
-   {
-     "type": "color",
-     "id": "priClr",
-     "label": "Primary Color",
-     "default": "#000000"
-   },
-   {
-     "type": "color",
-     "id": "secClr",
-     "label": "Secondary Color",
-     "default": "#ffffff"
-   },
-   {
-     "type": "text",
-     "id": "main-titile",
-     "label": "Button Text",
-     "default": "Checkout"
-   },
-   {
-     "type": "header",
-     "content": "Buy Now Button"
-   },
-   {
-     "type": "checkbox",
-     "id": "goBuynowEnable",
-     "label": "Enable Buynow Button",
-     "info": "To insert button use {% include 'gokwik-buy-now'%}"
-   },
-   {
-     "type": "color",
-     "id": "btnBClr",
-     "label": "Background Color",
-     "default": "#000000"
-   },
-   {
-     "type": "color",
-     "id": "btnTextClr",
-     "label": "Text Color",
-     "default": "#ffffff"
-   },
-   {
-     "type": "text",
-     "id": "buyNowText",
-     "label": "Buy Now Button Text",
-     "default": "Buy It Now"
-   },
-   {
-     "type": "header",
-     "content": "Other Settings"
-   },
-   {
-     "type": "text",
-     "id": "sub-titile",
-     "label": "Button Sub Text"
-   },
-   {
-     "type": "checkbox",
-     "id": "enableLogo",
-     "label": "Enable Logo"
-   },
-   {
-     "type": "checkbox",
-     "id": "enableIntlFlow",
-     "label": "Enable International Flow"
-   },
-   {
-     "type": "checkbox",
-     "id": "enableBannertext",
-     "label": "Enable Banner Text"
-   }
- ]
-}
-
-
+    "name": "Gokwik",
+    "settings": [
+      {
+        "type": "text",
+        "id": "mid",
+        "label": "Merchant Id"
+      },
+      {
+        "type": "header",
+        "content": "Select environment"
+      },
+      {
+        "type": "select",
+        "id": "envType",
+        "label": "Environment",
+        "options": [
+          {
+            "value": "qa",
+            "label": "QA"
+          },
+          {
+            "value": "sandbox",
+            "label": "Sandbox"
+          },
+          {
+            "value": "production",
+            "label": "Production"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "hideFlow",
+        "label": "Button hide without disable",
+        "info": "To hide only button without disable Gokwik flow",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Data Tracking"
+      },
+      {
+        "type": "text",
+        "id": "ga4Gokwik",
+        "label": "Enter Google Analytics ID (GA4)",
+        "placeholder": "Starts with GA- ...."
+      },
+      {
+        "type": "text",
+        "id": "fbpixel",
+        "label": "FB Pixel"
+      },
+      {
+        "type": "text",
+        "id": "snapPixel",
+        "label": "Snapchat Pixel"
+      },
+      {
+        "type": "header",
+        "content": "Checkout Button"
+      },
+      {
+        "type": "checkbox",
+        "id": "goEnable",
+        "label": "Enable Checkout Button",
+        "info": "To insert button use {% include 'gokwik-checkout'%}"
+      },
+      {
+        "type": "color",
+        "id": "priClr",
+        "label": "Primary Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "secClr",
+        "label": "Secondary Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "text",
+        "id": "main-titile",
+        "label": "Button Text",
+        "default": "Checkout"
+      },
+      {
+        "type": "header",
+        "content": "Buy Now Button"
+      },
+      {
+        "type": "checkbox",
+        "id": "goBuynowEnable",
+        "label": "Enable Buynow Button",
+        "info": "To insert button use {% include 'gokwik-buy-now'%}"
+      },
+      {
+        "type": "color",
+        "id": "btnBClr",
+        "label": "Background Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "btnTextClr",
+        "label": "Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "text",
+        "id": "buyNowText",
+        "label": "Buy Now Button Text",
+        "default": "Buy It Now"
+      },
+      {
+        "type": "header",
+        "content": "Other Settings"
+      },
+      {
+        "type": "text",
+        "id": "sub-titile",
+        "label": "Button Sub Text"
+      },
+      {
+        "type": "checkbox",
+        "id": "enableLogo",
+        "label": "Enable Logo"
+      },
+      {
+        "type": "checkbox",
+        "id": "enableIntlFlow",
+        "label": "Enable International Flow"
+      },
+      {
+        "type": "checkbox",
+        "id": "enableBannertext",
+        "label": "Enable Banner Text"
+      }
+    ]
+  },
+  {
+    "name": "Case bundle offer",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "zb_enabled",
+        "label": "Enable buy 2, save 20% messaging",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "zb_test_mode",
+        "label": "Show internal test notice",
+        "default": true,
+        "info": "Keep enabled while the automatic discount is restricted to the internal test customer."
+      },
+      {
+        "type": "collection",
+        "id": "zb_case_collection",
+        "label": "Eligible case collection",
+        "info": "Must match the collection targeted by the automatic discount."
+      },
+      {
+        "type": "text",
+        "id": "zb_discount_title",
+        "label": "Automatic discount title",
+        "default": "Buy 2 cases, save 20%",
+        "info": "Exact title used to identify confirmed Shopify discount allocations."
+      }
+    ]
+  },
+  {
+    "name": "Case offer",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Shows an informational promotion without links or product selectors. The native discount is store-wide; set its real percentage, minimum quantity, eligible collection and dates in Shopify Discounts. Display text must match those rules."
+      },
+      {
+        "type": "checkbox",
+        "id": "zp_offer_enabled",
+        "label": "Automatically apply the connected case offer",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "zp_discount_code",
+        "label": "Connected Shopify discount code"
+      },
+      {
+        "type": "collection",
+        "id": "zp_eligible_collection",
+        "label": "Eligible case collection",
+        "info": "Must match the collection selected in Shopify Discounts."
+      },
+      {
+        "type": "text",
+        "id": "zp_offer_badge",
+        "label": "Applied-discount label",
+        "default": "Case offer · 20% off"
+      },
+      {
+        "type": "text",
+        "id": "zp_offer_message",
+        "label": "Empty-cart offer message",
+        "default": "Buy any 2 cases. Get 20% off your cases."
+      },
+      {
+        "type": "text",
+        "id": "zp_one_more_message",
+        "label": "One-case cart message",
+        "default": "Add one more case to get 20% off your cases."
+      },
+      {
+        "type": "checkbox",
+        "id": "zoffer_show_product",
+        "label": "Show on eligible product pages",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "zoffer_show_cart",
+        "label": "Show cart progress",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Product panel copy"
+      },
+      {
+        "type": "text",
+        "id": "zoffer_heading",
+        "label": "Heading",
+        "default": "Double up."
+      },
+      {
+        "type": "text",
+        "id": "zoffer_qualifier",
+        "label": "Purchase condition",
+        "default": "Buy any 2 cases"
+      },
+      {
+        "type": "text",
+        "id": "zoffer_savings_label",
+        "label": "Displayed saving",
+        "default": "20%"
+      },
+      {
+        "type": "text",
+        "id": "zoffer_mix_message",
+        "label": "Design and model note",
+        "default": "Mix designs, colors & models."
+      },
+      {
+        "type": "text",
+        "id": "zoffer_automatic_message",
+        "label": "Automatic-application note",
+        "default": "Applied automatically"
+      },
+      {
+        "type": "header",
+        "content": "Cart copy"
+      },
+      {
+        "type": "text",
+        "id": "zoffer_cart_heading_empty",
+        "label": "Empty-cart heading",
+        "default": "Double up. Save 20%."
+      },
+      {
+        "type": "text",
+        "id": "zoffer_cart_heading_one",
+        "label": "One-case heading",
+        "default": "One more case. 20% off."
+      },
+      {
+        "type": "text",
+        "id": "zoffer_cart_heading_applied",
+        "label": "Applied-offer heading",
+        "default": "Your 20% saving is applied."
+      },
+      {
+        "type": "text",
+        "id": "zoffer_cart_heading_ready",
+        "label": "Qualifying-cart heading",
+        "default": "Your cases qualify."
+      },
+      {
+        "type": "text",
+        "id": "zoffer_cart_hint",
+        "label": "Cart footer",
+        "default": "Applied automatically at 2+ cases"
+      },
+      {
+        "type": "header",
+        "content": "Typography and spacing"
+      },
+      {
+        "type": "range",
+        "id": "zoffer_heading_size",
+        "label": "Desktop heading size",
+        "min": 16,
+        "max": 28,
+        "step": 1,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "range",
+        "id": "zoffer_heading_mobile",
+        "label": "Mobile heading size",
+        "min": 14,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 18
+      },
+      {
+        "type": "select",
+        "id": "zoffer_heading_weight",
+        "label": "Heading weight",
+        "options": [
+          {
+            "value": "500",
+            "label": "Medium"
+          },
+          {
+            "value": "600",
+            "label": "Semibold"
+          },
+          {
+            "value": "700",
+            "label": "Bold"
+          }
+        ],
+        "default": "600"
+      },
+      {
+        "type": "range",
+        "id": "zoffer_value_size",
+        "label": "Desktop percentage size",
+        "min": 28,
+        "max": 54,
+        "step": 2,
+        "unit": "px",
+        "default": 42
+      },
+      {
+        "type": "range",
+        "id": "zoffer_value_mobile",
+        "label": "Mobile percentage size",
+        "min": 26,
+        "max": 46,
+        "step": 2,
+        "unit": "px",
+        "default": 36
+      },
+      {
+        "type": "range",
+        "id": "zoffer_padding",
+        "label": "Panel padding",
+        "min": 12,
+        "max": 24,
+        "step": 2,
+        "unit": "px",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "zoffer_radius",
+        "label": "Panel corner radius",
+        "min": 0,
+        "max": 20,
+        "step": 2,
+        "unit": "px",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "zoffer_space_top",
+        "label": "Product-panel space above",
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "zoffer_space_bottom",
+        "label": "Product-panel space below",
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "zoffer_cart_space_bottom",
+        "label": "Cart-panel space below",
+        "min": 8,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "type": "header",
+        "content": "Product panel colors"
+      },
+      {
+        "type": "color",
+        "id": "zoffer_background",
+        "label": "Background",
+        "default": "#01161e"
+      },
+      {
+        "type": "color",
+        "id": "zoffer_text",
+        "label": "Primary text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "zoffer_muted",
+        "label": "Secondary text",
+        "default": "#d0dcdf"
+      },
+      {
+        "type": "color",
+        "id": "zoffer_accent",
+        "label": "Saving accent",
+        "default": "#6ac857"
+      },
+      {
+        "type": "header",
+        "content": "Cart panel colors"
+      },
+      {
+        "type": "color",
+        "id": "zoffer_cart_background",
+        "label": "Cart background",
+        "default": "#f6f8f5"
+      },
+      {
+        "type": "color",
+        "id": "zoffer_cart_text",
+        "label": "Cart primary text",
+        "default": "#01161e"
+      },
+      {
+        "type": "color",
+        "id": "zoffer_cart_muted",
+        "label": "Cart secondary text",
+        "default": "#56655c"
+      },
+      {
+        "type": "color",
+        "id": "zoffer_cart_border",
+        "label": "Cart border",
+        "default": "#dae1da"
+      },
+      {
+        "type": "color",
+        "id": "zoffer_cart_progress",
+        "label": "Cart progress fill",
+        "default": "#39732b"
+      }
+    ]
+  },
+  {
+    "name": "Pair Up With",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "zp_enabled",
+        "label": "Show Pair Up With recommendations",
+        "default": false,
+        "info": "Keep off until you want to recommend accessories. The case promotion is managed separately under Case offer."
+      },
+      {
+        "type": "checkbox",
+        "id": "zp_show_product",
+        "label": "Show on product pages",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "zp_show_cart",
+        "label": "Show on the cart page",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "zp_heading",
+        "label": "Default heading",
+        "default": "Pair Up With"
+      },
+      {
+        "type": "product_list",
+        "id": "zp_products",
+        "label": "Default products to pair",
+        "limit": 8,
+        "info": "Used when a pairing block and the product Upsell products metafield have no selection. Choose compatible cases, wallets, lanyards, or other products."
+      },
+      {
+        "type": "range",
+        "id": "zp_max_products",
+        "label": "Maximum products in cart",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "default": 2
+      },
+      {
+        "type": "header",
+        "content": "Typography"
+      },
+      {
+        "type": "range",
+        "id": "zp_heading_size",
+        "label": "Desktop heading size",
+        "min": 14,
+        "max": 28,
+        "step": 1,
+        "unit": "px",
+        "default": 18
+      },
+      {
+        "type": "range",
+        "id": "zp_heading_size_mobile",
+        "label": "Mobile heading size",
+        "min": 14,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 16
+      },
+      {
+        "type": "select",
+        "id": "zp_heading_weight",
+        "label": "Heading weight",
+        "options": [
+          {
+            "value": "400",
+            "label": "Regular"
+          },
+          {
+            "value": "500",
+            "label": "Medium"
+          },
+          {
+            "value": "600",
+            "label": "Semibold"
+          },
+          {
+            "value": "700",
+            "label": "Bold"
+          }
+        ],
+        "default": "600"
+      },
+      {
+        "type": "header",
+        "content": "Spacing and shape"
+      },
+      {
+        "type": "range",
+        "id": "zp_space_top",
+        "label": "Space above",
+        "min": 0,
+        "max": 64,
+        "step": 4,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "zp_space_bottom",
+        "label": "Space below",
+        "min": 0,
+        "max": 64,
+        "step": 4,
+        "unit": "px",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "zp_row_gap",
+        "label": "Space between products",
+        "min": 8,
+        "max": 24,
+        "step": 2,
+        "unit": "px",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "zp_corner_radius",
+        "label": "Card corner radius",
+        "min": 0,
+        "max": 24,
+        "step": 2,
+        "unit": "px",
+        "default": 12
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      },
+      {
+        "type": "color",
+        "id": "zp_text_color",
+        "label": "Text",
+        "default": "#01151e"
+      },
+      {
+        "type": "color",
+        "id": "zp_muted_color",
+        "label": "Secondary text",
+        "default": "#68716e"
+      },
+      {
+        "type": "color",
+        "id": "zp_card_background",
+        "label": "Product card background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "zp_border_color",
+        "label": "Card border",
+        "default": "#e6e8e6"
+      },
+      {
+        "type": "color",
+        "id": "zp_accent_color",
+        "label": "Offer accent",
+        "default": "#507c38"
+      },
+      {
+        "type": "color",
+        "id": "zp_button_background",
+        "label": "Button background",
+        "default": "#01151e"
+      },
+      {
+        "type": "color",
+        "id": "zp_button_text",
+        "label": "Button text",
+        "default": "#6ac857"
+      }
+    ]
+  }
 ]

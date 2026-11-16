@@ -1,0 +1,21 @@
+{% doc %}
+  Displays the eligible case promotion in product information.
+{% enddoc %}
+{% render 'upsell-products', product: closest.product, context: 'product', presentation: 'offer', offer_settings: block.settings, component_id: block.id, section_id: section.id, editor_attributes: block.shopify_attributes %}
+
+{% schema %}
+{
+  "name": "Case offer",
+  "tag": null,
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Show offer panel", "default": true },
+    { "type": "paragraph", "content": "This is an informational panel. Manage the connected discount, default copy, colors and typography in Theme settings > Case offer. Change the real discount rules in Shopify Discounts." },
+    { "type": "text", "id": "heading", "label": "Heading override", "info": "Leave blank to use the global heading." },
+    { "type": "text", "id": "qualifier", "label": "Purchase condition override", "info": "Keep this aligned with the real Shopify discount." },
+    { "type": "text", "id": "mix_message", "label": "Design and model note override" },
+    { "type": "range", "id": "space_top", "label": "Space above", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "space_bottom", "label": "Space below", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 0 }
+  ],
+  "presets": [{ "name": "Case offer" }]
+}
+{% endschema %}

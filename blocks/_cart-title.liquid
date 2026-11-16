@@ -1,53 +1,76 @@
-
-
 {% assign block_settings = block.settings %}
 
+{%- liquid
+  assign zootify_cart_heading = block_settings.title
+  if zootify_cart_heading == blank or zootify_cart_heading == 'Cart'
+    assign zootify_cart_heading = 'SHOPPING BAG'
+  endif
+-%}
+
 <div
-  class="cart-title spacing-style text-{{ block_settings.alignment }}"
+  class="cart-title cart-title--zootify spacing-style text-{{ block_settings.alignment }}"
   style="{% render 'spacing-style', settings: block_settings %}"
   {{ block.shopify_attributes }}
 >
-  <h1 class="{{ block_settings.type_preset | default: 'h2' }}">
+  <h1 class="cart-title--zootify__heading {{ block_settings.type_preset | default: 'h2' }}">
     {%- if cart.empty? -%}
       {{ 'content.your_cart_is_empty' | t }}
     {%- else -%}
-      {{ block_settings.title }}
-      {%- if block_settings.show_count -%}{% render 'cart-bubble' %}{%- endif -%}
+      {{ zootify_cart_heading }}
     {%- endif -%}
   </h1>
+
+  {%- unless cart.empty? -%}
+    {%- if block_settings.show_count -%}
+      <p class="cart-title--zootify__meta" aria-live="polite">
+        {{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %} selected
+      </p>
+    {%- endif -%}
+  {%- endunless -%}
 </div>
 
 {% stylesheet %}
-  .cart-title h1 {
-    margin-block-end: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--gap-sm);
+  /* Cart page heading only. No changes to totals, checkout, product cards or cart drawer. */
+  .zootify-cart-page .cart-title--zootify {
+    width: 100%;
+    text-align: center;
   }
 
-  .cart-title .cart-bubble {
-    width: fit-content;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--style-border-radius-buttons-primary);
-    aspect-ratio: auto;
-    padding: var(--cart-padding);
+  .zootify-cart-page .cart-title--zootify h1 {
+    display: block;
+    margin: 0;
+    font-family: var(--font-body--family, inherit);
+    font-size: clamp(27px, 2.25vw, 33px);
+    font-weight: 500;
+    line-height: 1.22;
+    letter-spacing: -0.035em;
+    text-transform: none;
   }
 
-  .cart-title .cart-bubble[data-maintain-ratio] {
-    aspect-ratio: 1;
-    min-width: 26px;
+  .zootify-cart-page .cart-title--zootify .cart-title--zootify__meta {
+    margin: 8px 0 0;
+    font-family: var(--font-body--family, inherit);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.015em;
+    color: rgb(var(--color-foreground-rgb) / 0.62);
   }
 
-  .cart-title .cart-bubble__background {
-    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
-  }
+  @media screen and (max-width: 749px) {
+    .zootify-cart-page .cart-title--zootify {
+      text-align: left;
+    }
 
-  .cart-title .cart-bubble__text {
-    color: var(--color-foreground);
-    font-family: var(--font-paragraph--family);
-    font-size: clamp(var(--cart-font-size--2xs), 0.7lh, var(--cart-font-size--xs));
+    .zootify-cart-page .cart-title--zootify h1 {
+      font-size: 26px;
+      letter-spacing: -0.03em;
+    }
+
+    .zootify-cart-page .cart-title--zootify .cart-title--zootify__meta {
+      margin-top: 6px;
+      font-size: 12px;
+    }
   }
 {% endstylesheet %}
 

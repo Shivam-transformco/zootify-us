@@ -14,6 +14,30 @@
     "zootify_announcement_bar_q8K7U9": {
       "type": "zootify-announcement-bar",
       "blocks": {
+        "message_W10first": {
+          "type": "message",
+          "settings": {
+            "text": "10% off your first order – use code WELCOME10",
+            "mobile_text": "10% off first order: WELCOME10",
+            "link": "",
+            "link_label": "",
+            "mobile_link_label": "",
+            "new_tab": false,
+            "icon": "none"
+          }
+        },
+        "message_3TART4": {
+          "type": "message",
+          "settings": {
+            "text": "Buy any 2 cases, save 20%",
+            "mobile_text": "",
+            "link": "",
+            "link_label": "",
+            "mobile_link_label": "",
+            "new_tab": false,
+            "icon": "none"
+          }
+        },
         "message_PB4cj3": {
           "type": "message",
           "settings": {
@@ -28,15 +52,18 @@
         }
       },
       "block_order": [
+        "message_W10first",
+        "message_3TART4",
         "message_PB4cj3"
       ],
       "name": "ZOOTIFY announcement bar",
       "settings": {
         "enable_bar": true,
+        "sticky_bar": true,
         "page_scope": "all",
         "devices": "both",
         "auto_rotate": false,
-        "rotation_interval": 7,
+        "rotation_interval": 5,
         "transition": "fade",
         "font_source": "body",
         "custom_font": "montserrat_n4",
@@ -65,11 +92,11 @@
         "max_width": 1440,
         "background_color": "#000000",
         "background_gradient": "",
-        "text_color": "#FFFFFF",
-        "link_color": "#FFFFFF",
-        "link_hover_color": "#7DC762",
-        "icon_color": "#FFFFFF",
-        "control_color": "#FFFFFF",
+        "text_color": "#ffffff",
+        "link_color": "#ffffff",
+        "link_hover_color": "#7dc762",
+        "icon_color": "#ffffff",
+        "control_color": "#656565",
         "border_width": 0,
         "border_color": "#222222",
         "icon_size_desktop": 16,

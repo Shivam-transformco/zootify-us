@@ -5,8 +5,18 @@
   Shows once, 2 seconds after the page opens (or earlier on 40% scroll / leaving the page on desktop).
   Closing it hides it for 14 days; signing up hides it for good.
   To change the offer, edit the code below and the WELCOME10 discount in Shopify.
+
+  PAUSE SWITCH: while the shop metafield custom.signup_popup_paused is true, customers
+  never see the popup. To test it, open any page with ?popup=test added to the URL
+  (e.g. https://us.zootify.com/?popup=test). Test mode lasts for that browser tab session
+  and ignores the "closed / already signed up" memory, so it shows every time.
+  To go live: set the metafield to false (Settings > Custom data > Shop) or ask Claude.
 {% endcomment %}
 {%- liquid
+  assign zt_paused = false
+  if shop.metafields.custom.signup_popup_paused.value == true
+    assign zt_paused = true
+  endif
   assign zt_code = 'WELCOME10'
   assign zt_show = true
   if customer or request.design_mode
@@ -17,7 +27,7 @@
   endif
 -%}
 {%- if zt_show -%}
-<div class="zt-pop" id="zt-pop" hidden>
+<div class="zt-pop" id="zt-pop" data-zt-paused="{{ zt_paused }}" hidden>
   <div class="zt-pop__overlay" data-zt-close></div>
   <div class="zt-pop__box" role="dialog" aria-modal="true" aria-labelledby="zt-pop-title">
     <button type="button" class="zt-pop__x" data-zt-close aria-label="Close">
@@ -102,6 +112,14 @@
   var stateEl = pop.querySelector('[data-zt-state]');
   var state = stateEl ? stateEl.getAttribute('data-zt-state') : 'new';
 
+  /* Pause switch: when paused, only show in test mode (?popup=test, remembered for this tab session) */
+  var testMode = false;
+  try {
+    if (/[?&]popup=test\b/.test(window.location.search)) sessionStorage.setItem('zt_popup_test', '1');
+    testMode = sessionStorage.getItem('zt_popup_test') === '1';
+  } catch (e) {}
+  if (pop.getAttribute('data-zt-paused') === 'true' && !testMode) return;
+
   function read() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
   function write(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} }
 
@@ -136,8 +154,10 @@
   if (state === 'error') { open(); return; }
 
   var s = read();
-  if (s.subscribed) return;
-  if (s.dismissedAt && Date.now() - s.dismissedAt < 14 * 24 * 60 * 60 * 1000) return;
+  if (!testMode) {
+    if (s.subscribed) return;
+    if (s.dismissedAt && Date.now() - s.dismissedAt < 14 * 24 * 60 * 60 * 1000) return;
+  }
 
   var fired = false;
   function trigger() {

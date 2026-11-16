@@ -1,0 +1,73 @@
+{% doc %}
+  Displays the case offer without product-selection controls.
+  @param {string} context - Product or cart placement.
+  @param {string} component_id - Unique component identifier.
+  @param {object} [offer_settings] - Product block copy overrides.
+  @param {string} [offer_state] - Empty, one, ready, or applied.
+  @param {number} [offer_quantity] - Eligible case units.
+  @param {number} [offer_saving] - Confirmed native discount amount.
+{% enddoc %}
+{%- liquid
+  assign offer_heading = offer_settings.heading | default: settings.zoffer_heading
+  if offer_heading == blank
+    assign offer_heading = 'zootify_case_offer.heading' | t
+  endif
+  assign offer_qualifier = offer_settings.qualifier | default: settings.zoffer_qualifier
+  if offer_qualifier == blank
+    assign offer_qualifier = 'zootify_case_offer.qualifier' | t
+  endif
+  assign mix_message = offer_settings.mix_message | default: settings.zoffer_mix_message
+  if mix_message == blank
+    assign mix_message = 'zootify_case_offer.mix_message' | t
+  endif
+  assign automatic_message = settings.zoffer_automatic_message
+  if automatic_message == blank
+    assign automatic_message = 'zootify_case_offer.automatic_message' | t
+  endif
+  assign savings_label = settings.zoffer_savings_label | default: '20%'
+  assign off_label = 'zootify_case_offer.off' | t
+  assign cart_heading = settings.zoffer_cart_heading_empty
+  if offer_state == 'applied'
+    assign cart_heading = settings.zoffer_cart_heading_applied
+  elsif offer_state == 'one'
+    assign cart_heading = settings.zoffer_cart_heading_one
+  elsif offer_state == 'ready'
+    assign cart_heading = settings.zoffer_cart_heading_ready
+  endif
+-%}
+{% if context == 'cart' %}
+  <aside class="zo-offer zo-offer--cart" data-zp-discount-state data-state="{{ offer_state }}" aria-labelledby="ZoOfferTitle-{{ context }}-{{ component_id }}" aria-live="polite" aria-atomic="true">
+    <div class="zo-cart-offer__top">
+      <h2 class="zo-cart-offer__heading" id="ZoOfferTitle-{{ context }}-{{ component_id }}" data-zo-cart-heading>{{ cart_heading | escape }}</h2>
+      <span class="zo-cart-offer__reward">{{ savings_label | escape }} {{ off_label }}</span>
+    </div>
+    <p class="zo-cart-offer__message zp-cart-notice__text">
+      {% if offer_state == 'applied' %}{% assign saved_amount = offer_saving | money %}{{ 'zootify_pairing.saved' | t: amount: saved_amount }}
+      {% elsif offer_state == 'one' %}{{ settings.zp_one_more_message | escape }}
+      {% elsif offer_state == 'ready' %}{{ 'zootify_pairing.discount_applying' | t }}
+      {% else %}{{ settings.zp_offer_message | escape }}{% endif %}
+    </p>
+    <div class="zo-cart-offer__progress" aria-hidden="true">
+      <span data-zo-step="1"{% if offer_quantity >= 1 %} class="is-complete"{% endif %}></span>
+      <span data-zo-step="2"{% if offer_state == 'applied' %} class="is-complete"{% elsif offer_state == 'ready' %} class="is-pending"{% endif %}></span>
+    </div>
+    <p class="zo-cart-offer__hint">{{ settings.zoffer_cart_hint | escape }}</p>
+  </aside>
+{% else %}
+  <aside class="zo-offer zo-offer--product" aria-labelledby="ZoOfferTitle-{{ context }}-{{ component_id }}">
+    <div class="zo-offer__main">
+      <div class="zo-offer__copy">
+        <h2 class="zo-offer__heading" id="ZoOfferTitle-{{ context }}-{{ component_id }}">{{ offer_heading | escape }}</h2>
+        <p class="zo-offer__qualifier">{{ offer_qualifier | escape }}</p>
+      </div>
+      <div class="zo-offer__reward">
+        <span class="zo-offer__value">{{ savings_label | escape }}</span>
+        <span class="zo-offer__off">{{ off_label }}</span>
+      </div>
+    </div>
+    <div class="zo-offer__footer">
+      <p class="zo-offer__mix">{{ mix_message | escape }}</p>
+      <p class="zo-offer__auto"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ automatic_message | escape }}</p>
+    </div>
+  </aside>
+{% endif %}

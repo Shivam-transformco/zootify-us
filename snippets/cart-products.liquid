@@ -214,7 +214,7 @@
 {% assign file_type = property.last | split: '.' | last | downcase %}
 {% assign file_types = 'jpg,jpeg,webp,gif,png,apng,avif,svg,bmp,ico,tiff' | split: ',' %}
 {% if file_types contains file_type %}
-  <div class="bcpo-cart-file"><img src="{{ property.last }}" style="max-width: 50px; height: auto;"></div>
+  <div class="bcpo-cart-file"><img src="{{ property.last | escape }}" width="50" height="50" alt="{{ property.first | escape }}" style="max-width: 50px; width: auto; height: auto;"></div>
 {% else %}
   <span class="bcpo-cart-file">Uploaded file</span>
 {% endif %}
@@ -225,7 +225,7 @@
 	{% assign file_type = property.last | split: '.' | last | downcase %}
 	{% assign file_types = 'jpg,jpeg,webp,gif,png,apng,avif,svg,bmp,ico,tiff' | split: ',' %}
 	{% if file_types contains file_type %}
-		<div class="bcpo-cart-file"><img src="{{ property.last }}" style="max-width: 50px; height: auto;"></div>
+		<div class="bcpo-cart-file"><img src="{{ property.last | escape }}" width="50" height="50" alt="{{ property.first | escape }}" style="max-width: 50px; width: auto; height: auto;"></div>
 	{% else %}
 		<span class="bcpo-cart-file">Uploaded file</span>
 	{% endif %}
@@ -250,7 +250,9 @@
                       role="list"
                     >
                       {%- for discount in item.line_level_discount_allocations -%}
-                        <li>{{ discount.discount_application.title | escape }}</li>
+                        {% assign line_discount_code = discount.discount_application.title | downcase %}
+                        {% assign pairing_discount_code = settings.zp_discount_code | strip | downcase %}
+                        <li>{% if pairing_discount_code != blank and line_discount_code == pairing_discount_code %}{{ 'zootify_pairing.discount_applied' | t }}{% else %}{{ discount.discount_application.title | escape }}{% endif %}</li>
                       {%- endfor -%}
                     </ul>
                   {% endif %}
@@ -955,3 +957,4 @@
   }
 
 {% endstylesheet %}
+

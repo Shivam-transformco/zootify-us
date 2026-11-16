@@ -176,6 +176,18 @@
               },
               "blocks": {}
             },
+            "zootify_case_offer_DoubleUp": {
+              "type": "zootify-case-offer",
+              "settings": {
+                "enabled": true,
+                "heading": "",
+                "qualifier": "",
+                "mix_message": "",
+                "space_top": 0,
+                "space_bottom": 0
+              },
+              "blocks": {}
+            },
             "custom_liquid_dUdGEJ": {
               "type": "custom-liquid",
               "name": "t:names.custom_liquid",
@@ -287,9 +299,45 @@
               },
               "block_order": []
             },
+            "zootify_pairing_PairUp": {
+              "type": "zootify-pairing",
+              "disabled": true,
+              "settings": {
+                "enabled": false,
+                "heading": "Pair Up With",
+                "subheading": "",
+                "products": [],
+                "max_products": 2,
+                "show_offer": true,
+                "heading_size": 18,
+                "heading_size_mobile": 16,
+                "heading_weight": "600",
+                "space_top": 24,
+                "space_bottom": 0,
+                "row_gap": 12,
+                "corner_radius": 12,
+                "text_color": "#01151e",
+                "muted_color": "#68716e",
+                "card_background": "#ffffff",
+                "border_color": "#e6e8e6",
+                "accent_color": "#507c38",
+                "button_background": "#01151e",
+                "button_text": "#6ac857"
+              },
+              "blocks": {}
+            },
+            "custom_liquid_biYFPc": {
+              "type": "custom-liquid",
+              "name": "t:names.custom_liquid",
+              "settings": {
+                "custom_liquid": "<div class=\"offer-wrapper\">\n  <div class=\"offer-heading\">Active offers</div>\n\n  <div class=\"offer-carousel\">\n    <div class=\"offer-track\">\n\n      <div class=\"offer-box\">\n        <span class=\"offer-text\">\n          10% off your first order – use code WELCOME10\n        </span>\n      </div>\n\n      <div class=\"offer-box\">\n        <span class=\"offer-text\">\n          Free standard shipping on all orders\n        </span>\n      </div>\n\n    </div>\n  </div>\n\n  <div class=\"offer-dots\"></div>\n</div>\n\n<style>\n.offer-wrapper {\n  max-width: 450px;\n  margin: 12px 0;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n}\n\n.offer-heading {\n  font-size: 18px;\n  margin-bottom: 12px;\n  color: #1a1a1a;\n  font-weight: 700;\n  padding-left: 2px;\n}\n\n.offer-carousel {\n  overflow: hidden;\n}\n\n.offer-track {\n  display: flex;\n  transition: transform 0.45s ease;\n}\n\n.offer-box {\n  min-width: 100%;\n  display: flex;\n  align-items: center;\n  padding: 16px 20px;\n  border: none;\n  border-radius: 12px;\n  background: #f8f8f8;\n  box-sizing: border-box;\n}\n\n.offer-text {\n  font-size: 14px;\n  font-weight: 400;\n  color: #1a1a1a;\n  letter-spacing: -0.1px;\n}\n\n.offer-dots {\n  display: flex;\n  justify-content: center;\n  gap: 8px;\n  margin-top: 12px;\n}\n\n.offer-dot {\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: #1a1a1a;\n  opacity: 0.2;\n  cursor: pointer;\n  transition: opacity 0.3s ease, background-color 0.3s ease;\n}\n\n.offer-dot.active {\n  background: #52ad4d;\n  opacity: 1;\n}\n\n@media (max-width: 600px) {\n  .offer-wrapper {\n    width: 100%;\n  }\n\n  .offer-heading {\n    font-size: 16px;\n  }\n\n  .offer-box {\n    padding: 14px 18px;\n  }\n\n  .offer-text {\n    font-size: 14px;\n  }\n}\n</style>\n\n<script>\n(function () {\n  const track = document.querySelector(\".offer-track\");\n  const slides = document.querySelectorAll(\".offer-box\");\n  const dotsContainer = document.querySelector(\".offer-dots\");\n\n  if (!track || slides.length === 0 || !dotsContainer) return;\n\n  let currentIndex = 0;\n\n  slides.forEach((_, index) => {\n    const dot = document.createElement(\"span\");\n    dot.className = \"offer-dot\" + (index === 0 ? \" active\" : \"\");\n    dot.addEventListener(\"click\", () => moveToSlide(index));\n    dotsContainer.appendChild(dot);\n  });\n\n  const dots = dotsContainer.querySelectorAll(\".offer-dot\");\n\n  function moveToSlide(index) {\n    track.style.transform = `translateX(-${index * 100}%)`;\n    dots.forEach(d => d.classList.remove(\"active\"));\n    if (dots[index]) dots[index].classList.add(\"active\");\n    currentIndex = index;\n  }\n\n  let touchStartX = 0;\n\n  track.addEventListener(\"touchstart\", e => {\n    touchStartX = e.touches[0].clientX;\n  }, { passive: true });\n\n  track.addEventListener(\"touchend\", e => {\n    const diff = touchStartX - e.changedTouches[0].clientX;\n\n    if (Math.abs(diff) > 40) {\n      moveToSlide(\n        diff > 0\n          ? Math.min(currentIndex + 1, slides.length - 1)\n          : Math.max(currentIndex - 1, 0)\n      );\n    }\n  }, { passive: true });\n\n  if (slides.length > 1) {\n    setInterval(() => {\n      currentIndex = (currentIndex + 1) % slides.length;\n      moveToSlide(currentIndex);\n    }, 4000);\n  }\n})();\n</script>"
+              },
+              "blocks": {}
+            },
             "custom_liquid_mKANDJ": {
               "type": "custom-liquid",
               "name": "t:names.custom_liquid",
+              "disabled": true,
               "settings": {
                 "custom_liquid": "{% render 'upsell-products' %}"
               },
@@ -354,14 +402,6 @@
               "disabled": true,
               "settings": {
                 "custom_liquid": "<style>\n.custom-info-container {\n  display: flex;\n  flex-direction: column;\n  gap: 8px;\n  font-size: 16px;\n  color: #000;\n}\n\n/* Shipping container */\n.custom-shipping-box {\n  width: 80%;              /* desktop width */\n  max-width: 80%;\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  padding: 8px;\n  border: 1px solid #e6e6e6;\n  border-radius: 4px;\n  font-size: 14px;\n  background: #fafafa;\n}\n\n/* Truck icon image */\n.custom-truck-icon {\n  width: 20px;\n  height: 20px;\n  object-fit: contain;\n  flex-shrink: 0;\n}\n\n/* Mobile: reset to default */\n@media (max-width: 768px) {\n  .custom-shipping-box {\n    width: 100%;\n    max-width: 100%;\n  }\n}\n</style>\n\n<div class=\"custom-info-container\">\n  <div class=\"custom-shipping-box\">\n    <img \n      src=\"https://cdn.shopify.com/s/files/1/0674/4136/1049/files/fast-delivery.png?v=1770551575\" \n      alt=\"Fast Delivery\" \n      class=\"custom-truck-icon\"\n    >\n    <span>Delivery within 4–5 days.</span>\n  </div>\n</div>"
-              },
-              "blocks": {}
-            },
-            "custom_liquid_biYFPc": {
-              "type": "custom-liquid",
-              "name": "t:names.custom_liquid",
-              "settings": {
-                "custom_liquid": "<div class=\"offer-wrapper\">\n  <div class=\"offer-heading\">Active offers</div>\n\n  <div class=\"offer-carousel\">\n    <div class=\"offer-track\">\n\n      <div class=\"offer-box\">\n        <span class=\"offer-text\">\n          Free standard shipping on all orders\n        </span>\n      </div>\n\n    </div>\n  </div>\n\n  <div class=\"offer-dots\"></div>\n</div>\n\n<style>\n.offer-wrapper {\n  max-width: 450px;\n  margin: 12px 0;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n}\n\n.offer-heading {\n  font-size: 18px;\n  margin-bottom: 12px;\n  color: #1a1a1a;\n  font-weight: 700;\n  padding-left: 2px;\n}\n\n.offer-carousel {\n  overflow: hidden;\n}\n\n.offer-track {\n  display: flex;\n  transition: transform 0.45s ease;\n}\n\n.offer-box {\n  min-width: 100%;\n  display: flex;\n  align-items: center;\n  padding: 16px 20px;\n  border: none;\n  border-radius: 12px;\n  background: #f8f8f8;\n  box-sizing: border-box;\n}\n\n.offer-text {\n  font-size: 14px;\n  font-weight: 400;\n  color: #1a1a1a;\n  letter-spacing: -0.1px;\n}\n\n.offer-dots {\n  display: flex;\n  justify-content: center;\n  gap: 8px;\n  margin-top: 12px;\n}\n\n.offer-dot {\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: #1a1a1a;\n  opacity: 0.2;\n  cursor: pointer;\n  transition: opacity 0.3s ease, background-color 0.3s ease;\n}\n\n.offer-dot.active {\n  background: #52ad4d;\n  opacity: 1;\n}\n\n@media (max-width: 600px) {\n  .offer-wrapper {\n    width: 100%;\n  }\n\n  .offer-heading {\n    font-size: 16px;\n  }\n\n  .offer-box {\n    padding: 14px 18px;\n  }\n\n  .offer-text {\n    font-size: 14px;\n  }\n}\n</style>\n\n<script>\n(function () {\n  const track = document.querySelector(\".offer-track\");\n  const slides = document.querySelectorAll(\".offer-box\");\n  const dotsContainer = document.querySelector(\".offer-dots\");\n\n  if (!track || slides.length === 0 || !dotsContainer) return;\n\n  let currentIndex = 0;\n\n  slides.forEach((_, index) => {\n    const dot = document.createElement(\"span\");\n    dot.className = \"offer-dot\" + (index === 0 ? \" active\" : \"\");\n    dot.addEventListener(\"click\", () => moveToSlide(index));\n    dotsContainer.appendChild(dot);\n  });\n\n  const dots = dotsContainer.querySelectorAll(\".offer-dot\");\n\n  function moveToSlide(index) {\n    track.style.transform = `translateX(-${index * 100}%)`;\n    dots.forEach(d => d.classList.remove(\"active\"));\n    if (dots[index]) dots[index].classList.add(\"active\");\n    currentIndex = index;\n  }\n\n  let touchStartX = 0;\n\n  track.addEventListener(\"touchstart\", e => {\n    touchStartX = e.touches[0].clientX;\n  }, { passive: true });\n\n  track.addEventListener(\"touchend\", e => {\n    const diff = touchStartX - e.changedTouches[0].clientX;\n\n    if (Math.abs(diff) > 40) {\n      moveToSlide(\n        diff > 0\n          ? Math.min(currentIndex + 1, slides.length - 1)\n          : Math.max(currentIndex - 1, 0)\n      );\n    }\n  }, { passive: true });\n\n  if (slides.length > 1) {\n    setInterval(() => {\n      currentIndex = (currentIndex + 1) % slides.length;\n      moveToSlide(currentIndex);\n    }, 4000);\n  }\n})();\n</script>"
               },
               "blocks": {}
             },
@@ -439,7 +479,7 @@
                     "text_DNPAct": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>10-day return or replacement - No questions asked. Product ordered must be unused, in original condition, and in brand packaging. For complete details, please visit <a href=\"https://us.zootify.com/policies/refund-policy\" target=\"_blank\" title=\"https://us.zootify.com/policies/refund-policy\">Return Policy</a></p>",
+                        "text": "<p></p><ul><li><strong>Standard Shipping - FREE:</strong> Estimated delivery in 3–7 days.</li><li><strong>Express Shipping - $10 extra:</strong> Estimated delivery in 1–3 days.</li></ul><p>Choose your preferred shipping option at checkout.</p><p><strong>Returns & Replacements<br/></strong>10-day return or replacement - No questions asked. Product ordered must be unused, in original condition, and in brand packaging. For complete details, please visit <a href=\"https://us.zootify.com/policies/refund-policy\" target=\"_blank\" title=\"https://us.zootify.com/policies/refund-policy\">Return Policy</a></p>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
@@ -528,18 +568,20 @@
             "judge_me_reviews_preview_badge_nU3W8F",
             "reviews",
             "price_a7krng",
+            "zootify_case_offer_DoubleUp",
             "custom_liquid_dUdGEJ",
             "custom_liquid_ywcT7E",
             "custom_liquid_ak7xNg",
             "ai_gen_block_8359e8c_irtcf6",
             "buy_buttons_eYQEYi",
+            "zootify_pairing_PairUp",
+            "custom_liquid_biYFPc",
             "custom_liquid_mKANDJ",
             "custom_liquid_emPbxQ",
             "custom_liquid_mrdyGn",
             "product_description_LfDYCg",
             "custom_liquid_ERzDEW",
             "custom_liquid_qVJ4ya",
-            "custom_liquid_biYFPc",
             "accordion_g8EVVp"
           ]
         }
@@ -680,13 +722,13 @@
         "use_gradient": false,
         "gradient": "linear-gradient(110deg, #f5f6f6 0%, #e9eeeb 100%)",
         "outer_background": "#ffffff",
-        "number_color": "#01161E",
-        "label_color": "#01161E",
-        "detail_color": "#01161E",
-        "heading_color": "#01161E",
+        "number_color": "#01161e",
+        "label_color": "#01161e",
+        "detail_color": "#01161e",
+        "heading_color": "#01161e",
         "eyebrow_color": "#68ba4e",
-        "note_color": "#01161E",
-        "star_color": "#01161E",
+        "note_color": "#01161e",
+        "star_color": "#01161e",
         "dividers_d": true,
         "dividers_m": true,
         "divider_color": "#ffffff",
