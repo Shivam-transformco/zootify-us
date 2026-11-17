@@ -131,7 +131,7 @@ function blackFridayManagedCode(code) {
 // 'tiered' remains an internal DOM identifier only. The offer is flat 20%
 // on a USD merchandise subtotal of $100+, with no minimum item quantity.
 function blackFridayTieredPercentage(cart) {
-  return blackFridaySubtotal(cart) >= blackFridayMinimumSpend() ? 20 : 0;
+  return blackFridayUnits(cart) >= 2 && blackFridaySubtotal(cart) >= blackFridayMinimumSpend() ? 20 : 0;
 }
 
 function allocatedSaving(cart, code) {
@@ -161,6 +161,7 @@ function blackFridayQuantityEligibility(kind, cart) {
   }
   if (count === 0) return { eligible: false, reason: 'empty' };
   if (kind === 'tiered') {
+    if (count < 2) return { eligible: false, reason: 'quantity_two' };
     const eligible = blackFridaySubtotal(cart) >= blackFridayMinimumSpend();
     return { eligible, reason: eligible ? '' : 'minimum_spend' };
   }
@@ -186,70 +187,18 @@ function blackFridayVisualEligibility(kind, cart) {
   return { eligible: false, reason: state.phase === 'ended' ? 'ended' : state.phase === 'upcoming' ? 'upcoming' : 'not_ready' };
 }
 
-function invalidBlackFridayCodes(cart, fallback = []) {
-  if (!blackFridayCartEnabled() || !window.ZootifyBlackFriday?.getState || blackFridayState().preview) return [];
-  const codes = codesFromCart(cart, fallback, true);
-  const offers = codes.filter((code) => blackFridayOffer(code));
-  const invalid = [
-    ...codes.filter((code) => blackFridayLegacyCode(code)),
-    ...offers.filter((code) => !blackFridayEligibility(blackFridayOffer(code).kind, cart).eligible),
-  ];
-  const valid = offers.filter((code) => !invalid.some((value) => normalizeCode(value) === normalizeCode(code)));
-  if (valid.length > 1) {
-    const allocated = valid.find((code) => allocatedSaving(cart, code) > 0);
-    invalid.push(...valid.filter((code) => !allocated || normalizeCode(code) !== normalizeCode(allocated)));
-  }
-  return uniqueCodes(invalid);
-}
-
-function nativeChoiceKey(cart) {
-  return 'zootify-bf-choice:' + String(cart?.token || '').split('?')[0] + ':' + blackFridayConfig().startDate;
-}
-function nativeChoice(cart, value) {
-  const key = nativeChoiceKey(cart);
-  const memory = window.__zbfNativeChoices ||= {};
-  if (value !== undefined) {
-    memory[key] = value;
-    try { sessionStorage.setItem(key, value); } catch {}
-    return value;
-  }
-  try { return memory[key] ?? sessionStorage.getItem(key) ?? ''; } catch { return memory[key] || ''; }
-}
-function nativeAutomaticCode(cart) {
-  const state = blackFridayState();
-  if (!blackFridayCartEnabled() || !state.canApplyCampaign || state.preview || blackFridayConfig().autoPercentage === false) return '';
-  const count = blackFridayUnits(cart);
-  if (!count) { nativeChoice(cart, ''); return ''; }
-  if (!blackFridayQuantityEligibility('tiered', cart).eligible) return '';
-  const active = codesFromCart(cart).filter((code) => allocatedSaving(cart, code) > 0);
-  if (active.some((code) => {
-    const offer = blackFridayOffer(code);
-    return offer && offer.kind !== 'tiered' && blackFridayQuantityEligibility(offer.kind, cart).eligible;
-  })) return '';
-  if (active.some((code) => !blackFridayManagedCode(code))) return '';
-  if (nativeChoice(cart) === 'none') return '';
-  const target = blackFridayOffers(cart).find((offer) => offer.kind === 'tiered').code;
-  if (active.some((code) => normalizeCode(code) === normalizeCode(target)) && !invalidBlackFridayCodes(cart).length) return '';
-  return target;
-}
 function nativeSavings(cart, kind) {
   const lines = blackFridayEligibleLines(cart);
   const rate = kind === 'welcome' ? 10 : blackFridayTieredPercentage(cart);
   if (kind === 'b2g1') return blackFridayUnits(cart) >= 3 ? Math.min(...lines.map((item) => Number(item.original_price ?? item.price) || 0)) : 0;
   return lines.reduce((total, item) => total + Math.round(Number(item.original_line_price ?? item.line_price ?? 0) * rate / 100), 0);
 }
-function nativeCartSignature(cart, code) {
-  const state = blackFridayState();
-  return JSON.stringify([String(cart?.token || ''), (cart?.items || []).map((item) => [item.variant_id, item.quantity, item.original_line_price]), codesFromCart(cart, [], true), code, state.actualPhase, state.testing, blackFridayConfig().releaseReady]);
-}
-
 class ZootifyCartDiscount extends HTMLElement {
   #busy = false;
   #hydrated = false;
   #revision = 0;
   #cart = null;
   #strings = {};
-  #reconcileTimer;
 
   connectedCallback() {
     try { this.#cart = JSON.parse(this.querySelector('[data-zbf-cart-state]')?.textContent || 'null'); } catch {}
@@ -264,8 +213,11 @@ class ZootifyCartDiscount extends HTMLElement {
     document.addEventListener('zootify:cart-transaction', this.#onTransaction);
     document.addEventListener('zootify:bf-state', this.#onSaleState);
     document.addEventListener('DOMContentLoaded', this.#onSaleState);
+    // Cart Liquid already embeds the current Shopify cart. Do not refetch and
+    // flip offer cards on first paint unless that state is genuinely missing.
+    this.#hydrated = Boolean(this.#cart && Array.isArray(this.#cart.items));
     this.renderOffers();
-    if (this.querySelector('details')?.open || this.querySelector('[data-zbf-offers]')) this.#hydrateCodes();
+    if (!this.#hydrated) this.#hydrateCodes();
   }
 
   disconnectedCallback() {
@@ -280,7 +232,6 @@ class ZootifyCartDiscount extends HTMLElement {
     document.removeEventListener('zootify:bf-state', this.#onSaleState);
     document.removeEventListener('DOMContentLoaded', this.#onSaleState);
     this.#revision += 1;
-    clearTimeout(this.#reconcileTimer);
   }
 
   string(key, fallback = '') {
@@ -297,34 +248,27 @@ class ZootifyCartDiscount extends HTMLElement {
   }
 
   #onQuantityChanged = () => {
+    // No coupon repaint until Shopify confirms the updated cart.
     this.#revision += 1;
-    this.#hydrated = false;
-    this.renderOffers();
   };
 
   #onCartChanged = (event) => {
     this.#revision += 1;
-    this.#hydrated = false;
     const cart = event.detail?.resource;
-    if (Array.isArray(cart?.items) && typeof cart.item_count === 'number') {
-      this.#cart = cart;
-      this.paintCodes(codesFromCart(cart, this.#domCodes()));
-      this.renderOffers();
-      if (event.detail?.data?.source !== 'zootify-cart-discount') this.#reconcile(cart);
-    }
+    if (!Array.isArray(cart?.items) || typeof cart.item_count !== 'number') return;
+    this.#cart = cart;
+    this.#hydrated = true;
+    this.paintCodes(codesFromCart(cart, this.#domCodes()));
+    this.renderOffers();
   };
 
   #onTransaction = () => {
-    this.renderOffers();
-    if (!window.__zootifyCartQueueV1?.pending && !this.#busy) {
-      if (!this.#hydrated) this.#hydrateCodes();
-      else if (this.#cart) this.#reconcile(this.#cart);
-    }
+    // Avoid re-fetching or rendering a stale cart during the operation.
+    if (!window.__zootifyCartQueueV1?.pending && !this.#busy && !this.#hydrated) this.#hydrateCodes();
   };
 
   #onSaleState = () => {
     this.renderOffers();
-    if (this.#cart) this.#reconcile(this.#cart);
     if (!this.#hydrated) this.#hydrateCodes();
   };
 
@@ -360,7 +304,7 @@ class ZootifyCartDiscount extends HTMLElement {
       event.preventDefault();
       if (offerButton.disabled) return;
       const offer = blackFridayOffers(this.#cart).find((entry) => entry.kind === offerButton.dataset.zbfKind);
-      if (offer) this.#changeCodes(offerButton.dataset.zbfOperation || 'apply', offer.code, false, offer.kind);
+      if (offer) this.#changeCodes(offerButton.dataset.zbfOperation || 'apply', offer.code, offer.kind);
       return;
     }
     const button = event.target.closest('[data-zc-remove-code]');
@@ -390,31 +334,12 @@ class ZootifyCartDiscount extends HTMLElement {
         this.#cart = cart;
         this.paintCodes(codesFromCart(cart, this.#domCodes()));
         this.renderOffers();
-        this.#reconcile(cart);
       } else {
         this.#hydrated = false;
       }
     } catch {
       this.#hydrated = false;
     }
-  }
-
-  #reconcile(cart) {
-    if (this.#busy || !this.isConnected || !cart) return;
-    if (this.closest('zootify-cart-summary')?.isBusy) {
-      clearTimeout(this.#reconcileTimer);
-      this.#reconcileTimer = setTimeout(() => this.#reconcile(this.#cart), 150);
-      return;
-    }
-    const target = nativeAutomaticCode(cart);
-    if (target) {
-      const signature = nativeCartSignature(cart, target);
-      if (window.__zbfAutoAttempt === signature) return;
-      window.__zbfAutoAttempt = signature;
-      this.#changeCodes('apply', target, true, 'tiered');
-      return;
-    }
-    if (invalidBlackFridayCodes(cart, this.#domCodes()).length) this.#changeCodes('reconcile', '', true);
   }
 
   renderOffers() {
@@ -530,9 +455,9 @@ class ZootifyCartDiscount extends HTMLElement {
     status.hidden = !message;
   }
 
-  async #changeCodes(operation, code, background = false, focusKind = '') {
+  async #changeCodes(operation, code, focusKind = '') {
     const summary = this.closest('zootify-cart-summary');
-    if (this.#busy || (!background && summary?.isBusy)) return;
+    if (this.#busy || summary?.isBusy) return;
     const sectionId = this.dataset.sectionId;
     if (!sectionId) return;
     const bfMode = blackFridayCartEnabled();
@@ -560,7 +485,6 @@ class ZootifyCartDiscount extends HTMLElement {
     let rollback = false;
     let accepted = false;
     let mutationStarted = false;
-    let invalidRemoved = [];
     let failureMessage = '';
     const sectionIds = [...new Set([sectionId, ...[...document.querySelectorAll('cart-items-component[data-section-id]')].map((node) => node.dataset.sectionId)])].slice(0, 5);
     const request = (codes) => {
@@ -605,20 +529,9 @@ class ZootifyCartDiscount extends HTMLElement {
             : this.string('saved_inactive', 'This code does not currently apply to your cart.'));
           return;
         }
-        let desired;
-        if (operation === 'reconcile') {
-          invalidRemoved = invalidBlackFridayCodes(currentCart, this.#domCodes());
-          if (!invalidRemoved.length) {
-            this.renderOffers();
-            this.setStatus('');
-            return;
-          }
-          desired = existing.filter((value) => !invalidRemoved.some((invalid) => normalizeCode(invalid) === normalizeCode(value)));
-        } else if (operation === 'apply') {
-          desired = managed ? [...existing.filter((value) => !blackFridayManagedCode(value)), code] : [...existing, code];
-        } else {
-          desired = existing.filter((value) => normalizeCode(value) !== normalizeCode(code));
-        }
+        const desired = operation === 'apply'
+          ? (managed ? [...existing.filter((value) => !blackFridayManagedCode(value)), code] : [...existing, code])
+          : existing.filter((value) => normalizeCode(value) !== normalizeCode(code));
         data = await request(desired);
         accepted = managed ? allocatedSaving(data, code) > 0 : codesFromCart(data).some((value) => normalizeCode(value) === normalizeCode(code));
         if (operation === 'apply' && managed && !accepted) {
@@ -632,8 +545,6 @@ class ZootifyCartDiscount extends HTMLElement {
           data = await request([...retained, ...(previousChoice ? [previousChoice] : restoreRegular ? [previousRegular] : [])]);
           rollback = true;
         }
-        if (operation === 'apply' && accepted && !rollback) nativeChoice(data, blackFridayOffer(code)?.kind || 'external');
-        if (operation === 'remove' && !background && !codesFromCart(data, [], true).some((entry) => normalizeCode(entry) === normalizeCode(code))) nativeChoice(data, 'none');
         let html = data.sections?.[sectionId];
         if (typeof html !== 'string' || !html.includes('shopify-section-' + sectionId)) {
           const freshURL = new URL(window.location.href);
@@ -644,7 +555,7 @@ class ZootifyCartDiscount extends HTMLElement {
         const freshComponent = fragment.getElementById(componentId);
         const renderedCodes = [...(freshComponent?.querySelectorAll('[data-zc-code]') || [])].map((node) => node.dataset.zcCode);
         const acceptedCodes = codesFromCart(data, renderedCodes);
-        if (!managed && operation !== 'reconcile') accepted = acceptedCodes.some((value) => normalizeCode(value) === normalizeCode(code));
+        if (!managed) accepted = acceptedCodes.some((value) => normalizeCode(value) === normalizeCode(code));
         if (operation === 'remove' && bfMode && blackFridayOffer(code)) accepted = allocatedSaving(data, code) > 0;
         const hasVisibleSaving = allocatedSaving(data, code) > 0 || renderedCodes.some((value) => normalizeCode(value) === normalizeCode(code));
 
@@ -663,28 +574,21 @@ class ZootifyCartDiscount extends HTMLElement {
         activeComponent.renderOffers();
         const input = activeComponent.querySelector('input[name="discount"]');
         const disclosure = activeComponent.querySelector('details');
-        if (disclosure) disclosure.open = background || focusKind ? disclosureOpen : true;
+        if (disclosure) disclosure.open = focusKind ? disclosureOpen : true;
         if (input) {
           input.value = operation === 'apply' && accepted && !rollback ? '' : (operation === 'apply' && !focusKind ? code : inputDraft);
           input.toggleAttribute('aria-invalid', operation === 'apply' && (!accepted || rollback) && !focusKind);
           if (input.hasAttribute('aria-invalid')) input.setAttribute('aria-invalid', 'true');
         }
-        if (operation === 'reconcile') {
-          const stillPresent = invalidRemoved.some((value) => codesFromCart(data, [], true).some((entry) => normalizeCode(entry) === normalizeCode(value)));
-          activeComponent.setStatus(stillPresent
-            ? this.string('remove_failed', 'This offer could not be removed. Please try again.')
-            : this.string('invalid_removed', 'Your previous offer no longer applies. Choose an available offer.'), stillPresent ? 'error' : 'info');
-        } else if (operation === 'remove') {
+        if (operation === 'remove') {
           activeComponent.setStatus(accepted ? this.string('remove_failed', 'This offer could not be removed. Please try again.') : this.string('removed', 'Discount code removed.'), accepted ? 'error' : 'info');
         } else if (rollback || !accepted) {
           activeComponent.setStatus(this.string('not_applicable', 'This code could not be applied. Your available offers are shown above.'), 'error');
         } else {
           activeComponent.setStatus(hasVisibleSaving ? this.string('applied', 'Offer applied.') : this.string('accepted_checkout', 'Code accepted. Any additional savings will be confirmed at checkout.'));
         }
-        if (!background) {
-          const focusTarget = focusKind ? activeComponent.querySelector('[data-zbf-kind="' + focusKind + '"] [data-zbf-offer-action]') : input;
-          requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true }));
-        }
+        const focusTarget = focusKind ? activeComponent.querySelector('[data-zbf-kind="' + focusKind + '"] [data-zbf-offer-action]') : input;
+        requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true }));
       } catch (error) {
         activeComponent = document.getElementById(componentId) || this;
         failureMessage = this.string('update_failed', 'We could not confirm the discount change. Please refresh your cart and check the total before checkout.');
@@ -709,7 +613,7 @@ class ZootifyCartDiscount extends HTMLElement {
               activeComponent.paintCodes(codesFromCart(freshCart));
               activeComponent.renderOffers();
               const disclosure = activeComponent.querySelector('details');
-              if (disclosure) disclosure.open = background || focusKind ? disclosureOpen : true;
+              if (disclosure) disclosure.open = focusKind ? disclosureOpen : true;
               activeComponent.setStatus(failureMessage, 'error');
             }
           } catch {}
@@ -913,6 +817,3 @@ if (!customElements.get('zootify-cart-discount')) customElements.define('zootify
 if (!customElements.get('zootify-cart-summary')) customElements.define('zootify-cart-summary', ZootifyCartSummary);
 
 
-document.addEventListener(ThemeEvents.cartUpdate, (event) => {
-  if (event.detail?.resource?.item_count === 0) nativeChoice(event.detail.resource, '');
-});

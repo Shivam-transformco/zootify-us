@@ -53,11 +53,6 @@ async function requestJSON(url, options = {}) {
   }
 }
 
-function allCodes(cart) {
-  if (!Array.isArray(cart.discount_codes)) throw new Error('The complete discount list is unavailable.');
-  return uniqueCodes(cart.discount_codes.map((entry) => entry.code));
-}
-
 function eligibleUnits(cart, ids) {
   const eligible = new Set(ids.map(String));
   return (cart.items || []).reduce((quantity, item) => {
@@ -172,58 +167,22 @@ class PairingController {
   schedule() {
     if (this.scheduled || !this.config || !this.instances.size) return;
     this.scheduled = true;
-    cartQueue().run(async () => {
+    // Display-only cart refresh. Discount codes are applied by the customer.
+    void (async () => {
       try {
-        const config = this.config;
-        const cart = await requestJSON(localURL(config.cartUrl, true));
-        const result = await this.reconcile(cart, config);
-        if (result.changed) await renderCart(result.cart, config);
-        this.publish(result.cart);
+        const cart = await requestJSON(localURL(this.config.cartUrl, true));
+        this.publish(cart);
       } catch (error) {
-        for (const instance of this.instances) instance.setStatus(instance.string('discountError', 'We could not confirm the offer. Check the final total before checkout.'), 'error');
-        console.warn('[ZOOTIFY pairing] Offer could not be confirmed.', error);
+        console.warn('[ZOOTIFY pairing] Cart refresh failed.', error);
       } finally {
         this.scheduled = false;
       }
-    });
+    })();
   }
 
   publish(cart) {
     this.cart = cart;
     for (const instance of this.instances) instance.paintCart(cart);
-  }
-
-  async reconcile(cart, config) {
-    const code = String(config.discountCode || '').trim();
-    if (!code) return { cart, changed: false };
-    const existing = allCodes(cart);
-    const present = existing.some((value) => normalize(value) === normalize(code));
-    const bf = window.ZootifyBlackFriday;
-    const bfState = bf?.getState();
-    if (bfState?.preview) return { cart, changed: false };
-    let bfEnabled = Boolean(bf?.config.enabled);
-    if (!bf) {
-      try { bfEnabled = Boolean(JSON.parse(document.getElementById('zootify-bf-config')?.textContent || '{}').enabled); } catch {}
-    }
-    const normalAllowed = !bfEnabled || ['off', 'ended'].includes(bfState?.actualPhase);
-    const welcomeCode = bf?.config.codes?.welcome || 'WELCOME10';
-    const welcomeChosen = existing.some((value) => normalize(value) === normalize(welcomeCode));
-    const wanted = Boolean(config.campaignEnabled) && normalAllowed && !welcomeChosen && eligibleUnits(cart, config.eligibleProductIds || []) >= 2;
-    if (present === wanted) return { cart, changed: false };
-    const desired = existing.filter((value) => normalize(value) !== normalize(code));
-    if (wanted) desired.push(code);
-    for (const instance of this.instances) instance.setStatus(instance.string('discountApplying', 'Updating your offer…'));
-    try {
-      const updated = await requestJSON(localURL(config.updateUrl, true), {
-        method: 'POST', body: JSON.stringify({ discount: desired.join(','), ...sectionsBody(config) }),
-      });
-      return { cart: updated, changed: true };
-    } catch (error) {
-      const current = await requestJSON(localURL(config.cartUrl, true));
-      const nowPresent = allCodes(current).some((value) => normalize(value) === normalize(code));
-      if (nowPresent !== wanted) throw error;
-      return { cart: current, changed: true };
-    }
   }
 
   async add(instance, variant) {
@@ -276,20 +235,10 @@ class PairingController {
           return;
         }
         if (!current) throw new Error('The product was added, but the refreshed cart is unavailable.');
-        let reconciled;
-        try {
-          reconciled = await this.reconcile(current, config);
-        } catch (error) {
-          await renderCart(current, config);
-          this.publish(current);
-          message = `${instance.string('added', 'Added to your cart.')} ${instance.string('discountError', 'The pair offer could not be applied.')}`;
-          tone = 'error';
-          console.warn('[ZOOTIFY pairing] Added; offer confirmation failed.', error);
-          return;
-        }
-        if (!reconciled.changed && response?.sections) reconciled.cart.sections = response.sections;
-        await renderCart(reconciled.cart, config);
-        this.publish(reconciled.cart);
+        // Keep shopper-selected coupons intact. No automatic coupon writes.
+        if (response?.sections) current.sections = response.sections;
+        await renderCart(current, config);
+        this.publish(current);
         message = instance.string('added', 'Added to your cart.');
       } catch (error) {
         message = this.uncertain

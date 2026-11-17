@@ -4857,3 +4857,51 @@ product-recommendations .section-resource-list__content > *:first-child {
     font-size: 19px !important;
   }
 }
+
+
+/* ==========================================
+   ZOOTIFY BLACK FRIDAY 2026
+   TEMPORARY BLACK PURCHASE BUTTON COLORS
+   DELETE THIS BLOCK AFTER THE SALE
+========================================== */
+
+:root {
+  --zbf-cta-bg: #000000;
+  --zbf-cta-white: #FFFFFF;
+}
+
+/* 1. PRODUCT PAGE ADD TO CART / GO TO CART
+   Applies to desktop and mobile */
+
+body .buy-buttons-block .product-form-buttons
+button.add-to-cart-button[data-testid="standalone-add-to-cart"][name="add"] {
+  background-color: var(--zbf-cta-bg);
+  color: var(--zbf-cta-white);
+  border-color: var(--zbf-cta-bg);
+}
+
+body .buy-buttons-block .product-form-buttons
+button.add-to-cart-button[data-testid="standalone-add-to-cart"][name="add"]:hover:not(:disabled) {
+  background-color: var(--zbf-cta-bg);
+  color: var(--zbf-cta-white);
+  border-color: var(--zbf-cta-bg);
+}
+
+/* 2. CART PAGE CHECKOUT BUTTON
+   Applies to main and mobile sticky checkout */
+
+body .zootify-cart-page--v3 .zc-summary button.zc-checkout {
+  background: var(--zbf-cta-bg);
+  color: var(--zbf-cta-white);
+  border-color: var(--zbf-cta-bg);
+}
+
+body .zootify-cart-page--v3 .zc-summary button.zc-checkout:hover:not(:disabled) {
+  background: var(--zbf-cta-bg);
+  color: var(--zbf-cta-white);
+  border-color: var(--zbf-cta-bg);
+}
+
+/* ==========================================
+   END ZOOTIFY BLACK FRIDAY 2026 COLORS
+========================================== */

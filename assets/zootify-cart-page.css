@@ -78,11 +78,43 @@
 }
 .zootify-cart-page--v3 .zc-summary .zc-checkout::before, .zootify-cart-page--v3 .zc-summary .zc-checkout::after { content: none; }
 .zootify-cart-page--v3 .zc-summary .zc-checkout .button-text { color: inherit; font: inherit; letter-spacing: inherit; text-transform: none; }
+/* No animated color transition between enabled and busy checkout states. */
+.zootify-cart-page--v3 .zc-summary button.zc-checkout,
+.zootify-cart-page--v3 .zc-summary button.zc-mobile-checkout {
+  transition: none;
+}
 @media (hover: hover) {
   .zootify-cart-page--v3 .zc-summary .zc-checkout:hover { color: var(--zc-button-bg); background: var(--zc-button-text); border-color: var(--zc-button-text); }
   .zootify-cart-page--v3 .zc-discount-toggle:hover { opacity: .8; }
 }
 .zootify-cart-page--v3 .zc-summary button:disabled { cursor: wait; opacity: .55; }
+/* Noninteractive is a functional state, not a grey flash. Keep the checkout
+   visually stable through quantity updates and discount verification. */
+.zootify-cart-page--v3 .zc-summary .zc-checkout:disabled,
+.zootify-cart-page--v3 .zc-summary .zc-mobile-checkout:disabled {
+  opacity: 1;
+  color: var(--zc-button-text);
+  background: var(--zc-button-bg);
+  border-color: var(--zc-button-bg);
+  cursor: progress;
+}
+@media (hover: hover) {
+  .zootify-cart-page--v3 .zc-summary .zc-checkout:disabled:hover {
+    opacity: 1;
+    color: var(--zc-button-text);
+    background: var(--zc-button-bg);
+    border-color: var(--zc-button-bg);
+  }
+}
+/* The Apply button should not dim while temporarily disabled by a cart update.
+   Ineligible offers retain their existing locked appearance. */
+.zootify-cart-page--v3 .zc-summary .zc-offers .zc-offer__action:disabled[data-zc-offer-locked="false"] {
+  opacity: 1;
+  color: var(--zbf-cart-button-text);
+  background: var(--zbf-cart-button);
+  border-color: var(--zbf-cart-button);
+}
+
 .zootify-cart-page--v3 .zc-wallet-label { display: flex; align-items: center; gap: 12px; margin: 16px 0 13px; color: var(--zc-muted); font-size: 11px; line-height: 1.4; text-align: center; }
 .zootify-cart-page--v3 .zc-wallet-label::before, .zootify-cart-page--v3 .zc-wallet-label::after { content: ''; flex: 1; height: 1px; background: var(--zc-border); }
 .zootify-cart-page--v3 .zc-wallets { width: 100%; }

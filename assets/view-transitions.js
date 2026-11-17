@@ -13,12 +13,25 @@
     }, RENDER_BLOCKER_TIMEOUT_MS);
   }
 
+  // A snapshot crossfade from the homepage into the cart can expose the
+  // previous hero over the order summary. Keep cart navigation instantaneous.
+  function isCartURL(raw) {
+    if (!raw) return false;
+    try { return /\/(?:cart)\/?$/.test(new URL(raw, window.location.href).pathname); }
+    catch { return false; }
+  }
+  function involvesCart(event) {
+    return isCartURL(window.location.href) ||
+      isCartURL(event?.activation?.entry?.url) ||
+      isCartURL(event?.activation?.from?.url);
+  }
+
   const idleCallback = typeof requestIdleCallback === 'function' ? requestIdleCallback : setTimeout;
 
   window.addEventListener('pageswap', async (event) => {
     const { viewTransition } = /** @type {PageSwapEvent} */ (event);
 
-    if (shouldSkipViewTransition(viewTransition)) {
+    if (shouldSkipViewTransition(viewTransition) || involvesCart(event)) {
       /** @type {ViewTransition | null} */ (viewTransition)?.skipTransition();
       return;
     }
@@ -58,7 +71,7 @@
   window.addEventListener('pagereveal', async (event) => {
     const { viewTransition } = /** @type {PageRevealEvent} */ (event);
 
-    if (shouldSkipViewTransition(viewTransition)) {
+    if (shouldSkipViewTransition(viewTransition) || involvesCart(event)) {
       /** @type {ViewTransition | null} */ (viewTransition)?.skipTransition();
       return;
     }

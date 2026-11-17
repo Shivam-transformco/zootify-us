@@ -650,7 +650,7 @@ assign header_offset = 'var(--announcement-height)'
       }
     }
 
-    .header-actions__action:hover,
+    .header-actions__action:not(.action__cart):not([data-testid="cart-drawer-trigger"]):hover,
     .search-action:hover,
     .header__icon--menu:hover {
        opacity: 1;

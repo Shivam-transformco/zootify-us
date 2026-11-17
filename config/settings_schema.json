@@ -3089,13 +3089,6 @@
       },
       {
         "type": "checkbox",
-        "id": "zbf_auto_percentage",
-        "label": "Automatically apply percentage offer",
-        "default": true,
-        "info": "Selects BF10, BF20 or BF30 by cart quantity. Explicit B2G1, WELCOME10 and Remove choices are respected."
-      },
-      {
-        "type": "checkbox",
         "id": "zbf_announcement_enabled",
         "label": "Show campaign announcement blocks",
         "default": true

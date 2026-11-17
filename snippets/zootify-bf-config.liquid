@@ -54,7 +54,6 @@
       "endTime": {{ settings.zbf_close_time | default: '00:00' | json }},
       "timezone": {{ settings.zbf_timezone | json }},
       "releaseReady": {{ settings.zbf_native_ready | json }},
-      "autoPercentage": {{ settings.zbf_auto_percentage | json }},
       "testMode": {{ settings.zbf_internal_test_mode | json }},
       "unpublishedTheme": {% if theme.role == 'unpublished' %}true{% else %}false{% endif %},
       "designMode": {{ request.design_mode | json }},

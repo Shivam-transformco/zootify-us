@@ -3,7 +3,18 @@
   @param {string} section_id - Main cart section ID.
 {% enddoc %}
 {{ 'zootify-bf-native-offers.css' | asset_url | stylesheet_tag }}
-{%- assign zbf_offer_kinds = 'b2g1,tiered' | split: ',' -%}
+{%- liquid
+  assign zbf_offer_kinds = 'b2g1,tiered' | split: ','
+  assign zbf_units = 0
+  assign zbf_subtotal = 0
+  for line in cart.items
+    unless line.gift_card or line.product.gift_card or line.selling_plan_allocation
+      assign zbf_units = zbf_units | plus: line.quantity
+      assign line_subtotal = line.original_line_price | default: line.line_price
+      assign zbf_subtotal = zbf_subtotal | plus: line_subtotal
+    endunless
+  endfor
+-%}
 {%- capture zbf_browse_url -%}{% render 'zootify-sale-url' %}{%- endcapture -%}
 <div
   class="zc-offers zc-offers--native"
@@ -61,12 +72,22 @@
         if zbf_saving > 0
           assign zbf_applied = true
         endif
+        assign zbf_initial_eligible = false
+        if zbf_kind == 'b2g1' and zbf_units >= 3
+          assign zbf_initial_eligible = true
+        elsif zbf_kind == 'tiered' and zbf_units >= 2 and zbf_subtotal >= 10000
+          assign zbf_initial_eligible = true
+        endif
+        assign zbf_has_nudge = false
+        if zbf_kind == 'b2g1' and zbf_units == 2 and zbf_applied == false
+          assign zbf_has_nudge = true
+        endif
         assign zbf_reason = 'zootify_bf_cart.not_ready' | t
-        if zbf_applied
+        if zbf_applied or zbf_initial_eligible
           assign zbf_reason = ''
         endif
       -%}
-      <li class="zc-offer" data-zbf-kind="{{ zbf_kind }}" hidden data-applied="{{ zbf_applied }}" data-locked="{% if zbf_reason != blank %}true{% else %}false{% endif %}">
+      <li class="zc-offer" data-zbf-kind="{{ zbf_kind }}" data-applied="{{ zbf_applied }}" data-has-nudge="{{ zbf_has_nudge }}" data-locked="{% if zbf_applied or zbf_initial_eligible %}false{% else %}true{% endif %}"{% unless settings.zbf_enabled and settings.zbf_cart_enabled %} hidden{% endunless %}>
         <div class="zc-offer__copy">
           <div class="zc-offer__heading">
             <span class="zc-offer__benefit"{% if zbf_kind == 'tiered' %} data-zbf-tier-description{% endif %}>{{ zbf_description | escape }}</span>
@@ -83,13 +104,13 @@
           data-zbf-offer-action
           data-zbf-kind="{{ zbf_kind }}"
           data-zbf-operation="{% if zbf_applied %}remove{% else %}apply{% endif %}"
-          data-zc-offer-locked="true"
+          data-zc-offer-locked="{% if zbf_applied or zbf_initial_eligible %}false{% else %}true{% endif %}"
           aria-describedby="ZbfReason-{{ section_id }}-{{ zbf_kind }}"
           aria-label="{% if zbf_applied %}{{ 'zootify_bf_cart.remove_label' | t | replace: '__code__', zbf_code | escape }}{% else %}{{ 'zootify_bf_cart.apply_label' | t | replace: '__code__', zbf_code | escape }}{% endif %}"
           disabled
         >{% if zbf_applied %}{{ 'zootify_bf_cart.remove' | t }}{% else %}{{ 'zootify_bf_cart.apply' | t }}{% endif %}</button>
         {% if zbf_kind == 'b2g1' %}
-          <div class="zc-offer-unlock" data-zbf-b2g1-nudge hidden>
+          <div class="zc-offer-unlock" data-zbf-b2g1-nudge{% unless zbf_has_nudge %} hidden{% endunless %}>
             <div class="zc-offer-unlock__heading">
               <span>Add one more case</span>
               <span class="zc-offer-unlock__count" aria-hidden="true">2 / 3</span>
