@@ -1,6 +1,7 @@
 {% doc %}
   Displays the eligible case promotion in product information.
 {% enddoc %}
+{% if block.settings.enabled != false %}{% render 'zootify-bf-product-offer', editor_attributes: block.shopify_attributes %}{% endif %}
 {% render 'upsell-products', product: closest.product, context: 'product', presentation: 'offer', offer_settings: block.settings, component_id: block.id, section_id: section.id, editor_attributes: block.shopify_attributes %}
 
 {% schema %}

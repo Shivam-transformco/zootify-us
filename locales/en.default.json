@@ -174,8 +174,8 @@
       "zoom_out": "Zoom out"
     },
     "inventory_low_stock_show_count": {
-      "one": "{{ count }} left",
-      "other": "{{ count }} left"
+      "one": "Only {{ count }} left",
+      "other": "Only {{ count }} left"
     },
     "inventory_low_stock": "Low stock",
     "inventory_in_stock": "In stock",
@@ -409,5 +409,106 @@
     "mix_message": "Mix designs, colors & models.",
     "automatic_message": "Applied automatically",
     "off": "OFF"
+  },
+  "zootify_bf": {
+    "accessibility": {
+      "shop_sale": "Shop the Black Friday collection"
+    },
+    "product": {
+      "accessible_label": "Black Friday sitewide sale",
+      "preview_note": "Theme editor preview only. Discount changes are disabled."
+    },
+    "countdown": {
+      "coming": "Black Friday is coming",
+      "live": "Black Friday is live",
+      "ended": "Black Friday has ended",
+      "day": "day",
+      "days": "days",
+      "hours": "hrs",
+      "minutes": "min",
+      "seconds": "sec",
+      "day_short": "d",
+      "hour_short": "h",
+      "minute_short": "m",
+      "second_short": "s",
+      "configure": "Set a deadline to preview this reminder",
+      "reminder_ended": "This reminder has ended"
+    },
+    "announcement": {
+      "offer_desktop": "Buy 2, Get 1 FREE · or up to 30% off",
+      "offer_mobile": "Buy 2, Get 1 FREE"
+    }
+  },
+  "zootify_bf_cart": {
+    "title": "Available offers",
+    "apply": "Apply",
+    "remove": "Remove",
+    "apply_label": "Apply __code__",
+    "remove_label": "Remove __code__",
+    "applied_badge": "Applied",
+    "b2g1_description": "Buy 2, Get 1 Free",
+    "b2g1_terms": "Lowest-priced item free with 3+ items.",
+    "welcome_description": "10% off with WELCOME10",
+    "preview": "Theme editor preview only. Use the separate theme preview to test discounts.",
+    "first_order": "This code is available once per customer.",
+    "empty": "Available with products in your cart.",
+    "upcoming": "Available when sale starts.",
+    "ended": "This offer has ended.",
+    "not_ready": "This offer is not available yet.",
+    "quantity_three": "Requires 3 or more products in your cart.",
+    "applying": "Applying code…",
+    "removing": "Removing code…",
+    "already_applied": "This code is already applied.",
+    "saved_inactive": "This code does not currently apply to your cart.",
+    "remove_failed": "This offer could not be removed. Please try again.",
+    "invalid_removed": "Your previous offer no longer applies. Choose an available offer.",
+    "removed": "Discount code removed.",
+    "not_applicable": "This code could not be applied. Your available offers are shown above.",
+    "applied": "Offer applied. Your total has been updated.",
+    "accepted_checkout": "Code accepted. Any additional savings will be confirmed at checkout.",
+    "update_failed": "We could not confirm the discount change. Please refresh your cart and check the total before checkout.",
+    "invalid_code": "Enter a valid discount code.",
+    "tiered_description": "__percentage__% off",
+    "tiered_empty_description": "Up to 30% off",
+    "tiered_terms": "1 item 10% · 2 items 20% · 3+ items 30%",
+    "legacy_unavailable": "This offer is no longer available.",
+    "welcome_terms": "Available once per customer.",
+    "save_amount": "Save __amount__",
+    "saved_amount": "Saved __amount__",
+    "current_rate": "__percentage__% for your cart",
+    "test_mode": "Discount testing — unpublished theme"
+  },
+  "zootify_media_stories": {
+    "play": "Play video",
+    "pause": "Pause video",
+    "mute": "Mute video",
+    "unmute": "Unmute video",
+    "explore": "Explore",
+    "previous": "Previous story",
+    "next": "Next story",
+    "navigation": "Story navigation",
+    "add_media": "Select a video or photo for this card.",
+    "video_error": "This video could not load. Tap play to try again."
+  },
+  "zootify_product_media": {
+    "film": {
+      "label": "{{ product }} film",
+      "play": "Play video",
+      "pause": "Pause video",
+      "loading": "Loading video",
+      "unmute": "Turn sound on",
+      "mute": "Turn sound off",
+      "error": "Video could not load. Tap play to retry.",
+      "setup_title": "ZOOTIFY Product Film",
+      "setup_text": "Enable this section and select a Family Media entry in this product's metafields. Add a video or fallback image to that entry under Content → Metaobjects → ZOOTIFY — Family Media. Shared entry updates apply to every linked product. This message is only visible in the theme editor.",
+      "hidden_desktop": "This video banner is hidden on desktop. Turn on Show on desktop when your landscape video is ready.",
+      "hidden_mobile": "This video banner is hidden on mobile. Turn on Show on mobile to display it."
+    }
+  },
+  "zootify_design_story": {
+    "setup_title": "Add a design story",
+    "setup_text": "Assign this product an image pair containing two images. Copy in that pair overrides the family story heading and text. This setup message is visible only in the theme editor.",
+    "repeated_title": "Choose separate story photos",
+    "repeated_text": "This section is hidden because one or more photos are already used in the original Product Banner. Choose different images in this product’s ZOOTIFY — Image Pair entry. The original banner remains separate. To intentionally reuse a photo, turn off Hide repeated Product Banner photos."
   }
 }

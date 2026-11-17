@@ -1,0 +1,347 @@
+{%- doc -%}
+  Displays a responsive two-panel Black Friday promotion inside collection pages.
+  @param {object} promo_settings - Native promo block settings.
+  @param {string} [button_markup] - Rendered customizable button block.
+  @param {string} [destination] - The Black Friday collection or preview destination.
+  @param {string} [display_mode] - Optional editorial layout rendering mode.
+{%- enddoc -%}
+{%- liquid
+  assign p = promo_settings
+  assign desktop_image = p.zbf_promo_image | default: p.zbf_promo_image_mobile
+  assign mobile_image = p.zbf_promo_image_mobile | default: desktop_image
+  assign image_enabled = false
+  if p.zbf_promo_background_mode == 'image' and desktop_image != blank
+    assign image_enabled = true
+  endif
+  assign heading = p.zbf_promo_heading | strip
+  assign accent = p.zbf_promo_accent_text | strip
+  assign eyebrow = p.zbf_promo_eyebrow | strip
+  assign copy = p.zbf_promo_copy | strip
+  assign family = settings.type_heading_font
+  case p.zbf_promo_font
+    when 'body'
+      assign family = settings.type_body_font
+    when 'accent'
+      assign family = settings.type_accent_font
+    when 'custom'
+      assign family = p.zbf_promo_custom_font
+  endcase
+  assign weight_font = family | font_modify: 'weight', p.zbf_promo_weight
+  assign weight_font = weight_font | default: family
+  assign image_description = p.zbf_promo_image_alt | default: ''
+  assign shop_label = 'zootify_bf.accessibility.shop_sale' | t
+-%}
+{% style %}
+  {{ weight_font | font_face: font_display: 'swap' }}
+{% endstyle %}
+<zbf-collection-promo
+  class="zbf-promo zbf-promo--{{ p.zbf_promo_layout }}{% if image_enabled %} zbf-promo--with-image{% endif %}{% if display_mode == 'outside' %} zbf-promo--outside{% endif %}"
+  data-after-desktop="{{ p.zbf_promo_after }}"
+  data-after-mobile="{{ p.zbf_promo_after_mobile }}"
+  data-first-row="{{ p.zbf_promo_first_row }}"
+  style="
+    --zbf-promo-bg: {{ p.zbf_promo_background | default: '#101010' }};
+    --zbf-promo-text: {{ p.zbf_promo_color | default: '#FFFFFF' }};
+    --zbf-promo-accent: {{ p.zbf_promo_accent_color | default: '#CE423B' }};
+    --zbf-promo-border: {{ p.zbf_promo_border }};
+    --zbf-promo-border-width: {{ p.zbf_promo_border_width }}px;
+    --zbf-promo-radius: {{ p.zbf_promo_radius }}px;
+    --zbf-promo-fit: {{ p.zbf_promo_fit }};
+    --zbf-promo-focus-desktop: {{ desktop_image.presentation.focal_point | default: '50% 50%' }};
+    --zbf-promo-focus-mobile: {{ mobile_image.presentation.focal_point | default: '50% 50%' }};
+    --zbf-promo-overlay: {{ p.zbf_promo_overlay_color | default: '#000000' }};
+    --zbf-promo-overlay-alpha: {{ p.zbf_promo_overlay_opacity | divided_by: 100.0 }};
+    --zbf-promo-font: {{ family.family | escape }}, {{ family.fallback_families }};
+    --zbf-promo-font-style: {{ family.style }};
+    --zbf-promo-weight: {{ p.zbf_promo_weight }};
+    --zbf-promo-heading-desktop: {{ p.zbf_promo_heading_size }}px;
+    --zbf-promo-heading-mobile: {{ p.zbf_promo_heading_mobile }}px;
+    --zbf-promo-copy-desktop: {{ p.zbf_promo_copy_size }}px;
+    --zbf-promo-copy-mobile: {{ p.zbf_promo_copy_mobile }}px;
+    --zbf-promo-pad-desktop: {{ p.zbf_promo_padding }}px;
+    --zbf-promo-pad-mobile: {{ p.zbf_promo_padding_mobile }}px;
+    --zbf-promo-gap-desktop: {{ p.zbf_promo_gap }}px;
+    --zbf-promo-gap-mobile: {{ p.zbf_promo_gap_mobile }}px;
+    --zbf-promo-vertical-desktop: {{ p.zbf_promo_vertical }};
+    --zbf-promo-vertical-mobile: {{ p.zbf_promo_vertical_mobile }};
+    --zbf-promo-top-height-desktop: {{ p.zbf_promo_min_height }}px;
+    --zbf-promo-top-height-mobile: {{ p.zbf_promo_min_height_mobile }}px;
+    --zbf-promo-align-desktop: {{ p.zbf_promo_align }};
+    --zbf-promo-align-mobile: {{ p.zbf_promo_align_mobile }};
+    --zbf-promo-footer-bg: {{ p.zbf_promo_footer_color | default: '#F7F7F7' }};
+    --zbf-promo-footer-border: {{ p.zbf_promo_footer_border | default: '#E6E6E6' }};
+    --zbf-promo-footer-height-desktop: {{ p.zbf_promo_footer_height | default: 76 }}px;
+    --zbf-promo-footer-height-mobile: {{ p.zbf_promo_footer_height_mobile | default: 72 }}px;
+    --zbf-promo-footer-pad-desktop: {% if p.zbf_promo_match_alignment %}{{ p.zbf_promo_padding }}{% else %}{{ p.zbf_promo_footer_padding | default: 40 }}{% endif %}px;
+    --zbf-promo-footer-pad-mobile: {% if p.zbf_promo_match_alignment %}{{ p.zbf_promo_padding_mobile }}{% else %}{{ p.zbf_promo_footer_padding_mobile | default: 24 }}{% endif %}px;
+  "
+>
+  <div class="zbf-promo__top">
+    {%- if image_enabled -%}
+      <picture class="zbf-promo__image-wrap">
+        {%- if p.zbf_promo_image_mobile != blank -%}
+          <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 375 }} 375w, {{ mobile_image | image_url: width: 550 }} 550w, {{ mobile_image | image_url: width: 750 }} 750w, {{ mobile_image | image_url: width: 1100 }} 1100w, {{ mobile_image | image_url: width: 1500 }} 1500w" sizes="100vw">
+        {%- endif -%}
+        {{ desktop_image | image_url: width: 2400 | image_tag: widths: '480, 750, 1100, 1500, 1900, 2400', sizes: '(min-width: 750px) 90vw, 100vw', loading: 'lazy', alt: image_description, class: 'zbf-promo__image' }}
+      </picture>
+      <div class="zbf-promo__overlay" aria-hidden="true"></div>
+    {%- endif -%}
+    <div class="zbf-promo__headline">
+      <div class="zbf-promo__intro">
+        {%- if eyebrow != blank -%}
+          <p class="zbf-promo__eyebrow">{{ eyebrow | escape }}</p>
+        {%- endif -%}
+        {%- if heading != blank or accent != blank -%}
+          <h3 class="zbf-promo__title">
+            {{ heading | escape }}{% if accent != blank %}<span class="zbf-promo__accent"> {{ accent | escape }}</span>{% endif %}
+          </h3>
+        {%- endif -%}
+        {%- if copy != blank -%}<p class="zbf-promo__subtext">{{ copy | escape | newline_to_br }}</p>{%- endif -%}
+        <span class="zbf-promo__rule" aria-hidden="true"></span>
+      </div>
+      {%- unless p.zbf_promo_footer_visible -%}
+        {%- if button_markup != blank -%}
+          <div class="zbf-promo__cta">{{ button_markup }}</div>
+        {%- endif -%}
+      {%- endunless -%}
+    </div>
+    {%- if p.zbf_promo_image_link and destination != blank -%}
+      <a class="zbf-promo__top-link" href="{{ destination | escape }}" aria-label="{{ shop_label | escape }}"></a>
+    {%- endif -%}
+  </div>
+  {%- if p.zbf_promo_footer_visible -%}
+    <div class="zbf-promo__footer">{{ button_markup }}</div>
+  {%- endif -%}
+</zbf-collection-promo>
+{% stylesheet %}
+  .zbf-promo-item {
+    min-width: 0;
+    grid-column: auto;
+    list-style: none;
+    align-self: stretch;
+  }
+  .zbf-promo-item--full { grid-column: 1 / -1; }
+  .zbf-promo {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: var(--zbf-promo-border-width) solid var(--zbf-promo-border);
+    border-radius: var(--zbf-promo-radius);
+    background: var(--zbf-promo-bg);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+  .zbf-promo__top {
+    display: flex;
+    position: relative;
+    isolation: isolate;
+    flex: 1 0 auto;
+    min-height: var(--zbf-promo-top-height-mobile);
+    overflow: hidden;
+    background: radial-gradient(ellipse at 100% 0%, rgb(255 255 255 / 0.035), transparent 60%), var(--zbf-promo-bg);
+    color: var(--zbf-promo-text);
+  }
+  .zbf-promo__image-wrap, .zbf-promo__overlay, .zbf-promo__top-link {
+    position: absolute;
+    inset: 0;
+  }
+  .zbf-promo__image-wrap { display: block; z-index: -2; pointer-events: none; }
+  .zbf-promo__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: var(--zbf-promo-fit);
+    object-position: var(--zbf-promo-focus-mobile);
+  }
+  .zbf-promo__overlay {
+    z-index: -1;
+    background: var(--zbf-promo-overlay);
+    opacity: var(--zbf-promo-overlay-alpha);
+    pointer-events: none;
+  }
+  .zbf-promo__headline {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: var(--zbf-promo-vertical-mobile);
+    gap: var(--zbf-promo-gap-mobile);
+    padding: var(--zbf-promo-pad-mobile);
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 3;
+    text-align: var(--zbf-promo-align-mobile);
+    pointer-events: none;
+  }
+  .zbf-promo__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--zbf-promo-gap-mobile);
+    min-width: 0;
+    width: 100%;
+  }
+  .zbf-promo__cta {
+    width: fit-content;
+    max-width: 100%;
+    margin-top: auto;
+    position: relative;
+    z-index: 4;
+    pointer-events: auto;
+  }
+  .zbf-promo__cta .zbf-campaign-button {
+    width: fit-content;
+    max-width: 100%;
+    margin-block-start: 0;
+    padding-inline: 0;
+  }
+  .zbf-promo__cta .zbf-campaign-button__link.button {
+    max-width: 100%;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+  .zbf-promo__rule {
+    display: none;
+    width: 28px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--zbf-promo-accent);
+  }
+  .zbf-promo__eyebrow {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.3;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .zbf-promo .zbf-promo__title {
+    margin: 0;
+    color: var(--zbf-promo-text);
+    font-family: var(--zbf-promo-font);
+    font-style: var(--zbf-promo-font-style, normal);
+    font-weight: var(--zbf-promo-weight);
+    font-size: var(--zbf-promo-heading-mobile);
+    line-height: 1.12;
+    letter-spacing: -0.028em;
+    text-wrap: wrap;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    display: block;
+    max-width: 100%;
+  }
+  .zbf-promo__accent { color: var(--zbf-promo-accent); }
+  .zbf-promo__subtext {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-size: var(--zbf-promo-copy-mobile);
+    line-height: 1.5;
+    color: var(--zbf-promo-text);
+  }
+  .zbf-promo__top-link { z-index: 2; cursor: pointer; }
+  .zbf-promo__top-link:focus-visible { outline: 2px solid white; outline-offset: -5px; }
+  .zbf-promo__footer {
+    min-width: 0;
+    min-height: var(--zbf-promo-footer-height-mobile);
+    padding: 12px var(--zbf-promo-footer-pad-mobile);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--zbf-promo-footer-bg);
+    border-top: 1px solid var(--zbf-promo-footer-border);
+  }
+  .zbf-promo__footer > .zbf-campaign-button {
+    margin-block-start: 0;
+    flex: 0 0 auto;
+    width: 100%;
+    padding-inline: 0;
+  }
+
+  .zbf-promo--tile:not(.zbf-promo--with-image) .zbf-promo__top {
+    background:
+      radial-gradient(ellipse at 110% 95%, rgb(206 66 59 / 0.19), transparent 60%),
+      linear-gradient(145deg, rgb(255 255 255 / 0.04), transparent 60%),
+      var(--zbf-promo-bg);
+  }
+  .zbf-promo--tile .zbf-promo__eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.10em;
+  }
+  .zbf-promo--tile .zbf-promo__accent {
+    display: block;
+    margin-top: 0.1em;
+  }
+  .zbf-promo--tile .zbf-promo__rule {
+    display: block;
+    width: 30px;
+    margin-top: 3px;
+    flex: 0 0 2px;
+  }
+  .zbf-promo-item--tile:hover .zbf-promo,
+  .zbf-promo-item--mobile-tile:hover .zbf-promo {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgb(0 0 0 / 0.08);
+  }
+  .zbf-promo--tile .zbf-promo__top { flex-grow: 1; }
+  .zbf-promo--tile .zbf-promo__headline {
+    justify-content: space-between;
+    gap: clamp(16px, 3vw, 32px);
+  }
+  .zbf-promo--tile .zbf-promo__intro { gap: 12px; }
+  .zbf-promo--tile .zbf-promo__subtext {
+    font-weight: 500;
+    letter-spacing: 0.015em;
+    opacity: 0.93;
+  }
+  @media screen and (max-width: 749px) {
+    .zbf-promo-item--mobile-tile { grid-column: auto; }
+    .zbf-promo-item--mobile-full { grid-column: 1 / -1; }
+    .zbf-promo-item--mobile-tile .zbf-promo { border-radius: var(--zbf-promo-radius); }
+    .zbf-promo-item--mobile-tile .zbf-promo__eyebrow { font-size: 9px; letter-spacing: 0.08em; }
+    .zbf-promo-item--mobile-tile .zbf-promo__title {
+      font-size: clamp(18px, 5.2vw, var(--zbf-promo-heading-mobile));
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+    }
+    .zbf-promo-item--mobile-tile .zbf-promo__rule { width: 24px; margin-top: 2px; }
+    .zbf-promo-item--mobile-tile .zbf-promo__intro { gap: 10px; }
+    .zbf-promo-item--mobile-tile .zbf-promo__cta { margin-top: auto; }
+    .zbf-promo-item--mobile-tile .zbf-promo__subtext {
+      font-size: clamp(10px, 2.7vw, 12px);
+      line-height: 1.4;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .zbf-promo { transition: none; }
+    .zbf-promo-item--tile:hover .zbf-promo,
+    .zbf-promo-item--mobile-tile:hover .zbf-promo { transform: none; }
+  }
+
+  .zbf-promo-item:focus-within, .zbf-promo:focus-within { overflow: visible; }
+  .product-grid[product-grid-view='zoom-out'] > .zbf-promo-item { display: none; }
+  .zbf-promo-outside { grid-column: 1 / -1; margin: 20px var(--page-margin); }
+  @media screen and (min-width: 750px) {
+    .zbf-promo-item--tile { grid-column: auto; }
+    .zbf-promo__top { min-height: var(--zbf-promo-top-height-desktop); }
+    .zbf-promo__image { object-position: var(--zbf-promo-focus-desktop); }
+    .zbf-promo__headline {
+      padding: var(--zbf-promo-pad-desktop);
+      justify-content: var(--zbf-promo-vertical-desktop);
+      gap: var(--zbf-promo-gap-desktop);
+      text-align: var(--zbf-promo-align-desktop);
+    }
+    .zbf-promo__intro { gap: var(--zbf-promo-gap-desktop); }
+    .zbf-promo .zbf-promo__title { font-size: var(--zbf-promo-heading-desktop); }
+    .zbf-promo__subtext { font-size: var(--zbf-promo-copy-desktop); }
+    .zbf-promo__footer {
+      min-height: var(--zbf-promo-footer-height-desktop);
+      padding-inline: var(--zbf-promo-footer-pad-desktop);
+    }
+  }
+{% endstylesheet %}

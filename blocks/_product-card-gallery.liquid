@@ -49,6 +49,7 @@
         </div>
       {%- endif -%}
     </div>
+    {% content_for 'block', type: '_zootify-hero-deal-badge', id: 'hero-deal-badge', closest.product: product %}
     {%  if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add', product: product, section_id: section.id %}
     {% endif %}
@@ -268,8 +269,22 @@
   "presets": [
     {
       "name": "t:names.product_card_media",
-      "category": "t:categories.product"
+      "category": "t:categories.product",
+      "blocks": [
+        {
+          "type": "_zootify-hero-deal-badge",
+          "id": "hero-deal-badge",
+          "static": true
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "_zootify-hero-deal-badge"
     }
   ]
 }
 {% endschema %}
+
+

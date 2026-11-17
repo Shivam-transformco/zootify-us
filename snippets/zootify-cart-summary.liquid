@@ -6,6 +6,17 @@
   @param {object} config - Settings from the main-cart section.
 {% enddoc %}
 {%- liquid
+  assign zbf_cart_mode = false
+  if settings.zbf_enabled and settings.zbf_cart_enabled
+    assign zbf_cart_mode = true
+  endif
+  assign zbf_code_b2g1 = settings.zbf_code_b2g1 | default: 'BFB2G1' | strip | downcase
+  assign zbf_code_tiered = settings.zbf_code_tiered | default: 'BLACKFRIDAY' | strip | downcase
+  assign zbf_code_bf30 = settings.zbf_code_bf30 | default: 'BF30' | strip | downcase
+  assign zbf_code_bf20 = settings.zbf_code_bf20 | default: 'BF20' | strip | downcase
+  assign zbf_code_bf10 = settings.zbf_code_bf10 | default: 'BF10' | strip | downcase
+  assign zbf_code_welcome = settings.zbf_code_welcome | default: 'WELCOME10' | strip | downcase
+  assign zbf_managed_codes = zbf_code_b2g1 | append: '|' | append: zbf_code_tiered | append: '|' | append: zbf_code_bf30 | append: '|' | append: zbf_code_bf20 | append: '|' | append: zbf_code_bf10 | append: '|' | append: zbf_code_welcome | split: '|'
   assign is_us = false
   if localization.country.iso_code == 'US' and cart.currency.iso_code == 'USD'
     assign is_us = true
@@ -46,7 +57,13 @@
   for code in discount_codes
     assign normalized_visible_code = code | downcase
     unless pairing_code != blank and normalized_visible_code == pairing_code
-      assign visible_code_count = visible_code_count | plus: 1
+      assign zbf_count_code = true
+      if zbf_cart_mode and zbf_managed_codes contains normalized_visible_code
+        assign zbf_count_code = false
+      endif
+      if zbf_count_code
+        assign visible_code_count = visible_code_count | plus: 1
+      endif
     endunless
   endfor
   assign other_saving = cart.total_discount | minus: pairing_saving | at_least: 0
@@ -85,6 +102,7 @@
   <div class="zc-panel" data-zc-panel>
     <h2 class="zc-heading">{{ config.zc_heading | escape }}</h2>
 
+    {% unless zbf_cart_mode %}
         {%- comment -%} WELCOME10 offer card (Claude, 6 Nov 2026): one-tap apply, shown OUTSIDE the discount dropdown (option 2). Hidden once applied, when the Buy-2 pair offer is active (they don't combine), or for signed-in customers who have already ordered. {%- endcomment -%}
         {%- liquid
           assign zt_offer_code = 'WELCOME10'
@@ -152,37 +170,48 @@
               });
             })();
           </script>
-    {% if settings.show_add_discount_code %}
+    {% endunless %}
+    {% if settings.show_add_discount_code or zbf_cart_mode %}
       <zootify-cart-discount
-        class="zc-discount"
+        class="zc-discount{% if zbf_cart_mode %} zc-discount--cards{% endif %}"
         id="ZcDiscount-{{ section_id }}"
         data-section-id="{{ section_id }}"
         data-cart-url="{{ routes.cart_url }}"
         data-update-url="{{ routes.cart_update_url }}"
       >
-        <details id="ZcDiscountDetails-{{ section_id }}"{% if visible_code_count > 0 %} open{% endif %}>
-          <summary class="zc-discount-toggle">
-            <span class="zc-discount-title"><span class="zc-icon" aria-hidden="true">{{ 'icon-discount.svg' | inline_asset_content }}</span>{{ config.zc_discount_label | escape }}</span>
-            <span class="zc-plus" aria-hidden="true"></span>
-          </summary>
-          <div class="zc-discount-body">
-            <form class="zc-code-form" data-zc-code-form action="{{ routes.cart_url }}" method="post">
-              <label class="visually-hidden" for="ZcCode-{{ section_id }}">{{ 'content.discount_code' | t }}</label>
-              <input id="ZcCode-{{ section_id }}" name="discount" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="{{ 'content.discount_code' | t }}" required aria-describedby="ZcDiscountStatus-{{ section_id }}">
-              <button type="submit" class="zc-apply">{{ 'actions.apply' | t }}</button>
-            </form>
-            <p class="zc-code-status" id="ZcDiscountStatus-{{ section_id }}" data-zc-code-status role="status" aria-live="polite" hidden></p>
-            <ul class="zc-code-list" data-zc-code-list aria-label="{{ 'content.discounts' | t }}" role="list">
-              {% for code in discount_codes %}
-                {% assign normalized_visible_code = code | downcase %}
-                {% unless pairing_code != blank and normalized_visible_code == pairing_code %}
-                  <li class="zc-code" data-zc-code="{{ code | escape }}"><span>{{ code | escape }}</span><button type="button" data-zc-remove-code="{{ code | escape }}" aria-label="{{ 'actions.remove_discount' | t: code: code | escape }}"><span aria-hidden="true">×</span></button></li>
-                {% endunless %}
-              {% endfor %}
-            </ul>
-            <p class="zc-code-fallback zc-small">Apply or remove your discount code during checkout.</p>
-          </div>
-        </details>
+        {% if zbf_cart_mode %}
+          {% render 'zootify-bf-cart-offers', section_id: section_id %}
+          <p class="zc-code-status zc-offers-status" id="ZcDiscountStatus-{{ section_id }}" data-zc-code-status role="status" aria-live="polite" hidden></p>
+        {% endif %}
+        {% if settings.show_add_discount_code %}
+          <details class="zc-discount-manual" id="ZcDiscountDetails-{{ section_id }}"{% if visible_code_count > 0 %} open{% endif %}>
+            <summary class="zc-discount-toggle">
+              <span class="zc-discount-title"><span class="zc-icon" aria-hidden="true">{{ 'icon-discount.svg' | inline_asset_content }}</span>{{ config.zc_discount_label | escape }}</span>
+              <span class="zc-plus" aria-hidden="true"></span>
+            </summary>
+            <div class="zc-discount-body">
+              <form class="zc-code-form" data-zc-code-form action="{{ routes.cart_url }}" method="post">
+                <label class="visually-hidden" for="ZcCode-{{ section_id }}">{{ 'content.discount_code' | t }}</label>
+                <input id="ZcCode-{{ section_id }}" name="discount" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="{{ 'content.discount_code' | t }}" required aria-describedby="ZcDiscountStatus-{{ section_id }}">
+                <button type="submit" class="zc-apply">{{ 'actions.apply' | t }}</button>
+              </form>
+              {% unless zbf_cart_mode %}<p class="zc-code-status" id="ZcDiscountStatus-{{ section_id }}" data-zc-code-status role="status" aria-live="polite" hidden></p>{% endunless %}
+              <ul class="zc-code-list" data-zc-code-list aria-label="{{ 'content.discounts' | t }}" role="list">
+                {% for code in discount_codes %}
+                  {% assign normalized_visible_code = code | downcase %}
+                  {% unless pairing_code != blank and normalized_visible_code == pairing_code %}
+                    {% assign zbf_hide_code_pill = false %}
+                    {% if zbf_cart_mode and zbf_managed_codes contains normalized_visible_code %}{% assign zbf_hide_code_pill = true %}{% endif %}
+                    {% unless zbf_hide_code_pill %}
+                      <li class="zc-code" data-zc-code="{{ code | escape }}"><span>{{ code | escape }}</span><button type="button" data-zc-remove-code="{{ code | escape }}" aria-label="{{ 'actions.remove_discount' | t: code: code | escape }}"><span aria-hidden="true">×</span></button></li>
+                    {% endunless %}
+                  {% endunless %}
+                {% endfor %}
+              </ul>
+              <p class="zc-code-fallback zc-small">Apply or remove your discount code during checkout.</p>
+            </div>
+          </details>
+        {% endif %}
       </zootify-cart-discount>
     {% endif %}
 

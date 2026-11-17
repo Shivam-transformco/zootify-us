@@ -1,0 +1,638 @@
+{%- doc -%}
+  A directly editable campaign button using the theme's primary button appearance.
+
+  @param {string} [fallback_url] - Destination when the button's own link is empty.
+  @param {string} [context_name] - Optional parent context, such as sale-hero or collection-promo.
+  @param {number} [parent_gap_desktop] - Parent flex gap to replace with the button's desktop top spacing.
+  @param {number} [parent_gap_mobile] - Parent flex gap to replace with the button's mobile top spacing.
+
+  @example
+  {% content_for 'block', type: '_zootify-campaign-button', id: 'campaign-button', fallback_url: '#ResultsList', context_name: 'sale-hero', parent_gap_desktop: 20, parent_gap_mobile: 16 %}
+{%- enddoc -%}
+
+{%- liquid
+  assign button_settings = block.settings
+  assign button_label = button_settings.label | strip
+  assign button_url = button_settings.link | default: fallback_url | strip
+  assign button_font = settings.type_body_font
+  case button_settings.font_source
+    when 'heading'
+      assign button_font = settings.type_heading_font
+    when 'accent'
+      assign button_font = settings.type_accent_font
+  endcase
+-%}
+
+{%- if button_settings.show_button and button_label != blank -%}
+  <div
+    id="ZbfCampaignButton-{{ section.id }}-{{ block.id }}"
+    class="zbf-campaign-button"
+    data-zbf-campaign-button
+    {% if context_name != blank %}data-zbf-button-context="{{ context_name | escape }}"{% endif %}
+    style="
+      --zbf-cbtn-radius: {% if button_settings.custom_radius %}{{ button_settings.corner_radius }}px{% else %}var(--style-border-radius, 8px){% endif %};
+      --zbf-cbtn-custom-bg: {{ button_settings.custom_background | default: '#111111' }};
+      --zbf-cbtn-custom-text: {{ button_settings.custom_text | default: '#ffffff' }};
+      --zbf-cbtn-custom-border: {{ button_settings.custom_border | default: '#111111' }};
+      --zbf-cbtn-custom-hover-bg: {{ button_settings.custom_hover_background | default: '#333333' }};
+      --zbf-cbtn-custom-hover-text: {{ button_settings.custom_hover_text | default: '#ffffff' }};
+      --zbf-cbtn-size-desktop: {{ button_settings.font_size_desktop }}px;
+      --zbf-cbtn-size-mobile: {{ button_settings.font_size_mobile }}px;
+      --zbf-cbtn-height-desktop: {{ button_settings.min_height_desktop }}px;
+      --zbf-cbtn-height-mobile: {{ button_settings.min_height_mobile }}px;
+      --zbf-cbtn-pad-x-desktop: {{ button_settings.padding_x_desktop }}px;
+      --zbf-cbtn-pad-x-mobile: {{ button_settings.padding_x_mobile }}px;
+      --zbf-cbtn-pad-y-desktop: {{ button_settings.padding_y_desktop }}px;
+      --zbf-cbtn-pad-y-mobile: {{ button_settings.padding_y_mobile }}px;
+      --zbf-cbtn-align-desktop: {{ button_settings.align_desktop }};
+      --zbf-cbtn-align-mobile: {{ button_settings.align_mobile }};
+      --zbf-cbtn-inset-desktop: {{ button_settings.horizontal_inset_desktop }}px;
+      --zbf-cbtn-inset-mobile: {{ button_settings.horizontal_inset_mobile }}px;
+      --zbf-cbtn-top-desktop: {{ button_settings.space_top_desktop }}px;
+      --zbf-cbtn-top-mobile: {{ button_settings.space_top_mobile }}px;
+      --zbf-cbtn-parent-gap-desktop: {{ parent_gap_desktop | default: 0 }}px;
+      --zbf-cbtn-parent-gap-mobile: {{ parent_gap_mobile | default: 0 }}px;
+      --zbf-cbtn-width-desktop: {% case button_settings.width_mode_desktop %}{% when 'full' %}100%{% when 'custom' %}min(100%, {{ button_settings.width_desktop }}px){% else %}fit-content{% endcase %};
+      --zbf-cbtn-width-mobile: {% case button_settings.width_mode_mobile %}{% when 'full' %}100%{% when 'custom' %}min(100%, {{ button_settings.width_mobile }}px){% else %}fit-content{% endcase %};
+      {% if button_settings.font_source == 'theme' %}
+        --zbf-cbtn-font-family: var(--button-font-family-primary);
+        --zbf-cbtn-font-style: var(--font-paragraph--style);
+      {% else %}
+        --zbf-cbtn-font-family: {{ button_font.family | escape }}, {{ button_font.fallback_families }};
+        --zbf-cbtn-font-style: {{ button_font.style }};
+      {% endif %}
+      {% if button_settings.weight_desktop != 'theme' %}--zbf-cbtn-weight-desktop: {{ button_settings.weight_desktop }};{% endif %}
+      {% if button_settings.weight_mobile != 'theme' %}--zbf-cbtn-weight-mobile: {{ button_settings.weight_mobile }};{% endif %}
+    "
+    data-zbf-button-appearance="{{ button_settings.appearance | default: 'dark' }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- if button_settings.weight_desktop != 'theme' or button_settings.weight_mobile != 'theme' -%}
+      {% style %}
+        {% if button_settings.weight_desktop != 'theme' %}
+          {% assign button_font_desktop = button_font | font_modify: 'weight', button_settings.weight_desktop %}
+          {{ button_font_desktop | font_face: font_display: 'swap' }}
+        {% endif %}
+        {% if button_settings.weight_mobile != 'theme' and button_settings.weight_mobile != button_settings.weight_desktop %}
+          {% assign button_font_mobile = button_font | font_modify: 'weight', button_settings.weight_mobile %}
+          {{ button_font_mobile | font_face: font_display: 'swap' }}
+        {% endif %}
+      {% endstyle %}
+    {%- endif -%}
+    <a
+      {% if button_url != blank %}href="{{ button_url | escape }}"{% else %}role="link" aria-disabled="true"{% endif %}
+      class="button zbf-campaign-button__link zbf-campaign-button__link--{{ button_settings.appearance | default: 'dark' }}{% if button_settings.weight_desktop != 'theme' %} zbf-campaign-button__link--weight-desktop{% endif %}{% if button_settings.weight_mobile != 'theme' %} zbf-campaign-button__link--weight-mobile{% endif %}"
+    >
+      <span>{{ button_label | escape }}</span>
+      {%- if button_settings.show_arrow -%}
+        <svg class="zbf-campaign-button__arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M4 12h16m-6-6 6 6-6 6"/>
+        </svg>
+      {%- endif -%}
+    </a>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .zbf-campaign-button {
+    display: flex;
+    justify-content: var(--zbf-cbtn-align-mobile);
+    align-self: stretch;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-block-start: var(--zbf-cbtn-top-mobile);
+    padding-inline: min(var(--zbf-cbtn-inset-mobile), 25%);
+  }
+
+  :where(:not(.visually-hidden, [hidden], style, script, link)) ~ .zbf-campaign-button {
+    margin-block-start: calc(var(--zbf-cbtn-top-mobile) - var(--zbf-cbtn-parent-gap-mobile));
+  }
+
+  .zbf-campaign-button > .zbf-campaign-button__link.button {
+    box-sizing: border-box;
+    flex: 0 1 auto;
+    width: var(--zbf-cbtn-width-mobile);
+    max-width: 100%;
+    min-width: 0;
+    min-height: var(--zbf-cbtn-height-mobile);
+    height: auto;
+    margin: 0;
+    padding-block: var(--zbf-cbtn-pad-y-mobile);
+    padding-inline: min(var(--zbf-cbtn-pad-x-mobile), 25%);
+    font-family: var(--zbf-cbtn-font-family);
+    font-style: var(--zbf-cbtn-font-style);
+    font-size: var(--zbf-cbtn-size-mobile);
+    line-height: 1.3;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  @media screen and (max-width: 749px) {
+    .zbf-campaign-button > .zbf-campaign-button__link--weight-mobile.button {
+      font-weight: var(--zbf-cbtn-weight-mobile);
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .zbf-campaign-button {
+      justify-content: var(--zbf-cbtn-align-desktop);
+      margin-block-start: var(--zbf-cbtn-top-desktop);
+      padding-inline: min(var(--zbf-cbtn-inset-desktop), 25%);
+    }
+
+    :where(:not(.visually-hidden, [hidden], style, script, link)) ~ .zbf-campaign-button {
+      margin-block-start: calc(var(--zbf-cbtn-top-desktop) - var(--zbf-cbtn-parent-gap-desktop));
+    }
+
+    .zbf-campaign-button > .zbf-campaign-button__link.button {
+      width: var(--zbf-cbtn-width-desktop);
+      min-height: var(--zbf-cbtn-height-desktop);
+      padding-block: var(--zbf-cbtn-pad-y-desktop);
+      padding-inline: min(var(--zbf-cbtn-pad-x-desktop), 25%);
+      font-size: var(--zbf-cbtn-size-desktop);
+    }
+
+    .zbf-campaign-button > .zbf-campaign-button__link--weight-desktop.button {
+      font-weight: var(--zbf-cbtn-weight-desktop);
+    }
+  }
+
+  .zbf-campaign-button > .zbf-campaign-button__link.button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    border-radius: var(--zbf-cbtn-radius);
+  }
+  .zbf-campaign-button__arrow { width: 16px; height: 16px; flex: 0 0 16px; }
+  .zbf-campaign-button > .zbf-campaign-button__link--dark.button {
+    background: #111111;
+    color: #ffffff;
+    border: 1px solid #111111;
+  }
+  .zbf-campaign-button > .zbf-campaign-button__link--dark.button:hover {
+    background: #333333;
+    border-color: #333333;
+    color: #ffffff;
+  }
+  .zbf-campaign-button > .zbf-campaign-button__link--outline.button {
+    background: transparent;
+    border: 1px solid #111111;
+    color: #111111;
+  }
+  .zbf-campaign-button > .zbf-campaign-button__link--outline.button:hover {
+    background: #111111;
+    border-color: #111111;
+    color: #ffffff;
+  }
+  .zbf-campaign-button > .zbf-campaign-button__link--custom.button {
+    background: var(--zbf-cbtn-custom-bg);
+    color: var(--zbf-cbtn-custom-text);
+    border: 1px solid var(--zbf-cbtn-custom-border);
+  }
+  .zbf-campaign-button > .zbf-campaign-button__link--custom.button:hover {
+    background: var(--zbf-cbtn-custom-hover-bg);
+    color: var(--zbf-cbtn-custom-hover-text);
+  }
+  .zbf-campaign-button > .zbf-campaign-button__link.button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Shop now button",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Shop now",
+      "info": "Clear the label to hide this button."
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link",
+      "info": "Leave empty to use the parent banner's destination: the sale collection for a promo, or the product grid for the sale-page banner."
+    },
+    {
+      "type": "select",
+      "id": "appearance",
+      "label": "Button appearance",
+      "options": [
+        {
+          "value": "dark",
+          "label": "Dark (reference design)"
+        },
+        {
+          "value": "theme",
+          "label": "Theme primary button"
+        },
+        {
+          "value": "outline",
+          "label": "Outline on light strip"
+        },
+        {
+          "value": "custom",
+          "label": "Custom colors"
+        }
+      ],
+      "default": "dark"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "label": "Show right arrow icon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_radius",
+      "label": "Override button corner radius",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "label": "Button corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 3,
+      "visible_if": "{{ block.settings.custom_radius }}"
+    },
+    {
+      "type": "header",
+      "content": "Custom button colors"
+    },
+    {
+      "type": "color",
+      "id": "custom_background",
+      "label": "Background",
+      "default": "#111111",
+      "visible_if": "{{ block.settings.appearance == 'custom' }}"
+    },
+    {
+      "type": "color",
+      "id": "custom_text",
+      "label": "Text",
+      "default": "#FFFFFF",
+      "visible_if": "{{ block.settings.appearance == 'custom' }}"
+    },
+    {
+      "type": "color",
+      "id": "custom_border",
+      "label": "Border",
+      "default": "#111111",
+      "visible_if": "{{ block.settings.appearance == 'custom' }}"
+    },
+    {
+      "type": "color",
+      "id": "custom_hover_background",
+      "label": "Hover background",
+      "default": "#333333",
+      "visible_if": "{{ block.settings.appearance == 'custom' }}"
+    },
+    {
+      "type": "color",
+      "id": "custom_hover_text",
+      "label": "Hover text",
+      "default": "#FFFFFF",
+      "visible_if": "{{ block.settings.appearance == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "font_source",
+      "label": "Font",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Theme primary button"
+        },
+        {
+          "value": "body",
+          "label": "Theme body font"
+        },
+        {
+          "value": "heading",
+          "label": "Theme heading font"
+        },
+        {
+          "value": "accent",
+          "label": "Theme accent font"
+        }
+      ],
+      "default": "theme",
+      "info": "Button colors, corners, and hover effects always follow the theme's primary button style."
+    },
+    {
+      "type": "header",
+      "content": "Desktop"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "label": "Font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "weight_desktop",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Theme default"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "range",
+      "id": "min_height_desktop",
+      "label": "Minimum height",
+      "min": 32,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 38,
+      "info": "Padding or a long label can make the button taller."
+    },
+    {
+      "type": "range",
+      "id": "padding_y_desktop",
+      "label": "Top and bottom padding",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "padding_x_desktop",
+      "label": "Left and right padding",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "width_mode_desktop",
+      "label": "Width",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Fit label"
+        },
+        {
+          "value": "custom",
+          "label": "Custom"
+        },
+        {
+          "value": "full",
+          "label": "Full width"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "range",
+      "id": "width_desktop",
+      "label": "Custom width",
+      "min": 60,
+      "max": 480,
+      "step": 10,
+      "unit": "px",
+      "default": 140,
+      "info": "Never exceeds the available content width.",
+      "visible_if": "{{ block.settings.width_mode_desktop == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "align_desktop",
+      "label": "Horizontal position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "flex-start",
+      "info": "Independent of the heading and text alignment."
+    },
+    {
+      "type": "range",
+      "id": "horizontal_inset_desktop",
+      "label": "Horizontal inset",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Moves a left- or right-aligned button inward. Large values are limited to keep the button inside its content area."
+    },
+    {
+      "type": "range",
+      "id": "space_top_desktop",
+      "label": "Space above",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Font size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "weight_mobile",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "theme",
+          "label": "Theme default"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "range",
+      "id": "min_height_mobile",
+      "label": "Minimum height",
+      "min": 32,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 40,
+      "info": "For a larger touch target, choose 44px or more. Padding or a long label can increase the height."
+    },
+    {
+      "type": "range",
+      "id": "padding_y_mobile",
+      "label": "Top and bottom padding",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "padding_x_mobile",
+      "label": "Left and right padding",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "width_mode_mobile",
+      "label": "Width",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Fit label"
+        },
+        {
+          "value": "custom",
+          "label": "Custom"
+        },
+        {
+          "value": "full",
+          "label": "Full width"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "range",
+      "id": "width_mobile",
+      "label": "Custom width",
+      "min": 60,
+      "max": 480,
+      "step": 10,
+      "unit": "px",
+      "default": 140,
+      "info": "Never exceeds the available content width.",
+      "visible_if": "{{ block.settings.width_mode_mobile == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "align_mobile",
+      "label": "Horizontal position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "flex-start",
+      "info": "Independent of the desktop button and of the heading and text alignment."
+    },
+    {
+      "type": "range",
+      "id": "horizontal_inset_mobile",
+      "label": "Horizontal inset",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "Moves a left- or right-aligned button inward. Large values are limited to keep the button inside its content area."
+    },
+    {
+      "type": "range",
+      "id": "space_top_mobile",
+      "label": "Space above",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    }
+  ]
+}
+{% endschema %}

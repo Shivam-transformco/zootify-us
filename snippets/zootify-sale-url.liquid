@@ -1,0 +1,17 @@
+{%- doc -%}
+  Uses the real sale collection when available; the unpublished catalog preview
+  explicitly uses Best selling to match the current Black Friday collection.
+  @example
+  {% capture sale_url %}{% render 'zootify-sale-url' %}{% endcapture %}
+{%- enddoc -%}
+{%- liquid
+  assign sale_handle = settings.zbf_sale_handle | default: 'black-friday' | handleize
+  assign sale_collection = collections[sale_handle]
+  if sale_collection != blank
+    echo sale_collection.url
+  elsif settings.zbf_preview_mode
+    echo routes.all_products_collection_url | append: '?view=black-friday&sort_by=best-selling'
+  else
+    echo routes.collections_url | append: '/' | append: sale_handle
+  endif
+-%}

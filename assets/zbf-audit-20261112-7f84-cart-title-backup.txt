@@ -1,0 +1,196 @@
+{% assign block_settings = block.settings %}
+
+{%- liquid
+  assign zootify_cart_heading = block_settings.title
+  if zootify_cart_heading == blank or zootify_cart_heading == 'Cart'
+    assign zootify_cart_heading = 'SHOPPING BAG'
+  endif
+-%}
+
+<div
+  class="cart-title cart-title--zootify spacing-style text-{{ block_settings.alignment }}"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  {{ block.shopify_attributes }}
+>
+  <h1 class="cart-title--zootify__heading {{ block_settings.type_preset | default: 'h2' }}">
+    {%- if cart.empty? -%}
+      {{ 'content.your_cart_is_empty' | t }}
+    {%- else -%}
+      {{ zootify_cart_heading }}
+    {%- endif -%}
+  </h1>
+
+  {%- unless cart.empty? -%}
+    {%- if block_settings.show_count -%}
+      <p class="cart-title--zootify__meta" aria-live="polite">
+        {{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %} selected
+      </p>
+    {%- endif -%}
+  {%- endunless -%}
+</div>
+
+{% stylesheet %}
+  /* Cart page heading only. No changes to totals, checkout, product cards or cart drawer. */
+  .zootify-cart-page .cart-title--zootify {
+    width: 100%;
+    text-align: center;
+  }
+
+  .zootify-cart-page .cart-title--zootify h1 {
+    display: block;
+    margin: 0;
+    font-family: var(--font-body--family, inherit);
+    font-size: clamp(27px, 2.25vw, 33px);
+    font-weight: 500;
+    line-height: 1.22;
+    letter-spacing: -0.035em;
+    text-transform: none;
+  }
+
+  .zootify-cart-page .cart-title--zootify .cart-title--zootify__meta {
+    margin: 8px 0 0;
+    font-family: var(--font-body--family, inherit);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.015em;
+    color: rgb(var(--color-foreground-rgb) / 0.62);
+  }
+
+  @media screen and (max-width: 749px) {
+    .zootify-cart-page .cart-title--zootify {
+      text-align: left;
+    }
+
+    .zootify-cart-page .cart-title--zootify h1 {
+      font-size: 26px;
+      letter-spacing: -0.03em;
+    }
+
+    .zootify-cart-page .cart-title--zootify .cart-title--zootify__meta {
+      margin-top: 6px;
+      font-size: 12px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.title",
+  "tag": null,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "t:settings.cart_title",
+      "default": "t:text_defaults.cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "t:settings.cart_count",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "t:settings.preset",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "paragraph",
+          "label": "t:options.paragraph"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.h3"
+        },
+        {
+          "value": "h4",
+          "label": "t:options.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.h6"
+        }
+      ],
+      "default": "",
+      "info": "t:info.edit_presets_in_theme_settings"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.title"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,887 @@
+{%- capture hero_button_markup -%}
+  {% content_for 'block', type: '_zootify-campaign-button', id: 'campaign-button', fallback_url: '#ResultsList', context_name: 'sale-hero', parent_gap_desktop: 0, parent_gap_mobile: 0 %}
+{%- endcapture -%}
+{%- assign hero_button_markup = hero_button_markup | strip -%}
+{%- liquid
+  assign hero = section.settings
+  assign desktop_image = hero.desktop_image | default: hero.mobile_image
+  assign mobile_image = hero.mobile_image | default: desktop_image
+  assign image_enabled = false
+  if hero.background_mode == 'image' and desktop_image != blank
+    assign image_enabled = true
+  endif
+  assign heading = hero.heading | strip
+  assign accent = hero.accent_text | strip
+  assign eyebrow = hero.eyebrow | strip
+  assign subheading = hero.subheading | strip_html | strip
+  assign can_show = false
+  if heading != blank or accent != blank or eyebrow != blank or subheading != blank or image_enabled or hero_button_markup != blank
+    assign can_show = true
+  endif
+  assign font_family = settings.type_heading_font
+  case hero.heading_font
+    when 'body'
+      assign font_family = settings.type_body_font
+    when 'accent'
+      assign font_family = settings.type_accent_font
+    when 'custom'
+      assign font_family = hero.custom_font
+  endcase
+  assign styled_font = font_family | font_modify: 'weight', hero.heading_weight
+  assign styled_font = styled_font | default: font_family
+  assign image_description = hero.image_alt | default: ''
+-%}
+{%- if settings.zbf_enabled and hero.enabled and can_show -%}
+  {% style %}
+    {{ styled_font | font_face: font_display: 'swap' }}
+  {% endstyle %}
+  <div
+    id="ZbfHero-{{ section.id }}"
+    class="zbf-hero section section--{{ hero.section_width }}"
+    style="
+      --zbf-hero-radius: {{ hero.corner_radius }}px;
+      --zbf-hero-top-height-desktop: {{ hero.height_desktop }}px;
+      --zbf-hero-top-height-mobile: {{ hero.height_mobile }}px;
+      --zbf-hero-desktop-ratio: {{ desktop_image.aspect_ratio | default: 2.5 }};
+      --zbf-hero-mobile-ratio: {{ mobile_image.aspect_ratio | default: 1 }};
+      --zbf-hero-fit: {{ hero.image_fit }};
+      --zbf-hero-focus-desktop: {{ desktop_image.presentation.focal_point | default: '50% 50%' }};
+      --zbf-hero-focus-mobile: {{ mobile_image.presentation.focal_point | default: '50% 50%' }};
+      --zbf-hero-overlay: {{ hero.overlay_color }};
+      --zbf-hero-overlay-alpha: {{ hero.overlay_opacity | divided_by: 100.0 }};
+      --zbf-hero-heading-font: {{ font_family.family | escape }}, {{ font_family.fallback_families }};
+      --zbf-hero-heading-style: {{ font_family.style }};
+      --zbf-hero-heading-weight: {{ hero.heading_weight }};
+      --zbf-hero-heading-desktop: {{ hero.heading_size_desktop }}px;
+      --zbf-hero-heading-mobile: {{ hero.heading_size_mobile }}px;
+      --zbf-hero-accent: {{ hero.accent_color | default: '#CE423B' }};
+      --zbf-hero-heading-case: {{ hero.heading_case }};
+      --zbf-hero-copy-desktop: {{ hero.copy_size_desktop }}px;
+      --zbf-hero-copy-mobile: {{ hero.copy_size_mobile }}px;
+      --zbf-hero-copy-weight: {{ hero.copy_weight }};
+      --zbf-hero-align-desktop: {{ hero.align_desktop }};
+      --zbf-hero-align-mobile: {{ hero.align_mobile }};
+      --zbf-hero-horizontal-desktop: {{ hero.horizontal_desktop }};
+      --zbf-hero-horizontal-mobile: {{ hero.horizontal_mobile }};
+      --zbf-hero-vertical-desktop: {{ hero.vertical_desktop }};
+      --zbf-hero-vertical-mobile: {{ hero.vertical_mobile }};
+      --zbf-hero-content-width: {{ hero.content_width }}px;
+      --zbf-hero-pad-desktop: {{ hero.content_pad_desktop }}px;
+      --zbf-hero-pad-mobile: {{ hero.content_pad_mobile }}px;
+      --zbf-hero-space-top-desktop: {{ hero.space_top_desktop }}px;
+      --zbf-hero-space-bottom-desktop: {{ hero.space_bottom_desktop }}px;
+      --zbf-hero-space-top-mobile: {{ hero.space_top_mobile }}px;
+      --zbf-hero-space-bottom-mobile: {{ hero.space_bottom_mobile }}px;
+      {% if hero.custom_colors %}
+        --zbf-hero-bg: {{ hero.background_color }};
+        --zbf-hero-heading-color: {{ hero.heading_color }};
+        --zbf-hero-copy-color: {{ hero.copy_color }};
+      {% endif %}
+      --zbf-hero-footer-bg: {{ hero.footer_color | default: '#F7F7F7' }};
+      --zbf-hero-footer-border: {{ hero.footer_border | default: '#E6E6E6' }};
+      --zbf-hero-footer-height-desktop: {{ hero.footer_height_desktop | default: 76 }}px;
+      --zbf-hero-footer-height-mobile: {{ hero.footer_height_mobile | default: 72 }}px;
+      --zbf-hero-footer-pad-desktop: {% if hero.footer_match_alignment %}{{ hero.content_pad_desktop }}{% else %}{{ hero.footer_padding_desktop | default: 48 }}{% endif %}px;
+      --zbf-hero-footer-pad-mobile: {% if hero.footer_match_alignment %}{{ hero.content_pad_mobile }}{% else %}{{ hero.footer_padding_mobile | default: 24 }}{% endif %}px;
+    "
+  >
+    <div class="zbf-hero__surface color-{{ hero.color_scheme }}">
+      <div class="zbf-hero__top zbf-hero__top--desktop-{{ hero.height_mode_desktop }} zbf-hero__top--mobile-{{ hero.height_mode_mobile }}{% if image_enabled %} zbf-hero__top--with-image{% endif %}">
+        {%- if image_enabled -%}
+          <picture class="zbf-hero__picture">
+            {%- if hero.mobile_image != blank -%}
+              <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 320 }} 320w, {{ mobile_image | image_url: width: 480 }} 480w, {{ mobile_image | image_url: width: 750 }} 750w, {{ mobile_image | image_url: width: 990 }} 990w, {{ mobile_image | image_url: width: 1500 }} 1500w" sizes="100vw">
+            {%- endif -%}
+            {{ desktop_image | image_url: width: 3000 | image_tag: widths: '320, 480, 750, 990, 1200, 1500, 1800, 2200, 2600, 3000', sizes: '100vw', loading: 'eager', alt: image_description, class: 'zbf-hero__image' }}
+          </picture>
+          <div class="zbf-hero__overlay" aria-hidden="true"></div>
+        {%- endif -%}
+        <div class="zbf-hero__content">
+          <div class="zbf-hero__copy">
+            {%- if eyebrow != blank -%}<p class="zbf-hero__eyebrow">{{ eyebrow | escape }}</p>{%- endif -%}
+            {%- if heading != blank or accent != blank -%}
+              <{{ hero.heading_tag }} class="zbf-hero__heading">
+                {{ heading | escape }}{% if accent != blank %}<span class="zbf-hero__accent"> {{ accent | escape }}</span>{% endif %}
+              </{{ hero.heading_tag }}>
+            {%- elsif hero.heading_tag == 'h1' -%}
+              <h1 class="visually-hidden">{{ collection.title | escape }}</h1>
+            {%- endif -%}
+            {%- if subheading != blank -%}
+              <div class="zbf-hero__subheading rte">{{ hero.subheading }}</div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+      {%- if hero.footer_visible -%}
+        <div class="zbf-hero__footer">{{ hero_button_markup }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+{% stylesheet %}
+  body:has(.zbf-hero) #ResultsList { scroll-margin-top: calc(var(--header-height, 80px) + 20px); }
+  .zbf-hero { padding-block: var(--zbf-hero-space-top-mobile) var(--zbf-hero-space-bottom-mobile); }
+  .zbf-hero__surface {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    background: var(--zbf-hero-footer-bg);
+    border: 1px solid var(--zbf-hero-footer-border);
+    border-radius: var(--zbf-hero-radius);
+  }
+  .zbf-hero__top {
+    position: relative;
+    display: flex;
+    isolation: isolate;
+    min-height: var(--zbf-hero-top-height-mobile);
+    background: radial-gradient(ellipse at 100% 0%, rgb(255 255 255 / 0.035), transparent 60%), var(--zbf-hero-bg, var(--color-background));
+    overflow: hidden;
+  }
+  .zbf-hero__picture, .zbf-hero__overlay { position: absolute; inset: 0; }
+  .zbf-hero__picture { z-index: -2; display: block; pointer-events: none; }
+  .zbf-hero__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: var(--zbf-hero-fit);
+    object-position: var(--zbf-hero-focus-mobile);
+  }
+  .zbf-hero__overlay {
+    z-index: -1;
+    background: var(--zbf-hero-overlay);
+    opacity: var(--zbf-hero-overlay-alpha);
+    pointer-events: none;
+  }
+  .zbf-hero__content {
+    display: flex;
+    justify-content: var(--zbf-hero-vertical-mobile);
+    flex-direction: column;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding: var(--zbf-hero-pad-mobile);
+    box-sizing: border-box;
+  }
+  .zbf-hero__copy {
+    display: flex;
+    flex-direction: column;
+    align-self: var(--zbf-hero-horizontal-mobile);
+    gap: 12px;
+    min-width: 0;
+    width: min(100%, var(--zbf-hero-content-width));
+    text-align: var(--zbf-hero-align-mobile);
+  }
+  .zbf-hero__eyebrow, .zbf-hero__heading, .zbf-hero__subheading, .zbf-hero__subheading > * { margin: 0; }
+  .zbf-hero__eyebrow {
+    font-family: var(--font-body--family);
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.3;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--zbf-hero-copy-color, var(--color-foreground));
+  }
+  .zbf-hero .zbf-hero__heading {
+    color: var(--zbf-hero-heading-color, var(--color-foreground));
+    font-family: var(--zbf-hero-heading-font);
+    font-style: var(--zbf-hero-heading-style);
+    font-weight: var(--zbf-hero-heading-weight);
+    font-size: var(--zbf-hero-heading-mobile);
+    line-height: 1.1;
+    letter-spacing: -0.028em;
+    text-transform: var(--zbf-hero-heading-case);
+    text-wrap: wrap;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    display: block;
+    max-width: 100%;
+  }
+  .zbf-hero .zbf-hero__accent { color: var(--zbf-hero-accent); }
+  .zbf-hero__subheading, .zbf-hero__subheading > * {
+    font-family: var(--font-body--family);
+    font-size: var(--zbf-hero-copy-mobile);
+    font-weight: var(--zbf-hero-copy-weight);
+    line-height: 1.5;
+    color: var(--zbf-hero-copy-color, var(--color-foreground));
+  }
+  .zbf-hero__footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: var(--zbf-hero-footer-height-mobile);
+    padding: 12px var(--zbf-hero-footer-pad-mobile);
+    box-sizing: border-box;
+    background: var(--zbf-hero-footer-bg);
+    border-top: 1px solid var(--zbf-hero-footer-border);
+  }
+  .zbf-hero__footer > .zbf-campaign-button { margin-block-start: 0; flex: 0 0 auto; width: 100%; padding-inline: 0; }
+  @media screen and (max-width: 749px) {
+    .zbf-hero__top--mobile-adapt.zbf-hero__top--with-image { aspect-ratio: var(--zbf-hero-mobile-ratio); }
+  }
+  @media screen and (min-width: 750px) {
+    .zbf-hero { padding-block: var(--zbf-hero-space-top-desktop) var(--zbf-hero-space-bottom-desktop); }
+    .zbf-hero__top { min-height: var(--zbf-hero-top-height-desktop); }
+    .zbf-hero__top--desktop-adapt.zbf-hero__top--with-image { aspect-ratio: var(--zbf-hero-desktop-ratio); }
+    .zbf-hero__image { object-position: var(--zbf-hero-focus-desktop); }
+    .zbf-hero__content { justify-content: var(--zbf-hero-vertical-desktop); padding: var(--zbf-hero-pad-desktop); }
+    .zbf-hero__copy { align-self: var(--zbf-hero-horizontal-desktop); text-align: var(--zbf-hero-align-desktop); gap: 16px; }
+    .zbf-hero .zbf-hero__heading { font-size: var(--zbf-hero-heading-desktop); }
+    .zbf-hero__subheading, .zbf-hero__subheading > * { font-size: var(--zbf-hero-copy-desktop); }
+    .zbf-hero__footer {
+      min-height: var(--zbf-hero-footer-height-desktop);
+      padding-inline: var(--zbf-hero-footer-pad-desktop);
+    }
+  }
+{% endstylesheet %}
+{% schema %}
+{
+  "name": "Black Friday sale banner",
+  "tag": "section",
+  "class": "zbf-sale-hero-section",
+  "enabled_on": {
+    "templates": [
+      "collection"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Show sale banner",
+      "default": true,
+      "info": "The Black Friday campaign switch in Theme settings must also be enabled."
+    },
+    {
+      "type": "paragraph",
+      "content": "Expand this section and select Shop now button to edit its desktop and mobile size, position, spacing, label, and link."
+    },
+    {
+      "type": "header",
+      "content": "Artwork"
+    },
+    {
+      "type": "select",
+      "id": "background_mode",
+      "label": "Background style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid color"
+        },
+        {
+          "value": "image",
+          "label": "Background image"
+        }
+      ],
+      "default": "solid",
+      "info": "Keep uploaded images saved while using the solid background."
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop background image",
+      "info": "Use a wide landscape image. For artwork with text already included, clear the heading and subheading below.",
+      "visible_if": "{{ section.settings.background_mode == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile background image",
+      "info": "Used below 750px. If empty, the desktop image is used. Set each image's focal point in the image editor.",
+      "visible_if": "{{ section.settings.background_mode == 'image' }}"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image description",
+      "info": "Describe meaningful artwork or text in the image. Leave empty for decorative images when the offer is written in the editable text below."
+    },
+    {
+      "type": "select",
+      "id": "height_mode_desktop",
+      "label": "Desktop headline panel height",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "Adapt to image"
+        },
+        {
+          "value": "fixed",
+          "label": "Custom minimum height"
+        }
+      ],
+      "default": "fixed"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "label": "Desktop headline panel minimum height",
+      "min": 200,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "default": 260,
+      "info": "Used for custom height and as the text-only banner height. Long content can increase the height.",
+      "visible_if": "{{ section.settings.height_mode_desktop == 'fixed' or section.settings.desktop_image == blank }}"
+    },
+    {
+      "type": "select",
+      "id": "height_mode_mobile",
+      "label": "Mobile headline panel height",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "Adapt to image"
+        },
+        {
+          "value": "fixed",
+          "label": "Custom minimum height"
+        }
+      ],
+      "default": "fixed"
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "Mobile headline panel minimum height",
+      "min": 180,
+      "max": 700,
+      "step": 20,
+      "unit": "px",
+      "default": 220,
+      "info": "Used for custom height and as the text-only banner height. Long content can increase the height.",
+      "visible_if": "{{ section.settings.height_mode_mobile == 'fixed' or section.settings.mobile_image == blank }}"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Fill banner (may crop)"
+        },
+        {
+          "value": "contain",
+          "label": "Show entire image"
+        }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "header",
+      "content": "Optional text and button"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "info": "Optional small text above the heading.",
+      "default": "ZOOTIFY · SITEWIDE"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Black Friday",
+      "info": "The main heading. The colored accent word is separate."
+    },
+    {
+      "type": "text",
+      "id": "accent_text",
+      "label": "Accent word",
+      "default": "Sale",
+      "info": "Red by default, displayed after the main heading. Leave empty to hide."
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent word color",
+      "default": "#CE423B"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Carry things worth carrying.</p>",
+      "info": "Leave empty to show only Black Friday Sale."
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading level",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1 — main collection title"
+        },
+        {
+          "value": "h2",
+          "label": "H2 — supporting banner"
+        }
+      ],
+      "default": "h1",
+      "info": "Use one H1 per page. When the visible heading is empty, the collection title remains available to screen readers."
+    },
+    {
+      "type": "header",
+      "content": "Fonts"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "options": [
+        {
+          "value": "heading",
+          "label": "Theme heading font"
+        },
+        {
+          "value": "body",
+          "label": "Theme body font"
+        },
+        {
+          "value": "accent",
+          "label": "Theme accent font"
+        },
+        {
+          "value": "custom",
+          "label": "Custom font"
+        }
+      ],
+      "default": "heading"
+    },
+    {
+      "type": "font_picker",
+      "id": "custom_font",
+      "label": "Custom heading font",
+      "default": "montserrat_n4",
+      "visible_if": "{{ section.settings.heading_font == 'custom' }}"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Desktop heading size",
+      "min": 24,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Mobile heading size",
+      "min": 20,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "min": 300,
+      "max": 800,
+      "step": 100,
+      "default": 600
+    },
+    {
+      "type": "select",
+      "id": "heading_case",
+      "label": "Heading capitalization",
+      "options": [
+        {
+          "value": "none",
+          "label": "As entered"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "copy_size_desktop",
+      "label": "Desktop subheading size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "copy_size_mobile",
+      "label": "Mobile subheading size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "copy_weight",
+      "label": "Subheading weight",
+      "min": 300,
+      "max": 700,
+      "step": 100,
+      "default": 400,
+      "info": "Subheading and eyebrow use the theme body font. The button follows the theme's primary button settings."
+    },
+    {
+      "type": "header",
+      "content": "Content placement"
+    },
+    {
+      "type": "text_alignment",
+      "id": "align_desktop",
+      "label": "Desktop text alignment",
+      "default": "left"
+    },
+    {
+      "type": "text_alignment",
+      "id": "align_mobile",
+      "label": "Mobile text alignment",
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_desktop",
+      "label": "Desktop horizontal position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "select",
+      "id": "vertical_desktop",
+      "label": "Desktop vertical position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Middle"
+        },
+        {
+          "value": "flex-end",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_mobile",
+      "label": "Mobile horizontal position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "select",
+      "id": "vertical_mobile",
+      "label": "Mobile vertical position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Middle"
+        },
+        {
+          "value": "flex-end",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Maximum text width",
+      "min": 280,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "default": 640
+    },
+    {
+      "type": "range",
+      "id": "content_pad_desktop",
+      "label": "Desktop content padding",
+      "min": 16,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "content_pad_mobile",
+      "label": "Mobile content padding",
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Colors and overlay"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_colors",
+      "label": "Use custom banner colors",
+      "default": true,
+      "info": "Changes banner background and text only. The button keeps the theme's primary button styling."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#101010",
+      "visible_if": "{{ section.settings.custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "copy_color",
+      "label": "Text color",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.custom_colors }}"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Image overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Image overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Width and spacing"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Banner width",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "Full width"
+        },
+        {
+          "value": "page-width",
+          "label": "Page width"
+        }
+      ],
+      "default": "full-width"
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "space_top_desktop",
+      "label": "Desktop space above",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "space_bottom_desktop",
+      "label": "Desktop space below",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "space_top_mobile",
+      "label": "Mobile space above",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "space_bottom_mobile",
+      "label": "Mobile space below",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Light strip and button"
+    },
+    {
+      "type": "checkbox",
+      "id": "footer_visible",
+      "label": "Show light strip below headline",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "footer_color",
+      "label": "Light strip background",
+      "default": "#F7F7F7",
+      "visible_if": "{{ section.settings.footer_visible }}"
+    },
+    {
+      "type": "color",
+      "id": "footer_border",
+      "label": "Strip divider color",
+      "default": "#E6E6E6",
+      "visible_if": "{{ section.settings.footer_visible }}"
+    },
+    {
+      "type": "range",
+      "id": "footer_height_desktop",
+      "label": "Desktop strip minimum height",
+      "min": 48,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 76,
+      "visible_if": "{{ section.settings.footer_visible }}"
+    },
+    {
+      "type": "range",
+      "id": "footer_height_mobile",
+      "label": "Mobile strip minimum height",
+      "min": 48,
+      "max": 128,
+      "step": 4,
+      "unit": "px",
+      "default": 72,
+      "visible_if": "{{ section.settings.footer_visible }}"
+    },
+    {
+      "type": "range",
+      "id": "footer_padding_desktop",
+      "label": "Desktop strip side padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.footer_visible }}"
+    },
+    {
+      "type": "range",
+      "id": "footer_padding_mobile",
+      "label": "Mobile strip side padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ section.settings.footer_visible }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "footer_match_alignment",
+      "label": "Align button with headline left edge",
+      "default": true,
+      "info": "Match button strip left inset to headline text padding. Turn off to customize strip padding separately."
+    },
+    {
+      "type": "paragraph",
+      "content": "Edit Shop now button as the child block below this section. Its desktop/mobile alignment, sizes, visual style and colors are separately editable."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Black Friday sale banner",
+      "blocks": {
+        "campaign-button": {
+          "type": "_zootify-campaign-button",
+          "static": true
+        }
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "type": "_zootify-campaign-button"
+    }
+  ]
+}
+{% endschema %}

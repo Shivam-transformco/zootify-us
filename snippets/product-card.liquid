@@ -1,5 +1,10 @@
 {%- doc -%}
   Product card snippet with wishlist overlay
+
+  @param {product} product - Product displayed by the card.
+  @param {string} children - Rendered child blocks.
+  @param {number} [product_card_gap] - Optional card content gap.
+  @param {boolean} [skip_block_attributes] - The caller already applies block attributes to its root.
 {%- enddoc -%}
 
 {% assign block_settings = block.settings %}
@@ -62,7 +67,7 @@
   data-product-id="{{ product.id }}"
   id="product-card-{{ block.id }}"
   data-product-transition="{{ settings.transition_to_main_product }}"
-  {{ block.shopify_attributes }}
+  {% unless skip_block_attributes %}{{ block.shopify_attributes }}{% endunless %}
   {% if onboarding %}
     data-placeholder="true"
   {% endif %}
@@ -182,3 +187,4 @@
     display: none;
   }
 {% endstylesheet %}
+

@@ -14,11 +14,40 @@
     "zootify_announcement_bar_q8K7U9": {
       "type": "zootify-announcement-bar",
       "blocks": {
-        "message_W10first": {
+        "countdown_BF2026": {
+          "type": "countdown",
+          "settings": {
+            "timer_source": "campaign",
+            "prefix": "Black Friday sale starts in",
+            "live_prefix": "Black Friday sale ends in",
+            "mobile_prefix": "Sale starts in",
+            "mobile_live_prefix": "Sale ends in",
+            "custom_date": "",
+            "custom_time": "00:00",
+            "custom_timezone": ""
+          }
+        },
+        "message_BFoffer": {
           "type": "message",
           "settings": {
-            "text": "10% off your first order – use code WELCOME10",
-            "mobile_text": "10% off first order: WELCOME10",
+            "text": "Buy 2 Get 1 FREE · Sitewide",
+            "mobile_text": "Buy 2 Get 1 FREE · Sitewide",
+            "standard_offer": false,
+            "display_phase": "live",
+            "link": "",
+            "link_label": "",
+            "mobile_link_label": "",
+            "new_tab": false,
+            "icon": "none"
+          }
+        },
+        "message_BF20": {
+          "type": "message",
+          "settings": {
+            "text": "Flat 20% off on orders $100+",
+            "mobile_text": "Flat 20% off · Orders $100+",
+            "standard_offer": false,
+            "display_phase": "live",
             "link": "",
             "link_label": "",
             "mobile_link_label": "",
@@ -31,6 +60,8 @@
           "settings": {
             "text": "Buy any 2 cases, save 20%",
             "mobile_text": "",
+            "standard_offer": true,
+            "display_phase": "always",
             "link": "",
             "link_label": "",
             "mobile_link_label": "",
@@ -43,16 +74,20 @@
           "settings": {
             "text": "Free standard shipping on all orders.",
             "mobile_text": "Free standard shipping on all orders.",
+            "standard_offer": false,
+            "display_phase": "always",
             "link": "shopify://policies/shipping-policy",
             "link_label": "",
             "mobile_link_label": "",
             "new_tab": false,
-            "icon": "truck"
+            "icon": "none"
           }
         }
       },
       "block_order": [
-        "message_W10first",
+        "countdown_BF2026",
+        "message_BFoffer",
+        "message_BF20",
         "message_3TART4",
         "message_PB4cj3"
       ],
@@ -62,7 +97,7 @@
         "sticky_bar": true,
         "page_scope": "all",
         "devices": "both",
-        "auto_rotate": false,
+        "auto_rotate": true,
         "rotation_interval": 5,
         "transition": "fade",
         "font_source": "body",
@@ -90,13 +125,13 @@
         "padding_side_mobile": 12,
         "content_width": "contained",
         "max_width": 1440,
-        "background_color": "#000000",
-        "background_gradient": "",
+        "background_color": "#CE423B",
         "text_color": "#ffffff",
         "link_color": "#ffffff",
         "link_hover_color": "#7dc762",
         "icon_color": "#ffffff",
-        "control_color": "#656565",
+        "control_color": "#ffffff",
+        "background_gradient": "",
         "border_width": 0,
         "border_color": "#222222",
         "icon_size_desktop": 16,
@@ -109,8 +144,6 @@
         "region_label": "Store announcements",
         "previous_label": "Previous announcement",
         "next_label": "Next announcement",
-        "pause_label": "Pause announcements",
-        "play_label": "Play announcements",
         "close_label": "Dismiss announcement bar",
         "position_label": "Announcement {current} of {total}",
         "new_tab_label": "opens in a new tab"

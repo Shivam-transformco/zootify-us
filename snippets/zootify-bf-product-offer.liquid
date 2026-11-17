@@ -1,0 +1,22 @@
+{% doc %}
+  Renders the static sitewide campaign offer and its countdown.
+  @param {string} [editor_attributes] - Theme editor block attributes.
+{% enddoc %}
+{%- if settings.zbf_enabled and settings.zbf_pdp_enabled -%}
+  {%- assign secondary_copy = settings.zbf_pdp_secondary | replace: 'up to 30% off', 'flat 20% off on orders $100+' | replace: 'Up to 30% off', 'flat 20% off on orders $100+' | replace: '20% off 2+ products', 'flat 20% off on orders $100+' -%}
+  <zootify-bf-region class="zbf-product-offer" data-zbf-campaign hidden {{ editor_attributes }}>
+    <aside class="zbf-product-offer__box" aria-label="{{ 'zootify_bf.product.accessible_label' | t | escape }}">
+      <div class="zbf-product-offer__copy">
+        <p class="zbf-product-offer__eyebrow">{{ settings.zbf_pdp_eyebrow | escape }}</p>
+        <p class="zbf-product-offer__headline">{{ settings.zbf_pdp_headline | escape }} <span class="zbf-product-offer__reward">{{ settings.zbf_pdp_reward | escape }}</span></p>
+        <p class="zbf-product-offer__secondary">{{ secondary_copy | escape }}</p>
+      </div>
+      {% if settings.zbf_pdp_timer_enabled %}
+        <div class="zbf-product-offer__timer-panel">
+          {% render 'zootify-bf-countdown', placement: 'product' %}
+        </div>
+      {% endif %}
+    </aside>
+    {% if request.design_mode %}<p class="zbf-editor-note" data-zbf-preview-note hidden>{{ 'zootify_bf.product.preview_note' | t }}</p>{% endif %}
+  </zootify-bf-region>
+{%- endif -%}

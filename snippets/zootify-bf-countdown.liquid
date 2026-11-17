@@ -1,0 +1,46 @@
+{% doc %}
+  Renders a campaign countdown or an independent announcement reminder.
+  @param {string} [placement] - Product or announcement placement.
+  @param {boolean} [compact] - Use abbreviated units in one line.
+  @param {object} [timer_settings] - Countdown reminder block settings.
+{% enddoc %}
+<zootify-bf-countdown
+  class="zbf-countdown"
+  data-placement="{{ placement | default: 'product' | escape }}"
+  data-timer-source="{{ timer_settings.timer_source | default: 'campaign' | escape }}"
+  data-prefix="{{ timer_settings.prefix | escape }}"
+  data-live-prefix="{{ timer_settings.live_prefix | escape }}"
+  data-mobile-prefix="{{ timer_settings.mobile_prefix | escape }}"
+  data-mobile-live-prefix="{{ timer_settings.mobile_live_prefix | escape }}"
+  data-custom-date="{{ timer_settings.custom_date | escape }}"
+  data-custom-time="{{ timer_settings.custom_time | escape }}"
+  data-custom-timezone="{{ timer_settings.custom_timezone | escape }}"
+  {% if compact %}data-compact{% endif %}
+  role="timer"
+  aria-live="off"
+  aria-label="{{ 'zootify_bf.countdown.coming' | t | escape }}"
+>
+  <span class="zbf-countdown__prefix" data-zbf-countdown-label aria-hidden="true">
+    <span class="zbf-countdown__desktop-prefix" data-zbf-countdown-desktop>{{ 'zootify_bf.countdown.coming' | t }}</span>
+    <span class="zbf-countdown__mobile-prefix" data-zbf-countdown-mobile>{{ 'zootify_bf.countdown.coming' | t }}</span>
+  </span>
+  <span class="zbf-countdown__units" data-zbf-countdown-value aria-hidden="true" hidden>
+    <span class="zbf-countdown__cell" data-zbf-unit="days" hidden>
+      <span class="zbf-countdown__digit" data-zbf-digit="days">00</span>
+      <span class="zbf-countdown__unit" data-zbf-unit-label="days">{{ 'zootify_bf.countdown.days' | t }}</span>
+    </span>
+    <span class="zbf-countdown__cell" data-zbf-unit="hours">
+      <span class="zbf-countdown__digit" data-zbf-digit="hours">00</span>
+      <span class="zbf-countdown__unit" data-zbf-unit-label="hours">{{ 'zootify_bf.countdown.hours' | t }}</span>
+    </span>
+    <span class="zbf-countdown__cell" data-zbf-unit="minutes">
+      <span class="zbf-countdown__digit" data-zbf-digit="minutes">00</span>
+      <span class="zbf-countdown__unit" data-zbf-unit-label="minutes">{{ 'zootify_bf.countdown.minutes' | t }}</span>
+    </span>
+    <span class="zbf-countdown__cell zbf-countdown__cell--seconds" data-zbf-unit="seconds">
+      <span class="zbf-countdown__digit" data-zbf-digit="seconds">00</span>
+      <span class="zbf-countdown__unit" data-zbf-unit-label="seconds">{{ 'zootify_bf.countdown.seconds' | t }}</span>
+    </span>
+  </span>
+  <span class="zbf-countdown__accessible" data-zbf-countdown-accessible></span>
+</zootify-bf-countdown>

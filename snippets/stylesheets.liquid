@@ -1,2 +1,57 @@
 {{ 'overflow-list.css' | asset_url | preload_tag: as: 'style' }}
 {{ 'base.css' | asset_url | stylesheet_tag: preload: true }}
+{%- if settings.zbf_preview_mode and template.name == 'collection' and template.suffix == 'black-friday' and collection.handle == 'all' -%}
+  <script>
+    // Old saved preview links also need the sale collection's Best selling order.
+    // Runs in the head, before the unsorted catalog can be painted. Explicit
+    // customer sort choices, filter parameters and pagination are preserved.
+    (() => {
+      const url = new URL(window.location.href);
+      if (!url.searchParams.get('sort_by')) {
+        url.searchParams.set('sort_by', 'best-selling');
+        window.location.replace(url.toString());
+      }
+    })();
+  </script>
+{%- endif -%}
+{% style %}
+  #header-group:has(#header-component[sticky='always']):has(zootify-announcement-v1[data-sticky='true']) {
+    display: block;
+    position: sticky;
+    top: 0;
+    flex: 0 0 auto;
+    align-self: stretch;
+    width: 100%;
+    z-index: var(--layer-sticky, 20);
+    overflow: visible;
+  }
+  #header-group:has(#header-component[sticky='always']):has(zootify-announcement-v1[data-sticky='true']) > .zootify-announcement-section,
+  #header-group:has(#header-component[sticky='always']):has(zootify-announcement-v1[data-sticky='true']) > .header-section {
+    position: relative;
+    top: auto;
+  }
+  body:has(#header-component[sticky='always']):has(zootify-announcement-v1[data-sticky='true']) {
+    --sticky-header-offset: calc(var(--header-height, 0px) + var(--zab-sticky-height, 0px));
+  }
+  .zbf-promo--balanced .zbf-campaign-button[data-zbf-button-context='collection-promo'] > a.zbf-campaign-button__link.button {
+    min-height: max(38px, var(--zbf-cbtn-height-mobile, 38px));
+    padding: max(6px, var(--zbf-cbtn-pad-y-mobile, 6px)) max(12px, var(--zbf-cbtn-pad-x-mobile, 12px));
+    font-size: max(12px, var(--zbf-cbtn-size-mobile, 12px));
+    line-height: 1.25;
+  }
+  .zbf-promo--refined .zbf-campaign-button[data-zbf-button-appearance='custom'] > a.zbf-campaign-button__link.button:hover:not([aria-disabled='true']) {
+    background: var(--zbf-cbtn-custom-hover-bg, #ececec);
+    color: var(--zbf-cbtn-custom-hover-text, #101010);
+    border-color: var(--zbf-cbtn-custom-border, #ffffff);
+  }
+  .zbf-promo--refined .zbf-campaign-button[data-zbf-campaign-button] > a.zbf-campaign-button__link.button:is(:hover, :active) {
+    transform: none;
+  }
+  @media (min-width: 750px) {
+    .zbf-promo--balanced .zbf-campaign-button[data-zbf-button-context='collection-promo'] > a.zbf-campaign-button__link.button {
+      min-height: max(38px, var(--zbf-cbtn-height-desktop, 38px));
+      padding: max(6px, var(--zbf-cbtn-pad-y-desktop, 6px)) max(12px, var(--zbf-cbtn-pad-x-desktop, 14px));
+      font-size: max(12px, var(--zbf-cbtn-size-desktop, 12px));
+    }
+  }
+{% endstyle %}

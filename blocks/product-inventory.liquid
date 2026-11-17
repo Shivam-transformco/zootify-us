@@ -1,5 +1,3 @@
-
-
 {%- liquid
   assign block_settings = block.settings
   assign variant = closest.product.selected_or_first_available_variant
@@ -40,23 +38,42 @@
       assign translation_key = 'content.inventory_out_of_stock'
     endif
   endif
+
+  case block_settings.badge_shape
+    when 'square'
+      assign badge_radius = '0px'
+    when 'rounded'
+      assign badge_radius = '12px'
+    when 'pill'
+      assign badge_radius = '999px'
+    else
+      assign badge_radius = '6px'
+  endcase
 -%}
 
 <product-inventory
-  class="
-    product-inventory spacing-style
-    {% if block_settings.type_preset != '' %}{{ block_settings.type_preset }}{% endif%}
+  class="product-inventory spacing-style"
+  data-zootify-title-badge="{{ block_settings.inline_with_title }}"
+  data-show-status-icon="{{ block_settings.show_status_icon }}"
+  data-product-id="{{ closest.product.id }}"
+  style="
+    {% render 'spacing-style', settings: block_settings %}
+    --inventory-mobile-padding-top: {{ block_settings.mobile_top_spacing | default: 8 }}px;
+    --inventory-mobile-padding-bottom: {{ block_settings.mobile_bottom_spacing | default: 8 }}px;
+    --stock-badge-bg: {{ block_settings.badge_background | default: '#CE423B' }};
+    --stock-badge-text: {{ block_settings.badge_text_color | default: '#FFFFFF' }};
+    --stock-badge-border: {{ block_settings.badge_border_color | default: '#CE423B' }};
+    --stock-badge-border-width: {{ block_settings.badge_border_width | default: 0 }}px;
+    --stock-badge-radius: {{ badge_radius }};
+    --stock-badge-font-size: {{ block_settings.badge_font_size | default: 12 }}px;
+    --stock-badge-pad-x: {{ block_settings.badge_padding_x | default: 10 }}px;
+    --stock-badge-pad-y: {{ block_settings.badge_padding_y | default: 5 }}px;
+    --stock-badge-title-gap: {{ block_settings.title_gap | default: 10 }}px;
   "
-  style="{% render 'spacing-style', settings: block_settings %}"
   {{ block.shopify_attributes }}
-  data-product-id="{{ product.id }}"
 >
-  <span
-    class="product-inventory__status"
-  >
-    <span
-      class="svg-wrapper product-inventory__icon product-inventory__icon-{{ status }}"
-    >
+  <span class="product-inventory__status">
+    <span class="svg-wrapper product-inventory__icon product-inventory__icon-{{ status }}">
       {{ 'icon-inventory.svg' | inline_asset_content }}
     </span>
     <span
@@ -75,12 +92,36 @@
 </product-inventory>
 
 {% stylesheet %}
+  .product-inventory {
+    display: block;
+    max-width: 100%;
+  }
+
   .product-inventory__status {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    font-size: var(--font-paragraph--size);
-    line-height: var(--font-paragraph--line-height);
-    gap: var(--padding-xs);
+    justify-content: center;
+    width: max-content;
+    max-width: 100%;
+    padding: var(--stock-badge-pad-y, 5px) var(--stock-badge-pad-x, 10px);
+    border: var(--stock-badge-border-width, 0px) solid var(--stock-badge-border, #CE423B);
+    border-radius: var(--stock-badge-radius, 6px);
+    background: var(--stock-badge-bg, #CE423B);
+    color: var(--stock-badge-text, #FFFFFF);
+    font-family: var(--font-body--family);
+    font-size: var(--stock-badge-font-size, 12px);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    gap: 6px;
+    box-sizing: border-box;
+  }
+
+  .product-inventory[data-show-status-icon="false"] .product-inventory__icon {
+    display: none;
   }
 
   .product-inventory__icon,
@@ -89,20 +130,46 @@
     height: var(--icon-size-sm);
   }
 
-  .product-inventory__icon-low {
-    color: var(--color-lowstock);
-  }
-
-  .product-inventory__icon-in_stock {
-    color: var(--color-instock);
-  }
-
+  .product-inventory__icon-low,
+  .product-inventory__icon-in_stock,
   .product-inventory__icon-out_of_stock {
-    color: var(--color-outofstock);
+    color: inherit;
   }
 
   .product-inventory__icon circle:first-of-type {
     opacity: 0.3;
+  }
+
+  /* Keep stock count next to, rather than inside, the SEO product heading.
+     Inline flow allows long titles and the badge to wrap as a unit. */
+  .product-details .text-block:has(> product-inventory[data-zootify-title-badge="true"]) {
+    display: block;
+  }
+
+  .product-details .text-block:has(> product-inventory[data-zootify-title-badge="true"]) > :is(h1, h2, h3, h4, h5, h6) {
+    display: inline;
+    width: auto !important;
+    max-inline-size: none !important;
+    margin-block: 0;
+  }
+
+  .product-details .text-block > product-inventory[data-zootify-title-badge="true"] {
+    display: inline;
+    margin-inline-start: var(--stock-badge-title-gap, 10px);
+    padding: 0 !important;
+    white-space: nowrap;
+    vertical-align: baseline;
+  }
+
+  .product-details .text-block > product-inventory[data-zootify-title-badge="true"] .product-inventory__status {
+    vertical-align: 0.4em;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-inventory.spacing-style:not([data-zootify-title-badge="true"]) {
+      padding-block-start: var(--inventory-mobile-padding-top, 8px);
+      padding-block-end: var(--inventory-mobile-padding-bottom, 8px);
+    }
   }
 {% endstylesheet %}
 
@@ -132,7 +199,141 @@
     },
     {
       "type": "header",
-      "content": "t:content.padding"
+      "content": "Badge placement"
+    },
+    {
+      "type": "checkbox",
+      "id": "inline_with_title",
+      "label": "Show badge beside product name",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "title_gap",
+      "label": "Space from product name",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 10,
+      "visible_if": "{{ block.settings.inline_with_title }}"
+    },
+    {
+      "type": "header",
+      "content": "Badge appearance"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Background color",
+      "default": "#CE423B"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "badge_shape",
+      "label": "Rectangle shape",
+      "options": [
+        { "value": "square", "label": "Square corners" },
+        { "value": "soft", "label": "Soft rectangle" },
+        { "value": "rounded", "label": "Rounded rectangle" },
+        { "value": "pill", "label": "Pill" }
+      ],
+      "default": "soft"
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "label": "Text size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_x",
+      "label": "Inside left/right spacing",
+      "min": 4,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_y",
+      "label": "Inside top/bottom spacing",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "show_status_icon",
+      "label": "Show inventory status dot",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Optional border"
+    },
+    {
+      "type": "range",
+      "id": "badge_border_width",
+      "label": "Border thickness",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "badge_border_color",
+      "label": "Border color",
+      "default": "#CE423B",
+      "visible_if": "{{ block.settings.badge_border_width > 0 }}"
+    },
+    {
+      "type": "header",
+      "content": "Separate-row mobile spacing"
+    },
+    {
+      "type": "paragraph",
+      "content": "These controls apply when 'Show badge beside product name' is turned off. For inline placement, use the title gap and badge spacing controls above."
+    },
+    {
+      "type": "range",
+      "id": "mobile_top_spacing",
+      "label": "Top spacing (mobile)",
+      "min": 0,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "mobile_bottom_spacing",
+      "label": "Bottom spacing (mobile)",
+      "min": 0,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Separate-row desktop padding"
     },
     {
       "type": "range",

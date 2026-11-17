@@ -1,0 +1,587 @@
+{%- doc -%}
+  Renders the editable Hero deal badge for the closest product card.
+  Promotion eligibility is independent of the visitor's delivery availability.
+  Product forms and checkout retain their own stock and shipping checks.
+
+  @example
+  {% content_for 'block', type: '_zootify-hero-deal-badge', id: 'hero-deal-badge', closest.product: product %}
+{%- enddoc -%}
+
+{%- liquid
+  assign product = closest.product
+  assign zbf_badge_position_mobile = block.settings.zbf_badge_position_mobile | default: 'inherit'
+  if zbf_badge_position_mobile == 'inherit'
+    assign zbf_badge_position_mobile = block.settings.zbf_badge_position
+  endif
+  assign zbf_badge_offset_y = block.settings.zbf_badge_offset_y | default: block.settings.zbf_badge_offset
+  assign zbf_badge_offset_y_mobile = block.settings.zbf_badge_offset_y_mobile | default: block.settings.zbf_badge_offset_mobile
+  if block.settings.zbf_badge_link_insets != false
+    assign zbf_badge_offset_y = block.settings.zbf_badge_offset
+    assign zbf_badge_offset_y_mobile = block.settings.zbf_badge_offset_mobile
+  endif
+  assign zbf_badge_label = block.settings.zbf_badge_label | strip
+  assign zbf_badge_eligible = false
+  assign zbf_badge_scope = block.settings.zbf_badge_scope | default: 'collection'
+
+  if settings.zbf_enabled and block.settings.zbf_badge_enabled and product != blank and zbf_badge_label != blank
+    if request.page_type == 'collection' or zbf_badge_scope == 'all'
+      case block.settings.zbf_badge_mode
+        when 'selected'
+          assign zbf_badge_product_ids = block.settings.zbf_badge_products | map: 'id'
+          if zbf_badge_product_ids contains product.id
+            assign zbf_badge_eligible = true
+          endif
+        when 'tag'
+          assign zbf_badge_tag = block.settings.zbf_badge_tag | strip
+          if zbf_badge_tag != blank and product.tags contains zbf_badge_tag
+            assign zbf_badge_eligible = true
+          endif
+        when 'all'
+          assign zbf_badge_eligible = true
+      endcase
+    endif
+  endif
+-%}
+
+{%- if zbf_badge_eligible -%}
+  <span
+    class="zbf-hero-deal-badge zbf-hero-deal-badge--{{ block.settings.zbf_badge_shape }} zbf-hero-deal-badge--desktop-{{ block.settings.zbf_badge_position }} zbf-hero-deal-badge--mobile-{{ zbf_badge_position_mobile }}{% if request.design_mode %} zbf-hero-deal-badge--editor{% endif %}"
+    {{ block.shopify_attributes }}
+    style="
+      --zbf-badge-background: {{ block.settings.zbf_badge_background }};
+      --zbf-badge-color: {{ block.settings.zbf_badge_color }};
+      --zbf-badge-font-family: var(--font-{{ block.settings.zbf_badge_font }}--family);
+      --zbf-badge-font-style: var(--font-{{ block.settings.zbf_badge_font }}--style);
+      --zbf-badge-weight: {{ block.settings.zbf_badge_weight }};
+      --zbf-badge-transform: {{ block.settings.zbf_badge_case }};
+      --zbf-badge-size-desktop: {{ block.settings.zbf_badge_size }}px;
+      --zbf-badge-size-mobile: {{ block.settings.zbf_badge_size_mobile }}px;
+      --zbf-badge-offset-desktop: {{ block.settings.zbf_badge_offset }}px;
+      --zbf-badge-offset-mobile: {{ block.settings.zbf_badge_offset_mobile }}px;
+      --zbf-badge-offset-y-desktop: {{ zbf_badge_offset_y }}px;
+      --zbf-badge-offset-y-mobile: {{ zbf_badge_offset_y_mobile }}px;
+      --zbf-badge-pad-x-desktop: {{ block.settings.zbf_badge_pad_x }}px;
+      --zbf-badge-pad-x-mobile: {{ block.settings.zbf_badge_pad_x_mobile }}px;
+      --zbf-badge-pad-y-desktop: {{ block.settings.zbf_badge_pad_y }}px;
+      --zbf-badge-pad-y-mobile: {{ block.settings.zbf_badge_pad_y_mobile }}px;
+      --zbf-badge-radius: {{ block.settings.zbf_badge_radius }}px;
+      --zbf-badge-corner-desktop: {{ block.settings.zbf_badge_corner }}px;
+      --zbf-badge-corner-mobile: {{ block.settings.zbf_badge_corner_mobile }}px;
+    "
+  >
+    <span class="zbf-hero-deal-badge__label">{{ zbf_badge_label | escape }}</span>
+    {%- if request.design_mode -%}
+      <button
+        type="button"
+        class="zbf-hero-deal-badge__editor-target"
+        aria-label="{{ zbf_badge_label | escape }}"
+      ></button>
+    {%- endif -%}
+  </span>
+{%- endif -%}
+
+{% stylesheet %}
+  .card-gallery:has(> .zbf-hero-deal-badge) {
+    position: relative;
+  }
+
+  .zbf-hero-deal-badge {
+    --zbf-badge-size: var(--zbf-badge-size-mobile);
+    --zbf-badge-offset: var(--zbf-badge-offset-mobile);
+    --zbf-badge-offset-y: var(--zbf-badge-offset-y-mobile);
+    --zbf-badge-pad-x: var(--zbf-badge-pad-x-mobile);
+    --zbf-badge-pad-y: var(--zbf-badge-pad-y-mobile);
+    --zbf-badge-corner: var(--zbf-badge-corner-mobile);
+
+    position: absolute;
+    z-index: 3;
+    left: var(--zbf-badge-offset);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    max-width: calc(100% - var(--zbf-badge-offset) * 2 - 32px);
+    box-sizing: border-box;
+    padding: var(--zbf-badge-pad-y) var(--zbf-badge-pad-x);
+    border-radius: var(--zbf-badge-radius);
+    color: var(--zbf-badge-color);
+    background: var(--zbf-badge-background);
+    font-family: var(--zbf-badge-font-family);
+    font-style: var(--zbf-badge-font-style, normal);
+    font-weight: var(--zbf-badge-weight);
+    font-size: var(--zbf-badge-size);
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    text-transform: var(--zbf-badge-transform);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .zbf-hero-deal-badge--editor {
+    pointer-events: auto;
+    z-index: 11;
+  }
+
+  .zbf-hero-deal-badge__editor-target {
+    all: unset;
+    position: absolute;
+    inset: 0;
+    display: block;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .zbf-hero-deal-badge__editor-target:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .zbf-hero-deal-badge--mobile-top-left {
+    top: var(--zbf-badge-offset-y);
+    bottom: auto;
+  }
+
+  .zbf-hero-deal-badge--mobile-bottom-left {
+    top: auto;
+    bottom: var(--zbf-badge-offset-y);
+  }
+
+  .zbf-hero-deal-badge__label {
+    overflow-wrap: anywhere;
+  }
+
+  .zbf-hero-deal-badge--corner {
+    width: var(--zbf-badge-corner);
+    height: var(--zbf-badge-corner);
+    min-width: 0;
+    max-width: calc(100% - var(--zbf-badge-offset) * 2 - 32px);
+    padding: calc(var(--zbf-badge-corner) * 0.12) calc(var(--zbf-badge-corner) * 0.3)
+      calc(var(--zbf-badge-corner) * 0.3) calc(var(--zbf-badge-corner) * 0.12);
+    align-items: flex-start;
+    justify-content: flex-start;
+    border-radius: 0 0 100% 0;
+    font-size: min(var(--zbf-badge-size), calc(var(--zbf-badge-corner) * 0.18));
+    line-height: 1.12;
+    text-align: left;
+  }
+
+  .zbf-hero-deal-badge--corner.zbf-hero-deal-badge--mobile-bottom-left {
+    padding-top: calc(var(--zbf-badge-corner) * 0.3);
+    padding-bottom: calc(var(--zbf-badge-corner) * 0.12);
+    align-items: flex-end;
+    border-radius: 0 100% 0 0;
+  }
+
+  .card-gallery:has(> .zbf-hero-deal-badge) > .product-badges,
+  .product-card-wrapper:has(.zbf-hero-deal-badge) > .discount-badge {
+    display: none;
+  }
+
+  [product-grid-view='zoom-out'] .zbf-hero-deal-badge {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .zbf-hero-deal-badge {
+      --zbf-badge-size: var(--zbf-badge-size-desktop);
+      --zbf-badge-offset: var(--zbf-badge-offset-desktop);
+      --zbf-badge-offset-y: var(--zbf-badge-offset-y-desktop);
+      --zbf-badge-pad-x: var(--zbf-badge-pad-x-desktop);
+      --zbf-badge-pad-y: var(--zbf-badge-pad-y-desktop);
+      --zbf-badge-corner: var(--zbf-badge-corner-desktop);
+    }
+
+    .zbf-hero-deal-badge--desktop-top-left {
+      top: var(--zbf-badge-offset-y);
+      bottom: auto;
+    }
+
+    .zbf-hero-deal-badge--desktop-bottom-left {
+      top: auto;
+      bottom: var(--zbf-badge-offset-y);
+    }
+
+    .zbf-hero-deal-badge--corner.zbf-hero-deal-badge--desktop-top-left {
+      padding-top: calc(var(--zbf-badge-corner) * 0.12);
+      padding-bottom: calc(var(--zbf-badge-corner) * 0.3);
+      align-items: flex-start;
+      border-radius: 0 0 100% 0;
+    }
+
+    .zbf-hero-deal-badge--corner.zbf-hero-deal-badge--desktop-bottom-left {
+      padding-top: calc(var(--zbf-badge-corner) * 0.3);
+      padding-bottom: calc(var(--zbf-badge-corner) * 0.12);
+      align-items: flex-end;
+      border-radius: 0 100% 0px 0px;
+    }
+  }
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Hero deal badge",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "zbf_badge_enabled",
+      "label": "Show Hero deal badges",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "These settings apply to this product-card gallery. Collection pages sharing this template share these settings. The Black Friday campaign switch still controls all sale elements."
+    },
+    {
+      "type": "text",
+      "id": "zbf_badge_label",
+      "label": "Badge text",
+      "default": "Hero deal",
+      "info": "Keep the label short. Two short words work best with the corner shape. Clear the text to hide the badge."
+    },
+    {
+      "type": "select",
+      "id": "zbf_badge_scope",
+      "label": "Page visibility",
+      "options": [
+        {
+          "value": "collection",
+          "label": "Collection pages"
+        },
+        {
+          "value": "all",
+          "label": "Every page using this gallery"
+        }
+      ],
+      "default": "collection",
+      "info": "Visibility applies to this product-card gallery. Other templates and galleries have their own badge settings."
+    },
+    {
+      "type": "select",
+      "id": "zbf_badge_mode",
+      "label": "Eligible products",
+      "options": [
+        {
+          "value": "all",
+          "label": "All products"
+        },
+        {
+          "value": "selected",
+          "label": "Selected products"
+        },
+        {
+          "value": "tag",
+          "label": "Products with a tag"
+        }
+      ],
+      "default": "all"
+    },
+    {
+      "type": "product_list",
+      "id": "zbf_badge_products",
+      "label": "Selected Hero deal products",
+      "limit": 50
+    },
+    {
+      "type": "text",
+      "id": "zbf_badge_tag",
+      "label": "Hero deal product tag",
+      "default": "hero-deal",
+      "info": "Match the product tag exactly. A tag is only needed when Products with a tag is selected.",
+      "visible_if": "{{ block.settings.zbf_badge_mode == 'tag' }}"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "select",
+      "id": "zbf_badge_shape",
+      "label": "Shape",
+      "options": [
+        {
+          "value": "pill",
+          "label": "Pill or rectangle"
+        },
+        {
+          "value": "corner",
+          "label": "Rounded corner"
+        }
+      ],
+      "default": "pill"
+    },
+    {
+      "type": "select",
+      "id": "zbf_badge_position",
+      "label": "Desktop position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "Top left"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom left"
+        }
+      ],
+      "default": "top-left",
+      "info": "Left-side placement keeps the wishlist and quick-add controls clear."
+    },
+    {
+      "type": "checkbox",
+      "id": "zbf_badge_link_insets",
+      "label": "Link horizontal and vertical insets",
+      "default": true,
+      "info": "Turn off to adjust the top or bottom distance separately."
+    },
+    {
+      "type": "color",
+      "id": "zbf_badge_background",
+      "label": "Background color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "zbf_badge_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_radius",
+      "label": "Pill corner radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "visible_if": "{{ block.settings.zbf_badge_shape == 'pill' }}"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "zbf_badge_font",
+      "label": "Font",
+      "options": [
+        {
+          "value": "body",
+          "label": "Theme body font"
+        },
+        {
+          "value": "heading",
+          "label": "Theme heading font"
+        },
+        {
+          "value": "accent",
+          "label": "Theme accent font"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "select",
+      "id": "zbf_badge_weight",
+      "label": "Font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "zbf_badge_case",
+      "label": "Text case",
+      "options": [
+        {
+          "value": "none",
+          "label": "As entered"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "header",
+      "content": "Desktop sizing"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_size",
+      "label": "Text size",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_offset",
+      "label": "Horizontal inset",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 10,
+      "info": "Also controls vertical spacing while horizontal and vertical insets are linked."
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_offset_y",
+      "label": "Vertical inset",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 10,
+      "visible_if": "{{ block.settings.zbf_badge_link_insets == false }}"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_pad_x",
+      "label": "Horizontal padding",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 10,
+      "visible_if": "{{ block.settings.zbf_badge_shape == 'pill' }}"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_pad_y",
+      "label": "Vertical padding",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "default": 5,
+      "visible_if": "{{ block.settings.zbf_badge_shape == 'pill' }}"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_corner",
+      "label": "Rounded corner badge size",
+      "min": 56,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 64,
+      "visible_if": "{{ block.settings.zbf_badge_shape == 'corner' }}"
+    },
+    {
+      "type": "header",
+      "content": "Mobile sizing"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_size_mobile",
+      "label": "Text size",
+      "min": 8,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "select",
+      "id": "zbf_badge_position_mobile",
+      "label": "Mobile position",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "top-left",
+          "label": "Top left"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom left"
+        }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_offset_mobile",
+      "label": "Horizontal inset",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 8,
+      "info": "Also controls vertical spacing while horizontal and vertical insets are linked."
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_offset_y_mobile",
+      "label": "Vertical inset",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 8,
+      "visible_if": "{{ block.settings.zbf_badge_link_insets == false }}"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_pad_x_mobile",
+      "label": "Horizontal padding",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 8,
+      "visible_if": "{{ block.settings.zbf_badge_shape == 'pill' }}"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_pad_y_mobile",
+      "label": "Vertical padding",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "default": 4,
+      "visible_if": "{{ block.settings.zbf_badge_shape == 'pill' }}"
+    },
+    {
+      "type": "range",
+      "id": "zbf_badge_corner_mobile",
+      "label": "Rounded corner badge size",
+      "min": 56,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 56,
+      "visible_if": "{{ block.settings.zbf_badge_shape == 'corner' }}"
+    }
+  ]
+}
+{% endschema %}

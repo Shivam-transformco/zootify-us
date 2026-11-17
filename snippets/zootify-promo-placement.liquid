@@ -1,0 +1,65 @@
+{%- doc -%}
+  Places a collection promo with CSS from the first paint, not a delayed DOM move.
+  Matches the native auto-fill card widths, gap and large-card two-column override.
+  @param {object} promo - Promo settings.
+  @param {object} section - Parent collection section.
+  @param {string} promo_id - Unique list-item ID.
+  @param {number} product_count - Number of products on this page.
+{%- enddoc -%}
+{%- capture min_card_width -%}{% render 'util-product-grid-card-size', section: section %}{%- endcapture -%}
+{%- liquid
+  assign min_card_width = min_card_width | strip
+  assign mobile_after = promo.zbf_promo_after_mobile | default: 2 | at_least: 0 | at_most: product_count
+  assign mobile_order = mobile_after | times: 2 | plus: 1
+  assign desktop_after = promo.zbf_promo_after | default: 3 | at_least: 0
+  assign forced_two = false
+  if section.settings.product_card_size == 'large' or section.settings.product_card_size == 'extra-large'
+    assign forced_two = true
+  endif
+  assign initial_columns = 1
+  if forced_two
+    assign initial_columns = 2
+  endif
+  assign initial_after = desktop_after
+  if desktop_after > 0
+    if promo.zbf_promo_first_row
+      if promo.zbf_promo_layout == 'full'
+        assign initial_after = initial_columns
+      else
+        assign initial_after = initial_columns | minus: 1 | at_least: 1
+      endif
+    elsif promo.zbf_promo_layout == 'full'
+      assign initial_after = desktop_after | minus: 1 | divided_by: initial_columns | plus: 1 | times: initial_columns
+    endif
+  endif
+  assign initial_order = initial_after | at_most: product_count | times: 2 | plus: 1
+-%}
+{% style %}
+  #{{ promo_id }} { --zbf-placement-ready: 1; order: {{ mobile_order }}; }
+  @media screen and (min-width: 750px) {
+    #{{ promo_id }} { order: {{ initial_order }}; }
+    {% for cols in (1..24) %}
+      {% unless forced_two and cols < 3 %}
+        {% liquid
+          assign column_gaps = cols | minus: 1
+          assign after = desktop_after
+          if desktop_after > 0
+            if promo.zbf_promo_first_row
+              if promo.zbf_promo_layout == 'full'
+                assign after = cols
+              else
+                assign after = cols | minus: 1 | at_least: 1
+              endif
+            elsif promo.zbf_promo_layout == 'full'
+              assign after = desktop_after | minus: 1 | divided_by: cols | plus: 1 | times: cols
+            endif
+          endif
+          assign item_order = after | at_most: product_count | times: 2 | plus: 1
+        %}
+        @container product-grid (min-width: calc({{ min_card_width }} * {{ cols }} + {{ section.settings.columns_gap_horizontal }}px * {{ column_gaps }}{% if forced_two and cols == 3 %} + 0.02px{% endif %})) {
+          #{{ promo_id }} { order: {{ item_order }}; }
+        }
+      {% endunless %}
+    {% endfor %}
+  }
+{% endstyle %}

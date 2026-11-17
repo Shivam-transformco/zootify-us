@@ -1,0 +1,12 @@
+{% layout none %}
+{% if theme.role == 'unpublished' %}
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Badge rendering check</title></head><body><h1>Badge rendering check</h1><pre id="server-report" style="white-space:pre-wrap;overflow-wrap:anywhere">{
+"theme": {{ theme.id | json }},
+"role": {{ theme.role | json }},
+"country": {{ localization.country.iso_code | json }},
+"campaignEnabled": {{ settings.zbf_enabled | json }},
+"collection": {{ collection.handle | json }},
+"products": [
+{% for product in collection.products limit: 3 %}{"id": {{ product.id | json }}, "title": {{ product.title | json }}, "available": {{ product.available | json }}, "variants": [{% for variant in product.variants limit: 3 %}{"available": {{ variant.available | json }}, "quantity": {{ variant.inventory_quantity | json }}, "policy": {{ variant.inventory_policy | json }}, "management": {{ variant.inventory_management | json }}}{% unless forloop.last %},{% endunless %}{% endfor %}]}{% unless forloop.last %},{% endunless %}{% endfor %}
+]}</pre></body></html>
+{% endif %}

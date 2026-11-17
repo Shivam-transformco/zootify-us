@@ -1413,13 +1413,15 @@ button.shopify-payment-button__button--unbranded {
 }
 
 .button {
-  padding-top:10px;
-  padding-bottom:10px;
-  padding-left:12px;
-  padding-right:12px;
+  box-sizing: border-box;
+  min-height: var(--z-primary-button-height, 38px);
+  padding-block: 6px;
+  padding-inline: var(--z-primary-button-padding-x, 14px);
   font-family: var(--button-font-family-primary);
+  font-size: 11px; /* Change this number to adjust the text size */
+  font-weight: 700;
   text-transform: var(--button-text-case-primary);
-  border-radius:4px;
+  border-radius: var(--style-border-radius-buttons-primary, 3px);
 }
 
 /* ZOOTIFY primary CTA interaction only.

@@ -1,0 +1,313 @@
+{% liquid
+  assign s = section.settings
+  assign image_pair = product.metafields.custom.zootify_image_pair.value
+  assign family_media = product.metafields.custom.zootify_family_media.value
+  assign first_image = image_pair.image_1.value
+  assign second_image = image_pair.image_2.value
+  assign story_heading = image_pair.heading.value | default: family_media.story_heading.value
+  assign story_text = image_pair.text.value | default: family_media.story_text.value
+  assign has_images = false
+  if first_image != blank and second_image != blank
+    assign has_images = true
+  endif
+  assign has_repeated_banner_photo = false
+  if s.hide_repeated_banner_photos and has_images
+    assign original_banner_fields = 'desktop_banner,mobile_banner' | split: ','
+    assign story_image_fields = 'image_1,image_2,mobile_image_1,mobile_image_2' | split: ','
+    for original_banner_field in original_banner_fields
+      assign original_banner_images = product.metafields.custom[original_banner_field].value
+      for original_banner_image in original_banner_images
+        assign canonical_banner_image = original_banner_image.preview_image | default: original_banner_image
+        assign original_banner_id = canonical_banner_image.id | default: original_banner_image.id | append: ''
+        if original_banner_id != blank
+          for story_image_field in story_image_fields
+            assign selected_story_image = image_pair[story_image_field].value
+            assign canonical_story_image = selected_story_image.preview_image | default: selected_story_image
+            assign selected_story_id = canonical_story_image.id | default: selected_story_image.id | append: ''
+            if selected_story_id != blank and selected_story_id == original_banner_id
+              assign has_repeated_banner_photo = true
+              break
+            endif
+          endfor
+        endif
+        if has_repeated_banner_photo
+          break
+        endif
+      endfor
+      if has_repeated_banner_photo
+        break
+      endif
+    endfor
+  endif
+  if has_repeated_banner_photo
+    assign has_images = false
+  endif
+  assign has_copy = false
+  if s.show_heading and story_heading != blank
+    assign has_copy = true
+  elsif s.show_text and story_text != blank
+    assign has_copy = true
+  endif
+  assign loading = 'lazy'
+  if section.index == 1
+    assign loading = 'eager'
+  endif
+  assign double_gutter = s.gutter_desktop | times: 2
+  assign double_mobile_gutter = s.gutter_mobile | times: 2
+  assign content_breakpoint = s.max_width | plus: double_gutter
+  assign maximum_image_width = s.max_width | minus: s.gap_desktop | divided_by: 2
+%}
+{% capture image_sizes %}{% if s.width == 'contained' %}(min-width: {{ content_breakpoint }}px) {{ maximum_image_width }}px, {% endif %}(min-width: 750px) calc((100vw - {{ double_gutter }}px - {{ s.gap_desktop }}px) / 2), {% if s.mobile_layout == 'overlap' %}calc((100vw - {{ double_mobile_gutter }}px) * 0.88){% else %}calc(100vw - {{ double_mobile_gutter }}px){% endif %}{% endcapture %}
+{% if has_images or request.design_mode %}
+  <div
+    id="ZootifyDesignStory-{{ section.id }}"
+    class="zds zds--{{ s.width }} zds--mobile-{{ s.mobile_layout }} zds--align-{{ s.text_alignment }}{% if has_copy %} zds--has-copy{% endif %}"
+    style="--zds-max-width: {{ s.max_width }}px; --zds-gutter-d: {{ s.gutter_desktop }}px; --zds-gutter-m: {{ s.gutter_mobile }}px; --zds-gap-d: {{ s.gap_desktop }}px; --zds-gap-m: {{ s.gap_mobile }}px; --zds-offset: {{ s.image_offset }}px; --zds-radius-d: {{ s.radius_desktop }}px; --zds-radius-m: {{ s.radius_mobile }}px; --zds-fit: {{ s.image_fit }}; --zds-overlap: {{ s.overlap_depth }}px; --zds-heading-d: {{ s.heading_size_desktop }}px; --zds-heading-m: {{ s.heading_size_mobile }}px; --zds-heading-weight: {{ s.heading_weight }}; --zds-body-d: {{ s.body_size_desktop }}px; --zds-body-m: {{ s.body_size_mobile }}px; --zds-body-weight: {{ s.body_weight }}; --zds-text-align: {{ s.text_alignment }}; --zds-background: {{ s.background }}; --zds-heading-color: {{ s.heading_color }}; --zds-body-color: {{ s.body_color }}; --zds-image-background: {{ s.image_background }}; --zds-top-d: {{ s.padding_top_desktop }}px; --zds-bottom-d: {{ s.padding_bottom_desktop }}px; --zds-top-m: {{ s.padding_top_mobile }}px; --zds-bottom-m: {{ s.padding_bottom_mobile }}px;"
+  >
+    <div class="zds__container">
+      {% if has_images %}
+        <div class="zds__grid">
+          {% if has_copy %}
+            <div class="zds__copy">
+              {% if s.show_heading and story_heading != blank %}
+                <h2 class="zds__heading">{{ story_heading | escape }}</h2>
+              {% endif %}
+              {% if s.show_text and story_text != blank %}
+                <p class="zds__body">{{ story_text | escape | newline_to_br }}</p>
+              {% endif %}
+            </div>
+          {% endif %}
+          {% for index in (1..2) %}
+            {% liquid
+              assign source_index = index
+              if s.swap_images
+                assign source_index = 3 | minus: index
+              endif
+              assign image_key = 'image_' | append: source_index
+              assign mobile_key = 'mobile_image_' | append: source_index
+              assign alt_key = 'alt_' | append: source_index
+              assign focus_key = 'focus_' | append: source_index
+              assign media_image = image_pair[image_key].value
+              assign media_image = media_image.preview_image | default: media_image
+              assign mobile_image = image_pair[mobile_key].value
+              assign mobile_image = mobile_image.preview_image | default: mobile_image
+              assign mobile_max_width = mobile_image.width | at_most: 1500
+              assign desktop_ratio = s.ratio_desktop
+              if desktop_ratio == 'adapt'
+                assign desktop_ratio = media_image.aspect_ratio | default: 1
+              endif
+              assign mobile_ratio = s.ratio_mobile
+              if mobile_ratio == 'adapt'
+                assign mobile_ratio = mobile_image.aspect_ratio | default: media_image.aspect_ratio | default: 1
+              endif
+              assign image_alt = image_pair[alt_key].value | default: media_image.alt | default: product.title
+              assign media_focus = media_image.presentation.focal_point | default: '50% 50%'
+              assign mobile_focus = mobile_image.presentation.focal_point | default: media_focus
+              assign focus_override = image_pair[focus_key].value | strip | downcase
+              case focus_override
+                when 'center'
+                  assign media_focus = '50% 50%'
+                  assign mobile_focus = media_focus
+                when 'top'
+                  assign media_focus = '50% 0%'
+                  assign mobile_focus = media_focus
+                when 'bottom'
+                  assign media_focus = '50% 100%'
+                  assign mobile_focus = media_focus
+                when 'left'
+                  assign media_focus = '0% 50%'
+                  assign mobile_focus = media_focus
+                when 'right'
+                  assign media_focus = '100% 50%'
+                  assign mobile_focus = media_focus
+              endcase
+            %}
+            <figure class="zds__visual zds__visual--{{ index }}">
+              <div class="zds__frame" style="--zds-frame-ratio-d: {{ desktop_ratio }}; --zds-frame-ratio-m: {{ mobile_ratio }}; --zds-focus-d: {{ media_focus }}; --zds-focus-m: {{ mobile_focus }};">
+                <picture>
+                  {% if mobile_image != blank %}
+                    {% capture mobile_srcset %}{% assign mobile_widths = '360,540,720,960,1200' | split: ',' %}{% for requested_width in mobile_widths %}{% assign candidate_width = requested_width | plus: 0 %}{% if candidate_width < mobile_max_width %}{{ mobile_image | image_url: width: candidate_width }} {{ candidate_width }}w, {% endif %}{% endfor %}{{ mobile_image | image_url: width: mobile_max_width }} {{ mobile_max_width }}w{% endcapture %}
+                    <source
+                      media="(max-width: 749px)"
+                      srcset="{{ mobile_srcset | strip }}"
+                      sizes="{{ image_sizes | strip }}"
+                      width="{{ mobile_image.width }}"
+                      height="{{ mobile_image.height }}"
+                    >
+                  {% endif %}
+                  {{ media_image | image_url: width: 2160 | image_tag: widths: '360, 540, 720, 900, 1080, 1440, 1800, 2160', sizes: image_sizes, loading: loading, class: 'zds__image', style: 'object-position: var(--zds-focus);', alt: image_alt }}
+                </picture>
+              </div>
+            </figure>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="zds__setup" role="status">
+          {% if has_repeated_banner_photo %}
+            <h2 class="zds__setup-title">{{ 'zootify_design_story.repeated_title' | t }}</h2>
+            <p>{{ 'zootify_design_story.repeated_text' | t }}</p>
+          {% else %}
+            <h2 class="zds__setup-title">{{ 'zootify_design_story.setup_title' | t }}</h2>
+            <p>{{ 'zootify_design_story.setup_text' | t }}</p>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+.zds {
+  --zds-gutter: var(--zds-gutter-d);
+  --zds-radius: var(--zds-radius-d);
+  width: 100%;
+  min-width: 0;
+  padding-block: var(--zds-top-d) var(--zds-bottom-d);
+  background: var(--zds-background);
+  color: var(--zds-body-color);
+  font-family: var(--font-body--family, inherit);
+}
+.zds *, .zds *::before, .zds *::after { box-sizing: border-box; }
+.zds__container {
+  width: 100%;
+  max-width: calc(var(--zds-max-width) + var(--zds-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--zds-gutter);
+}
+.zds--full .zds__container { max-width: none; }
+.zds__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 'copy second' 'first second';
+  column-gap: var(--zds-gap-d);
+  align-items: start;
+}
+.zds__copy { grid-area: copy; min-width: 0; text-align: var(--zds-text-align); }
+.zds .zds__heading {
+  margin: 0;
+  max-width: none;
+  font-family: var(--font-heading--family, var(--font-body--family, inherit));
+  font-size: var(--zds-heading-d);
+  font-weight: var(--zds-heading-weight);
+  font-style: normal;
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+  text-transform: none;
+  color: var(--zds-heading-color);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.zds .zds__body {
+  max-width: 46ch;
+  margin: 18px 0 0;
+  font-family: var(--font-body--family, inherit);
+  font-size: var(--zds-body-d);
+  font-weight: var(--zds-body-weight);
+  font-style: normal;
+  line-height: 1.65;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--zds-body-color);
+  overflow-wrap: anywhere;
+}
+.zds .zds__body:first-child { margin-top: 0; }
+.zds--align-center .zds__body { margin-inline: auto; }
+.zds__visual { position: relative; min-width: 0; width: 100%; margin: 0; }
+.zds__visual--1 { grid-area: first; }
+.zds--has-copy .zds__visual--1 { margin-top: var(--zds-offset); }
+.zds__visual--2 { grid-area: second; }
+.zds__frame {
+  --zds-focus: var(--zds-focus-d);
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--zds-frame-ratio-d);
+  overflow: hidden;
+  border-radius: var(--zds-radius);
+  background: var(--zds-image-background);
+}
+.zds__frame picture { display: block; width: 100%; height: 100%; }
+.zds .zds__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: var(--zds-fit);
+  border: 0;
+  border-radius: 0;
+}
+.zds__setup { padding: 32px; border: 1px dashed color-mix(in srgb, var(--zds-heading-color) 25%, transparent); border-radius: var(--zds-radius); background: var(--zds-image-background); }
+.zds .zds__setup-title { margin: 0 0 10px; color: var(--zds-heading-color); font-family: var(--font-heading--family, inherit); font-size: 22px; font-weight: 600; line-height: 1.3; }
+.zds__setup p { max-width: 65ch; margin: 0; color: var(--zds-body-color); font: inherit; font-size: 14px; line-height: 1.6; }
+@media screen and (max-width: 749px) {
+  .zds {
+    --zds-gutter: var(--zds-gutter-m);
+    --zds-radius: var(--zds-radius-m);
+    padding-block: var(--zds-top-m) var(--zds-bottom-m);
+  }
+  .zds__grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: 'copy' 'first' 'second'; row-gap: var(--zds-gap-m); }
+  .zds:not(.zds--has-copy) .zds__grid { grid-template-areas: 'first' 'second'; }
+  .zds .zds__heading { font-size: var(--zds-heading-m); line-height: 1.22; letter-spacing: -0.025em; }
+  .zds .zds__body { max-width: none; margin-top: 12px; font-size: var(--zds-body-m); line-height: 1.6; }
+  .zds--has-copy .zds__visual--1 { margin-top: 0; }
+  .zds__frame { --zds-focus: var(--zds-focus-m); aspect-ratio: var(--zds-frame-ratio-m); }
+  .zds--mobile-overlap .zds__visual { width: 88%; }
+  .zds--mobile-overlap .zds__visual--1 { justify-self: start; isolation: isolate; z-index: 0; }
+  .zds--mobile-overlap .zds__visual--1::before { content: ''; position: absolute; z-index: -1; inset: 12px -12px calc(-1 * var(--zds-overlap)) 12px; border-radius: var(--zds-radius); background: var(--zds-image-background); }
+  .zds--mobile-overlap .zds__visual--2 { justify-self: end; z-index: 1; }
+  .zds__setup { padding: 24px 20px; }
+  .zds .zds__setup-title { font-size: 20px; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "ZOOTIFY Design Story",
+  "tag": "section",
+  "class": "zootify-design-story-section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [
+    { "type": "paragraph", "content": "This is an additional story section. The original Product Banner stays separate and uses its existing images. Choose this story's own photos in the product's ZOOTIFY — Image Pair entry. Pair copy overrides family story copy; two images are required. Layout settings apply to this product template." },
+    { "type": "checkbox", "id": "hide_repeated_banner_photos", "label": "Hide repeated Product Banner photos", "default": true, "info": "Hide this section when any selected story photo is already used in the product's desktop or mobile banner. Turn off to intentionally reuse a photo." },
+    { "type": "header", "content": "Layout" },
+    { "type": "select", "id": "width", "label": "Content width", "default": "contained", "options": [{ "value": "contained", "label": "Constrained" }, { "value": "full", "label": "Full width" }] },
+    { "type": "range", "id": "max_width", "label": "Maximum content width", "min": 960, "max": 1920, "step": 16, "default": 1440, "unit": "px", "visible_if": "{{ section.settings.width == 'contained' }}" },
+    { "type": "range", "id": "gutter_desktop", "label": "Side spacing — desktop", "min": 16, "max": 120, "step": 4, "default": 40, "unit": "px" },
+    { "type": "range", "id": "gutter_mobile", "label": "Side spacing — mobile", "min": 12, "max": 32, "step": 2, "default": 16, "unit": "px" },
+    { "type": "range", "id": "gap_desktop", "label": "Column gap — desktop", "min": 16, "max": 96, "step": 4, "default": 64, "unit": "px" },
+    { "type": "range", "id": "gap_mobile", "label": "Content gap — mobile", "min": 12, "max": 48, "step": 2, "default": 24, "unit": "px" },
+    { "type": "range", "id": "image_offset", "label": "Space below text — desktop", "min": 0, "max": 240, "step": 8, "default": 72, "unit": "px", "info": "Offsets the first image beneath the text. The second image starts alongside the heading." },
+    { "type": "range", "id": "radius_desktop", "label": "Image corners — desktop", "min": 0, "max": 32, "step": 2, "default": 16, "unit": "px" },
+    { "type": "range", "id": "radius_mobile", "label": "Image corners — mobile", "min": 0, "max": 24, "step": 2, "default": 14, "unit": "px" },
+    { "type": "select", "id": "ratio_desktop", "label": "Image proportions — desktop", "default": "adapt", "options": [{ "value": "adapt", "label": "Adapt to each image" }, { "value": "16 / 9", "label": "Landscape — 16:9" }, { "value": "3 / 4", "label": "Portrait — 3:4" }, { "value": "4 / 5", "label": "Portrait — 4:5" }, { "value": "1 / 1", "label": "Square" }, { "value": "9 / 16", "label": "Tall — 9:16" }] },
+    { "type": "select", "id": "ratio_mobile", "label": "Image proportions — mobile", "default": "adapt", "options": [{ "value": "adapt", "label": "Adapt to each image" }, { "value": "16 / 9", "label": "Landscape — 16:9" }, { "value": "3 / 4", "label": "Portrait — 3:4" }, { "value": "4 / 5", "label": "Portrait — 4:5" }, { "value": "1 / 1", "label": "Square" }, { "value": "9 / 16", "label": "Tall — 9:16" }] },
+    { "type": "select", "id": "image_fit", "label": "Image fit", "default": "cover", "options": [{ "value": "cover", "label": "Fill frame" }, { "value": "contain", "label": "Fit whole image" }], "info": "Fill frame may crop edges. Crop positions follow the image-pair focus fields, then the image's native focal point." },
+    { "type": "checkbox", "id": "swap_images", "label": "Swap the two images", "default": false },
+    { "type": "select", "id": "mobile_layout", "label": "Mobile layout", "default": "stacked", "options": [{ "value": "stacked", "label": "Stacked" }, { "value": "overlap", "label": "Layered frames" }], "info": "Layered frames alternate left and right. Only the background accent overlaps; neither photograph covers the other." },
+    { "type": "range", "id": "overlap_depth", "label": "Layered accent depth", "min": 16, "max": 72, "step": 4, "default": 40, "unit": "px", "visible_if": "{{ section.settings.mobile_layout == 'overlap' }}" },
+    { "type": "header", "content": "Typography" },
+    { "type": "paragraph", "content": "Font families follow the theme. Story copy comes from the image pair, then the product family." },
+    { "type": "checkbox", "id": "show_heading", "label": "Show heading", "default": true },
+    { "type": "checkbox", "id": "show_text", "label": "Show body text", "default": true },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size — desktop", "min": 20, "max": 60, "step": 2, "default": 34, "unit": "px" },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size — mobile", "min": 18, "max": 40, "step": 1, "default": 26, "unit": "px" },
+    { "type": "select", "id": "heading_weight", "label": "Heading weight", "default": "600", "options": [{ "value": "500", "label": "Medium" }, { "value": "600", "label": "Semibold" }, { "value": "700", "label": "Bold" }] },
+    { "type": "range", "id": "body_size_desktop", "label": "Body size — desktop", "min": 12, "max": 20, "step": 1, "default": 16, "unit": "px" },
+    { "type": "range", "id": "body_size_mobile", "label": "Body size — mobile", "min": 12, "max": 20, "step": 1, "default": 14, "unit": "px" },
+    { "type": "select", "id": "body_weight", "label": "Body weight", "default": "400", "options": [{ "value": "400", "label": "Regular" }, { "value": "500", "label": "Medium" }] },
+    { "type": "select", "id": "text_alignment", "label": "Text alignment", "default": "left", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }] },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "background", "label": "Section background", "default": "#ffffff" },
+    { "type": "color", "id": "heading_color", "label": "Heading", "default": "#01161e" },
+    { "type": "color", "id": "body_color", "label": "Body text", "default": "#606364" },
+    { "type": "color", "id": "image_background", "label": "Image frame and layered accent", "default": "#f3f3f1" },
+    { "type": "header", "content": "Section spacing" },
+    { "type": "range", "id": "padding_top_desktop", "label": "Top spacing — desktop", "min": 0, "max": 160, "step": 4, "default": 64, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_desktop", "label": "Bottom spacing — desktop", "min": 0, "max": 160, "step": 4, "default": 64, "unit": "px" },
+    { "type": "range", "id": "padding_top_mobile", "label": "Top spacing — mobile", "min": 0, "max": 96, "step": 4, "default": 40, "unit": "px" },
+    { "type": "range", "id": "padding_bottom_mobile", "label": "Bottom spacing — mobile", "min": 0, "max": 96, "step": 4, "default": 40, "unit": "px" }
+  ],
+  "presets": [{ "name": "ZOOTIFY Design Story", "category": "Product storytelling" }]
+}
+{% endschema %}
+

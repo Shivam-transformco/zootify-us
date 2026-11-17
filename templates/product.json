@@ -110,6 +110,32 @@
               },
               "blocks": {}
             },
+            "product_inventory_MrNjNn": {
+              "type": "product-inventory",
+              "name": "t:names.product_inventory",
+              "settings": {
+                "inventory_threshold": 50,
+                "show_inventory_quantity": true,
+                "inline_with_title": true,
+                "title_gap": 6,
+                "badge_background": "#ce423b",
+                "badge_text_color": "#ffffff",
+                "badge_shape": "soft",
+                "badge_font_size": 12,
+                "badge_padding_x": 10,
+                "badge_padding_y": 5,
+                "show_status_icon": false,
+                "badge_border_width": 3,
+                "badge_border_color": "#FFFFFF",
+                "mobile_top_spacing": 0,
+                "mobile_bottom_spacing": 8,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
             "product_description_LyJnwN": {
               "type": "product-description",
               "name": "t:names.product_description",
@@ -329,8 +355,9 @@
             "custom_liquid_biYFPc": {
               "type": "custom-liquid",
               "name": "t:names.custom_liquid",
+              "disabled": true,
               "settings": {
-                "custom_liquid": "<div class=\"offer-wrapper\">\n  <div class=\"offer-heading\">Active offers</div>\n\n  <div class=\"offer-carousel\">\n    <div class=\"offer-track\">\n\n      <div class=\"offer-box\">\n        <span class=\"offer-text\">\n          10% off your first order – use code WELCOME10\n        </span>\n      </div>\n\n      <div class=\"offer-box\">\n        <span class=\"offer-text\">\n          Free standard shipping on all orders\n        </span>\n      </div>\n\n    </div>\n  </div>\n\n  <div class=\"offer-dots\"></div>\n</div>\n\n<style>\n.offer-wrapper {\n  max-width: 450px;\n  margin: 12px 0;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n}\n\n.offer-heading {\n  font-size: 18px;\n  margin-bottom: 12px;\n  color: #1a1a1a;\n  font-weight: 700;\n  padding-left: 2px;\n}\n\n.offer-carousel {\n  overflow: hidden;\n}\n\n.offer-track {\n  display: flex;\n  transition: transform 0.45s ease;\n}\n\n.offer-box {\n  min-width: 100%;\n  display: flex;\n  align-items: center;\n  padding: 16px 20px;\n  border: none;\n  border-radius: 12px;\n  background: #f8f8f8;\n  box-sizing: border-box;\n}\n\n.offer-text {\n  font-size: 14px;\n  font-weight: 400;\n  color: #1a1a1a;\n  letter-spacing: -0.1px;\n}\n\n.offer-dots {\n  display: flex;\n  justify-content: center;\n  gap: 8px;\n  margin-top: 12px;\n}\n\n.offer-dot {\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: #1a1a1a;\n  opacity: 0.2;\n  cursor: pointer;\n  transition: opacity 0.3s ease, background-color 0.3s ease;\n}\n\n.offer-dot.active {\n  background: #52ad4d;\n  opacity: 1;\n}\n\n@media (max-width: 600px) {\n  .offer-wrapper {\n    width: 100%;\n  }\n\n  .offer-heading {\n    font-size: 16px;\n  }\n\n  .offer-box {\n    padding: 14px 18px;\n  }\n\n  .offer-text {\n    font-size: 14px;\n  }\n}\n</style>\n\n<script>\n(function () {\n  const track = document.querySelector(\".offer-track\");\n  const slides = document.querySelectorAll(\".offer-box\");\n  const dotsContainer = document.querySelector(\".offer-dots\");\n\n  if (!track || slides.length === 0 || !dotsContainer) return;\n\n  let currentIndex = 0;\n\n  slides.forEach((_, index) => {\n    const dot = document.createElement(\"span\");\n    dot.className = \"offer-dot\" + (index === 0 ? \" active\" : \"\");\n    dot.addEventListener(\"click\", () => moveToSlide(index));\n    dotsContainer.appendChild(dot);\n  });\n\n  const dots = dotsContainer.querySelectorAll(\".offer-dot\");\n\n  function moveToSlide(index) {\n    track.style.transform = `translateX(-${index * 100}%)`;\n    dots.forEach(d => d.classList.remove(\"active\"));\n    if (dots[index]) dots[index].classList.add(\"active\");\n    currentIndex = index;\n  }\n\n  let touchStartX = 0;\n\n  track.addEventListener(\"touchstart\", e => {\n    touchStartX = e.touches[0].clientX;\n  }, { passive: true });\n\n  track.addEventListener(\"touchend\", e => {\n    const diff = touchStartX - e.changedTouches[0].clientX;\n\n    if (Math.abs(diff) > 40) {\n      moveToSlide(\n        diff > 0\n          ? Math.min(currentIndex + 1, slides.length - 1)\n          : Math.max(currentIndex - 1, 0)\n      );\n    }\n  }, { passive: true });\n\n  if (slides.length > 1) {\n    setInterval(() => {\n      currentIndex = (currentIndex + 1) % slides.length;\n      moveToSlide(currentIndex);\n    }, 4000);\n  }\n})();\n</script>"
+                "custom_liquid": "<div class=\"offer-wrapper\">\n  <div class=\"offer-heading\">Active offers</div>\n\n  <div class=\"offer-carousel\">\n    <div class=\"offer-track\">\n\n      <div class=\"offer-box\">\n        <span class=\"offer-text\">\n          Free standard shipping on all orders\n        </span>\n      </div>\n\n    </div>\n  </div>\n\n  <div class=\"offer-dots\"></div>\n</div>\n\n<style>\n.offer-wrapper {\n  max-width: 450px;\n  margin: 12px 0;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif;\n}\n\n.offer-heading {\n  font-size: 18px;\n  margin-bottom: 12px;\n  color: #1a1a1a;\n  font-weight: 700;\n  padding-left: 2px;\n}\n\n.offer-carousel {\n  overflow: hidden;\n}\n\n.offer-track {\n  display: flex;\n  transition: transform 0.45s ease;\n}\n\n.offer-box {\n  min-width: 100%;\n  display: flex;\n  align-items: center;\n  padding: 16px 20px;\n  border: none;\n  border-radius: 12px;\n  background: #f8f8f8;\n  box-sizing: border-box;\n}\n\n.offer-text {\n  font-size: 14px;\n  font-weight: 400;\n  color: #1a1a1a;\n  letter-spacing: -0.1px;\n}\n\n.offer-dots {\n  display: flex;\n  justify-content: center;\n  gap: 8px;\n  margin-top: 12px;\n}\n\n.offer-dot {\n  width: 6px;\n  height: 6px;\n  border-radius: 50%;\n  background: #1a1a1a;\n  opacity: 0.2;\n  cursor: pointer;\n  transition: opacity 0.3s ease, background-color 0.3s ease;\n}\n\n.offer-dot.active {\n  background: #52ad4d;\n  opacity: 1;\n}\n\n@media (max-width: 600px) {\n  .offer-wrapper {\n    width: 100%;\n  }\n\n  .offer-heading {\n    font-size: 16px;\n  }\n\n  .offer-box {\n    padding: 14px 18px;\n  }\n\n  .offer-text {\n    font-size: 14px;\n  }\n}\n</style>\n\n<script>\n(function () {\n  const track = document.querySelector(\".offer-track\");\n  const slides = document.querySelectorAll(\".offer-box\");\n  const dotsContainer = document.querySelector(\".offer-dots\");\n\n  if (!track || slides.length === 0 || !dotsContainer) return;\n\n  let currentIndex = 0;\n\n  slides.forEach((_, index) => {\n    const dot = document.createElement(\"span\");\n    dot.className = \"offer-dot\" + (index === 0 ? \" active\" : \"\");\n    dot.addEventListener(\"click\", () => moveToSlide(index));\n    dotsContainer.appendChild(dot);\n  });\n\n  const dots = dotsContainer.querySelectorAll(\".offer-dot\");\n\n  function moveToSlide(index) {\n    track.style.transform = `translateX(-${index * 100}%)`;\n    dots.forEach(d => d.classList.remove(\"active\"));\n    if (dots[index]) dots[index].classList.add(\"active\");\n    currentIndex = index;\n  }\n\n  let touchStartX = 0;\n\n  track.addEventListener(\"touchstart\", e => {\n    touchStartX = e.touches[0].clientX;\n  }, { passive: true });\n\n  track.addEventListener(\"touchend\", e => {\n    const diff = touchStartX - e.changedTouches[0].clientX;\n\n    if (Math.abs(diff) > 40) {\n      moveToSlide(\n        diff > 0\n          ? Math.min(currentIndex + 1, slides.length - 1)\n          : Math.max(currentIndex - 1, 0)\n      );\n    }\n  }, { passive: true });\n\n  if (slides.length > 1) {\n    setInterval(() => {\n      currentIndex = (currentIndex + 1) % slides.length;\n      moveToSlide(currentIndex);\n    }, 4000);\n  }\n})();\n</script>"
               },
               "blocks": {}
             },
@@ -479,7 +506,7 @@
                     "text_DNPAct": {
                       "type": "text",
                       "settings": {
-                        "text": "<p></p><ul><li><strong>Standard Shipping - FREE:</strong> Estimated delivery in 3–7 days.</li><li><strong>Express Shipping - $10 extra:</strong> Estimated delivery in 1–3 days.</li></ul><p>Choose your preferred shipping option at checkout.</p><p><strong>Returns & Replacements<br/></strong>10-day return or replacement - No questions asked. Product ordered must be unused, in original condition, and in brand packaging. For complete details, please visit <a href=\"https://us.zootify.com/policies/refund-policy\" target=\"_blank\" title=\"https://us.zootify.com/policies/refund-policy\">Return Policy</a></p>",
+                        "text": "<p></p><ul><li><strong>Standard Shipping - FREE:</strong> Estimated delivery in 3–7 days.</li><li><strong>Express Shipping - $10 extra:</strong> Estimated delivery in 1–3 days.</li></ul><p>Choose your preferred shipping option at checkout.</p><p><strong>Returns & Replacements<br/></strong>10-day return or replacement.&nbsp;<br/>Product ordered must be unused, in original condition, and in brand packaging. For complete details, please visit <a href=\"https://us.zootify.com/policies/refund-policy\" target=\"_blank\" title=\"https://us.zootify.com/policies/refund-policy\">Return Policy</a></p>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
@@ -564,6 +591,7 @@
           },
           "block_order": [
             "text_GnyQiN",
+            "product_inventory_MrNjNn",
             "product_description_LyJnwN",
             "judge_me_reviews_preview_badge_nU3W8F",
             "reviews",
@@ -813,6 +841,91 @@
         "note_gap_m": 4
       }
     },
+    "zootify_product_film": {
+      "type": "zootify-product-film",
+      "settings": {
+        "enabled": true,
+        "show_desktop": false,
+        "show_mobile": true,
+        "autoplay_desktop": true,
+        "autoplay_mobile": true,
+        "loop": true,
+        "show_sound": true,
+        "width": "full",
+        "max_width": 1440,
+        "ratio_desktop": "21 / 9",
+        "ratio_mobile": "adapt",
+        "media_fit": "cover",
+        "media_fit_mobile": "contain",
+        "radius": 24,
+        "radius_mobile": 16,
+        "show_heading": true,
+        "text_position": "above",
+        "overlay_position": "center",
+        "overlay_text_color": "#ffffff",
+        "overlay_opacity": 40,
+        "text_alignment": "left",
+        "text_width": 720,
+        "text_gap": 28,
+        "heading_size": 36,
+        "heading_size_mobile": 26,
+        "heading_weight": "600",
+        "body_size": 16,
+        "body_size_mobile": 14,
+        "background": "#ffffff",
+        "media_background": "#f5f6f5",
+        "text_color": "#01161e",
+        "control_background": "#ffffff",
+        "control_color": "#01161e",
+        "control_size": 44,
+        "control_offset": 20,
+        "gutter_desktop": 32,
+        "padding_top": 32,
+        "padding_bottom": 32,
+        "gutter_mobile": 16,
+        "padding_top_mobile": 24,
+        "padding_bottom_mobile": 24
+      }
+    },
+    "zootify_design_story": {
+      "type": "zootify-design-story",
+      "disabled": true,
+      "settings": {
+        "hide_repeated_banner_photos": true,
+        "width": "contained",
+        "max_width": 1440,
+        "gutter_desktop": 40,
+        "gutter_mobile": 16,
+        "gap_desktop": 64,
+        "gap_mobile": 24,
+        "image_offset": 72,
+        "radius_desktop": 16,
+        "radius_mobile": 14,
+        "ratio_desktop": "adapt",
+        "ratio_mobile": "adapt",
+        "image_fit": "cover",
+        "swap_images": false,
+        "mobile_layout": "stacked",
+        "overlap_depth": 40,
+        "show_heading": true,
+        "show_text": true,
+        "heading_size_desktop": 34,
+        "heading_size_mobile": 26,
+        "heading_weight": "600",
+        "body_size_desktop": 16,
+        "body_size_mobile": 14,
+        "body_weight": "400",
+        "text_alignment": "left",
+        "background": "#ffffff",
+        "heading_color": "#01161e",
+        "body_color": "#606364",
+        "image_background": "#f3f3f1",
+        "padding_top_desktop": 64,
+        "padding_bottom_desktop": 64,
+        "padding_top_mobile": 32,
+        "padding_bottom_mobile": 32
+      }
+    },
     "custom_liquid_tUAGMi": {
       "type": "custom-liquid",
       "disabled": true,
@@ -835,186 +948,6 @@
         "padding_bottom": 0,
         "padding_top_mobile": 0,
         "padding_bottom_mobile": 0
-      }
-    },
-    "frostand_section_dcYBRU": {
-      "type": "frostand-section",
-      "blocks": {
-        "card_zhfJN8": {
-          "type": "card",
-          "settings": {
-            "video": "shopify://files/videos/download (2).mp4",
-            "heading": "Frosted. Refined.",
-            "body": "A clean translucent back keeps your iPhone visible while helping resist everyday scratches.",
-            "focal_x_desktop": 50,
-            "focal_y_desktop": 50,
-            "focal_x_mobile": 50,
-            "focal_y_mobile": 50,
-            "use_custom_colors": false,
-            "card_background": "#ffffff",
-            "card_gradient_end": "#f5f5f3",
-            "media_background": "#ffffff"
-          }
-        },
-        "card_LcLKbC": {
-          "type": "card",
-          "settings": {
-            "video": "shopify://files/videos/download (5).mp4",
-            "heading": "MagSafe. Right on cue.",
-            "body": "Snap on chargers and accessories",
-            "focal_x_desktop": 50,
-            "focal_y_desktop": 50,
-            "focal_x_mobile": 50,
-            "focal_y_mobile": 50,
-            "use_custom_colors": false,
-            "card_background": "#ffffff",
-            "card_gradient_end": "#f5f5f3",
-            "media_background": "#ffffff"
-          }
-        },
-        "card_qpQcdH": {
-          "type": "card",
-          "settings": {
-            "video": "shopify://files/videos/download (3).mp4",
-            "heading": "Stand when you need it.",
-            "body": "Flip out the integrated kickstand for effortless hands-free viewing",
-            "focal_x_desktop": 50,
-            "focal_y_desktop": 50,
-            "focal_x_mobile": 50,
-            "focal_y_mobile": 50,
-            "use_custom_colors": false,
-            "card_background": "#ffffff",
-            "card_gradient_end": "#f5f5f3",
-            "media_background": "#ffffff"
-          }
-        },
-        "card_yHpyMV": {
-          "type": "card",
-          "settings": {
-            "video": "shopify://files/videos/download (4).mp4",
-            "heading": "Built for everyday impact.",
-            "body": "A rigid PC back and flexible TPU edges help guard against daily drops",
-            "focal_x_desktop": 50,
-            "focal_y_desktop": 50,
-            "focal_x_mobile": 50,
-            "focal_y_mobile": 50,
-            "use_custom_colors": false,
-            "card_background": "#ffffff",
-            "card_gradient_end": "#f5f5f3",
-            "media_background": "#ffffff"
-          }
-        },
-        "feature_9EAz63": {
-          "type": "feature",
-          "settings": {
-            "icon": "frost",
-            "title": "Frosted PC Back",
-            "body": "Clean, translucent finish"
-          }
-        },
-        "feature_TUhDk4": {
-          "type": "feature",
-          "settings": {
-            "icon": "grip",
-            "title": "Premium Textured Edges",
-            "body": "Secure, comfortable grip"
-          }
-        },
-        "feature_krhpgQ": {
-          "type": "feature",
-          "settings": {
-            "icon": "magsafe",
-            "title": "MagSafe Ready",
-            "body": "Charge and attach effortlessly"
-          }
-        },
-        "feature_3U8UEi": {
-          "type": "feature",
-          "settings": {
-            "icon": "stand",
-            "title": "Built-in Kickstand",
-            "body": "Hands-free viewing anywhere"
-          }
-        }
-      },
-      "block_order": [
-        "card_zhfJN8",
-        "card_LcLKbC",
-        "card_qpQcdH",
-        "card_yHpyMV",
-        "feature_9EAz63",
-        "feature_TUhDk4",
-        "feature_krhpgQ",
-        "feature_3U8UEi"
-      ],
-      "disabled": true,
-      "name": "Frostand Arc Features",
-      "settings": {
-        "max_width": 1800,
-        "cards_max_width": 1200,
-        "background_color": "#ffffff",
-        "text_color": "#171714",
-        "muted_color": "#66645f",
-        "side_padding": 48,
-        "side_padding_mobile": 20,
-        "padding_top": 48,
-        "padding_bottom": 92,
-        "padding_top_mobile": 28,
-        "padding_bottom_mobile": 64,
-        "cards_per_row": 4,
-        "card_gap": 12,
-        "card_gap_mobile": 12,
-        "card_height": 480,
-        "card_height_mobile": 480,
-        "media_height": 75,
-        "mobile_media_height": 75,
-        "card_radius": 5,
-        "border_width": 1,
-        "border_color": "#cecdc9",
-        "card_background": "#ffffff",
-        "enable_card_gradient": true,
-        "card_gradient_end": "#ffffff",
-        "soft_gradient_enable": true,
-        "soft_gradient_color": "#000000",
-        "soft_gradient_opacity": 6,
-        "soft_gradient_start": 58,
-        "media_fit": "cover",
-        "mobile_layout": "scroll",
-        "mobile_card_width": 88,
-        "show_progress": true,
-        "heading_font": "montserrat_n4",
-        "body_font": "montserrat_n4",
-        "use_individual_fonts": false,
-        "card_title_font": "montserrat_n4",
-        "card_body_font": "montserrat_n4",
-        "eyebrow_font": "montserrat_n4",
-        "discover_heading_font": "montserrat_n4",
-        "discover_body_font": "montserrat_n4",
-        "feature_title_font": "montserrat_n4",
-        "feature_body_font": "montserrat_n4",
-        "card_title_size": 18,
-        "card_title_size_mobile": 18,
-        "card_title_weight": "400",
-        "card_body_size": 13,
-        "card_body_size_mobile": 13,
-        "eyebrow_size": 12,
-        "eyebrow_size_mobile": 10,
-        "feature_title_size": 15,
-        "feature_title_size_mobile": 16,
-        "feature_body_size": 14,
-        "feature_body_size_mobile": 13,
-        "show_discover": true,
-        "discover_eyebrow": "FROSTED FINISH. MAGNETIC. MOVIE-READY.",
-        "discover_heading": "Discover Frostand",
-        "discover_body": "A clean frosted finish meets everyday utility. Designed for professionals and minimalists, Frostand combines MagSafe support, textured edges and a built-in stand—without hiding the look of your iPhone.",
-        "discover_max_width": 520,
-        "discover_gap": 84,
-        "discover_gap_mobile": 68,
-        "discover_heading_size": 44,
-        "disc_heading_size_mobile": 36,
-        "discover_body_size": 20,
-        "discover_body_size_mobile": 18,
-        "feature_icon_size": 54
       }
     },
     "product_image_with_text_ynbhjk": {
@@ -1041,6 +974,190 @@
         "padding_x_mobile": 16,
         "gap_mobile": 20,
         "block_gap_mobile": 40
+      }
+    },
+    "frostand_section_dcYBRU": {
+      "type": "frostand-section",
+      "blocks": {
+        "card_UBEg6r": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/ZOOTIFY_wireframe_preview.mp4",
+            "mobile_video": "shopify://files/videos/ZOOTIFY_wireframe_preview.mp4",
+            "heading": "Frosted. Refined. Protected",
+            "body": "A soft translucent finish with a clean, refined look.",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#ffffff",
+            "card_gradient_end": "#ffffff",
+            "media_background": "#ffffff"
+          }
+        },
+        "card_94ipm4": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/Untitled design (3).mp4",
+            "mobile_video": "shopify://files/videos/Untitled design (3).mp4",
+            "heading": "Flush when closed.",
+            "body": "The stand sits flat. No extra bump or bulk.",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#ffffff",
+            "card_gradient_end": "#ffffff",
+            "media_background": "#ffffff"
+          }
+        },
+        "card_9UfLyd": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/2.mp4",
+            "mobile_video": "shopify://files/videos/2.mp4",
+            "heading": "Stand when needed.",
+            "body": "Flip out the kickstand for hands-free viewing.",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#ffffff",
+            "card_gradient_end": "#ffffff",
+            "media_background": "#ffffff"
+          }
+        },
+        "card_LTxKcK": {
+          "type": "card",
+          "settings": {
+            "video": "shopify://files/videos/1.mp4",
+            "mobile_video": "shopify://files/videos/1.mp4",
+            "heading": "Made in your colour.",
+            "body": "Choose the shade that feels most like you.",
+            "focal_x_desktop": 50,
+            "focal_y_desktop": 50,
+            "focal_x_mobile": 50,
+            "focal_y_mobile": 50,
+            "use_custom_colors": false,
+            "card_background": "#ffffff",
+            "card_gradient_end": "#ffffff",
+            "media_background": "#ffffff"
+          }
+        },
+        "feature_nbkFw4": {
+          "type": "feature",
+          "settings": {
+            "icon": "frost",
+            "title": "Frosted PC Back",
+            "body": "Clean, translucent finish"
+          }
+        },
+        "feature_nnb9gQ": {
+          "type": "feature",
+          "settings": {
+            "icon": "grip",
+            "title": "Premium Textured Edges",
+            "body": "Secure, comfortable grip"
+          }
+        },
+        "feature_V68G3P": {
+          "type": "feature",
+          "settings": {
+            "icon": "magsafe",
+            "title": "MagSafe Ready",
+            "body": "Charge and attach effortlessly"
+          }
+        },
+        "feature_Dim4P4": {
+          "type": "feature",
+          "settings": {
+            "icon": "stand",
+            "title": "Built-in Kickstand",
+            "body": "Hands-free viewing anywhere"
+          }
+        }
+      },
+      "block_order": [
+        "card_UBEg6r",
+        "card_94ipm4",
+        "card_9UfLyd",
+        "card_LTxKcK",
+        "feature_nbkFw4",
+        "feature_nnb9gQ",
+        "feature_V68G3P",
+        "feature_Dim4P4"
+      ],
+      "disabled": true,
+      "name": "Frostand Features",
+      "settings": {
+        "max_width": 1800,
+        "cards_max_width": 1200,
+        "background_color": "#ffffff",
+        "text_color": "#171714",
+        "muted_color": "#575550",
+        "side_padding": 100,
+        "side_padding_mobile": 20,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "padding_top_mobile": 28,
+        "padding_bottom_mobile": 40,
+        "cards_per_row": 4,
+        "card_gap": 12,
+        "card_gap_mobile": 12,
+        "card_height": 515,
+        "card_height_mobile": 480,
+        "media_height": 75,
+        "mobile_media_height": 75,
+        "card_radius": 5,
+        "border_width": 1,
+        "border_color": "#cecdc9",
+        "card_background": "#ffffff",
+        "enable_card_gradient": false,
+        "card_gradient_end": "#ffffff",
+        "soft_gradient_enable": false,
+        "soft_gradient_color": "#000000",
+        "soft_gradient_opacity": 6,
+        "soft_gradient_start": 58,
+        "media_fit": "cover",
+        "mobile_layout": "scroll",
+        "mobile_card_width": 88,
+        "show_progress": true,
+        "heading_font": "montserrat_n4",
+        "body_font": "montserrat_n4",
+        "use_individual_fonts": false,
+        "card_title_font": "montserrat_n4",
+        "card_body_font": "montserrat_n4",
+        "eyebrow_font": "montserrat_n4",
+        "discover_heading_font": "montserrat_n4",
+        "discover_body_font": "montserrat_n4",
+        "feature_title_font": "montserrat_n4",
+        "feature_body_font": "montserrat_n4",
+        "card_title_size": 18,
+        "card_title_size_mobile": 18,
+        "card_title_weight": "500",
+        "card_body_size": 13,
+        "card_body_size_mobile": 13,
+        "eyebrow_size": 12,
+        "eyebrow_size_mobile": 10,
+        "feature_title_size": 15,
+        "feature_title_size_mobile": 16,
+        "feature_body_size": 14,
+        "feature_body_size_mobile": 13,
+        "show_discover": true,
+        "discover_eyebrow": "BEST SELLER FOR A REASON",
+        "discover_heading": "You get all you need.",
+        "discover_body": "Frostand follows our ideology of providing all the essential functions of an iPhone case in a sophisticated and elegant design for modern people who are constantly moving between work, travel, and life.\nEssentials Combined with Elegance",
+        "discover_max_width": 520,
+        "discover_gap": 72,
+        "discover_gap_mobile": 68,
+        "discover_heading_size": 34,
+        "disc_heading_size_mobile": 30,
+        "discover_body_size": 15,
+        "discover_body_size_mobile": 14,
+        "feature_icon_size": 50
       }
     },
     "178669754265e54872": {
@@ -1584,7 +1701,44 @@
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
-              "blocks": {}
+              "blocks": {
+                "hero-deal-badge": {
+                  "type": "_zootify-hero-deal-badge",
+                  "static": true,
+                  "settings": {
+                    "zbf_badge_enabled": true,
+                    "zbf_badge_label": "Hero deal",
+                    "zbf_badge_scope": "collection",
+                    "zbf_badge_mode": "all",
+                    "zbf_badge_products": [],
+                    "zbf_badge_tag": "hero-deal",
+                    "zbf_badge_shape": "pill",
+                    "zbf_badge_position": "top-left",
+                    "zbf_badge_link_insets": true,
+                    "zbf_badge_background": "#111111",
+                    "zbf_badge_color": "#ffffff",
+                    "zbf_badge_radius": 30,
+                    "zbf_badge_font": "body",
+                    "zbf_badge_weight": "600",
+                    "zbf_badge_case": "uppercase",
+                    "zbf_badge_size": 11,
+                    "zbf_badge_offset": 10,
+                    "zbf_badge_offset_y": 10,
+                    "zbf_badge_pad_x": 10,
+                    "zbf_badge_pad_y": 5,
+                    "zbf_badge_corner": 64,
+                    "zbf_badge_size_mobile": 10,
+                    "zbf_badge_position_mobile": "inherit",
+                    "zbf_badge_offset_mobile": 8,
+                    "zbf_badge_offset_y_mobile": 8,
+                    "zbf_badge_pad_x_mobile": 8,
+                    "zbf_badge_pad_y_mobile": 4,
+                    "zbf_badge_corner_mobile": 56
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": []
             },
             "group_VPQXaP": {
               "type": "_product-card-group",
@@ -1822,7 +1976,44 @@
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
-              "blocks": {}
+              "blocks": {
+                "hero-deal-badge": {
+                  "type": "_zootify-hero-deal-badge",
+                  "static": true,
+                  "settings": {
+                    "zbf_badge_enabled": true,
+                    "zbf_badge_label": "Hero deal",
+                    "zbf_badge_scope": "collection",
+                    "zbf_badge_mode": "all",
+                    "zbf_badge_products": [],
+                    "zbf_badge_tag": "hero-deal",
+                    "zbf_badge_shape": "pill",
+                    "zbf_badge_position": "top-left",
+                    "zbf_badge_link_insets": true,
+                    "zbf_badge_background": "#111111",
+                    "zbf_badge_color": "#ffffff",
+                    "zbf_badge_radius": 30,
+                    "zbf_badge_font": "body",
+                    "zbf_badge_weight": "600",
+                    "zbf_badge_case": "uppercase",
+                    "zbf_badge_size": 11,
+                    "zbf_badge_offset": 10,
+                    "zbf_badge_offset_y": 10,
+                    "zbf_badge_pad_x": 10,
+                    "zbf_badge_pad_y": 5,
+                    "zbf_badge_corner": 64,
+                    "zbf_badge_size_mobile": 10,
+                    "zbf_badge_position_mobile": "inherit",
+                    "zbf_badge_offset_mobile": 8,
+                    "zbf_badge_offset_y_mobile": 8,
+                    "zbf_badge_pad_x_mobile": 8,
+                    "zbf_badge_pad_y_mobile": 4,
+                    "zbf_badge_corner_mobile": 56
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": []
             },
             "product_title_DA6jwh": {
               "type": "product-title",
@@ -2279,10 +2470,12 @@
     "custom_liquid_dq3k3A",
     "main",
     "zootify_trust_bar_9gfHBe",
+    "zootify_product_film",
+    "zootify_design_story",
     "custom_liquid_tUAGMi",
     "product_banner_zAYQBH",
-    "frostand_section_dcYBRU",
     "product_image_with_text_ynbhjk",
+    "frostand_section_dcYBRU",
     "178669754265e54872",
     "blocks_cykkVM",
     "1786539665bdbeaecd",

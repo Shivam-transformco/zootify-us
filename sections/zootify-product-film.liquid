@@ -1,0 +1,605 @@
+{% liquid
+  assign family_media = product.metafields.custom.zootify_family_media.value
+  assign main_video = family_media.video.value
+  assign mobile_video = family_media.mobile_video.value
+  if main_video == blank
+    assign main_video = mobile_video
+  endif
+  assign main_poster = family_media.poster.value
+  if main_video != blank
+    assign main_poster = main_poster | default: product.featured_image | default: main_video.preview_image | default: family_media.mobile_poster.value
+  else
+    assign main_poster = main_poster | default: family_media.mobile_poster.value
+  endif
+  assign mobile_poster = family_media.mobile_poster.value | default: main_poster | default: mobile_video.preview_image
+  assign film_heading = family_media.heading.value | default: '' | strip
+  assign film_text = family_media.text.value | default: '' | strip
+  assign has_media = false
+  if main_video != blank or main_poster != blank
+    assign has_media = true
+  endif
+  assign main_ratio = main_video.aspect_ratio | default: main_poster.aspect_ratio | default: 1.777778
+  assign mobile_ratio = mobile_video.aspect_ratio | default: main_video.aspect_ratio | default: mobile_poster.aspect_ratio | default: main_ratio
+  assign has_intro = false
+  if section.settings.show_heading and section.settings.text_position != 'hidden'
+    if film_heading != blank or film_text != blank
+      assign has_intro = true
+    endif
+  endif
+  assign desktop_ratio = section.settings.ratio_desktop
+  if desktop_ratio == 'adapt'
+    assign desktop_ratio = main_ratio
+  endif
+  assign phone_ratio = section.settings.ratio_mobile
+  if phone_ratio == 'adapt'
+    assign phone_ratio = mobile_ratio
+  endif
+  assign poster_alt = main_poster.alt | default: product.title
+  if main_video != blank
+    assign poster_alt = ''
+  endif
+  assign media_label = 'zootify_product_media.film.label' | t: product: product.title
+%}
+
+{% if section.settings.enabled and has_media %}
+  <zootify-product-film
+    class="zpf zpf--{{ section.settings.width }} zpf--align-{{ section.settings.text_alignment }} zpf--text-{{ section.settings.text_position }} zpf--overlay-{{ section.settings.overlay_position }}{% if has_intro %} zpf--with-intro{% endif %}"
+    role="region"
+    {% if has_intro and film_heading != blank %}
+      aria-labelledby="ZpfHeading-{{ section.id }}"
+    {% else %}
+      aria-label="{{ media_label | escape }}"
+    {% endif %}
+    data-show-desktop="{{ section.settings.show_desktop }}"
+    data-show-mobile="{{ section.settings.show_mobile }}"
+    data-autoplay-desktop="{{ section.settings.autoplay_desktop }}"
+    data-autoplay-mobile="{{ section.settings.autoplay_mobile }}"
+    data-loop="{{ section.settings.loop }}"
+    data-show-sound="{{ section.settings.show_sound }}"
+    data-play-label="{{ 'zootify_product_media.film.play' | t | escape }}"
+    data-pause-label="{{ 'zootify_product_media.film.pause' | t | escape }}"
+    data-loading-label="{{ 'zootify_product_media.film.loading' | t | escape }}"
+    data-unmute-label="{{ 'zootify_product_media.film.unmute' | t | escape }}"
+    data-mute-label="{{ 'zootify_product_media.film.mute' | t | escape }}"
+    data-media-label="{{ media_label | escape }}"
+    style="--zpf-width: {{ section.settings.max_width }}px; --zpf-gutter: {{ section.settings.gutter_desktop }}px; --zpf-gutter-mobile: {{ section.settings.gutter_mobile }}px; --zpf-top: {{ section.settings.padding_top }}px; --zpf-bottom: {{ section.settings.padding_bottom }}px; --zpf-top-mobile: {{ section.settings.padding_top_mobile }}px; --zpf-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px; --zpf-radius: {{ section.settings.radius }}px; --zpf-radius-mobile: {{ section.settings.radius_mobile }}px; --zpf-ratio: {{ desktop_ratio }}; --zpf-ratio-mobile: {{ phone_ratio }}; --zpf-fit: {{ section.settings.media_fit }}; --zpf-fit-mobile: {{ section.settings.media_fit_mobile }}; --zpf-bg: {{ section.settings.background }}; --zpf-media-bg: {{ section.settings.media_background }}; --zpf-text: {{ section.settings.text_color }}; --zpf-heading-size: {{ section.settings.heading_size }}px; --zpf-heading-size-mobile: {{ section.settings.heading_size_mobile }}px; --zpf-heading-weight: {{ section.settings.heading_weight }}; --zpf-body-size: {{ section.settings.body_size }}px; --zpf-body-size-mobile: {{ section.settings.body_size_mobile }}px; --zpf-text-width: {{ section.settings.text_width }}px; --zpf-text-gap: {{ section.settings.text_gap }}px; --zpf-align: {{ section.settings.text_alignment }}; --zpf-overlay-text: {{ section.settings.overlay_text_color }}; --zpf-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }}; --zpf-control-bg: {{ section.settings.control_background }}; --zpf-control-fg: {{ section.settings.control_color }}; --zpf-control-size: {{ section.settings.control_size }}px; --zpf-control-offset: {{ section.settings.control_offset }}px;"
+  >
+    <div class="zpf__inner">
+      {% capture film_intro %}
+        {% if has_intro %}
+          <div class="zpf__intro">
+            {% if film_heading != blank %}
+              <h2 class="zpf__heading" id="ZpfHeading-{{ section.id }}">{{ film_heading | escape }}</h2>
+            {% endif %}
+            {% if film_text != blank %}
+              <div class="zpf__text">{{ film_text | escape | newline_to_br }}</div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endcapture %}
+      {% if section.settings.text_position == 'above' %}{{ film_intro }}{% endif %}
+      <div class="zpf__frame" data-zpf-frame>
+        {% if section.settings.text_position == 'overlay' and has_intro %}
+          <div class="zpf__overlay">{{ film_intro }}</div>
+        {% endif %}
+        {% if main_poster != blank %}
+          <picture class="zpf__poster">
+            {% if mobile_poster != blank and mobile_poster != main_poster %}
+              <source
+                media="(max-width: 749px)"
+                srcset="{{ mobile_poster | image_url: width: 480 }} 480w, {{ mobile_poster | image_url: width: 750 }} 750w, {{ mobile_poster | image_url: width: 1100 }} 1100w, {{ mobile_poster | image_url: width: 1500 }} 1500w"
+                sizes="100vw"
+                width="{{ mobile_poster.width }}"
+                height="{{ mobile_poster.height }}"
+              >
+            {% endif %}
+            {{ main_poster | image_url: width: 2400 | image_tag: widths: '480, 750, 1100, 1500, 1800, 2200, 2400', sizes: '100vw', loading: 'lazy', decoding: 'async', alt: poster_alt, class: 'zpf__poster-image' }}
+          </picture>
+        {% endif %}
+        <div class="zpf__mount" data-zpf-mount></div>
+        {% if main_video != blank %}
+          <template data-zpf-video="desktop">
+            {{ main_video | video_tag: autoplay: false, loop: section.settings.loop, muted: true, controls: false, playsinline: true, preload: 'none', class: 'zpf__video' }}
+          </template>
+          {% if mobile_video != blank and mobile_video.id != main_video.id %}
+            <template data-zpf-video="mobile">
+              {{ mobile_video | video_tag: autoplay: false, loop: section.settings.loop, muted: true, controls: false, playsinline: true, preload: 'none', class: 'zpf__video' }}
+            </template>
+          {% endif %}
+          <div class="zpf__controls" data-zpf-controls hidden>
+            <button class="zpf__button" data-zpf-play type="button" aria-label="{{ 'zootify_product_media.film.play' | t | escape }}" aria-pressed="false" aria-busy="false">
+              <svg class="zpf__icon zpf__icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5a.75.75 0 0 1 1.15-.64l10 6.5a.75.75 0 0 1 0 1.28l-10 6.5A.75.75 0 0 1 8 18.5z"/></svg>
+              <svg class="zpf__icon zpf__icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+              <span class="zpf__spinner" aria-hidden="true"></span>
+            </button>
+            {% if section.settings.show_sound %}
+              <button class="zpf__button" data-zpf-sound type="button" aria-label="{{ 'zootify_product_media.film.unmute' | t | escape }}" aria-pressed="false">
+                <svg class="zpf__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path class="zpf__sound-on" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/><path class="zpf__sound-off" d="m16 9 5 6m0-6-5 6"/></svg>
+              </button>
+            {% endif %}
+          </div>
+          <span class="zpf__error" data-zpf-error role="status" hidden>{{ 'zootify_product_media.film.error' | t }}</span>
+          <noscript>
+            {% if mobile_video != blank and mobile_video.id != main_video.id %}
+              {{ main_video | video_tag: autoplay: false, loop: false, muted: true, controls: true, playsinline: true, preload: 'none', class: 'zpf__video zpf__video--fallback zpf__video--fallback-desktop' }}
+              {{ mobile_video | video_tag: autoplay: false, loop: false, muted: true, controls: true, playsinline: true, preload: 'none', class: 'zpf__video zpf__video--fallback zpf__video--fallback-mobile' }}
+            {% else %}
+              {{ main_video | video_tag: autoplay: false, loop: false, muted: true, controls: true, playsinline: true, preload: 'none', class: 'zpf__video zpf__video--fallback' }}
+            {% endif %}
+          </noscript>
+        {% endif %}
+      </div>
+    </div>
+  </zootify-product-film>
+  {% if request.design_mode %}
+    {% unless section.settings.show_desktop %}
+      <div class="zpf__editor-note zpf__visibility-note zpf__visibility-note--desktop">{{ 'zootify_product_media.film.hidden_desktop' | t }}</div>
+    {% endunless %}
+    {% unless section.settings.show_mobile %}
+      <div class="zpf__editor-note zpf__visibility-note zpf__visibility-note--mobile">{{ 'zootify_product_media.film.hidden_mobile' | t }}</div>
+    {% endunless %}
+  {% endif %}
+{% elsif request.design_mode %}
+  <div class="zpf__editor-note">
+    <strong>{{ 'zootify_product_media.film.setup_title' | t }}</strong>
+    <p>{{ 'zootify_product_media.film.setup_text' | t }}</p>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .zpf { display: block; padding: var(--zpf-top) var(--zpf-gutter) var(--zpf-bottom); background: var(--zpf-bg); color: var(--zpf-text); }
+  .zpf *, .zpf *::before, .zpf *::after { box-sizing: border-box; }
+  .zpf__inner { width: 100%; max-width: var(--zpf-width); margin-inline: auto; }
+  .zpf--full .zpf__inner { max-width: none; }
+  .zpf__intro { max-width: var(--zpf-text-width); margin-block-end: var(--zpf-text-gap); text-align: var(--zpf-align); }
+  .zpf--align-center .zpf__intro { margin-inline: auto; }
+  .zpf--align-right .zpf__intro { margin-inline-start: auto; margin-inline-end: 0; }
+  .zpf__heading { margin: 0; color: inherit; font-family: var(--font-heading--family, var(--font-body--family, inherit)); font-size: var(--zpf-heading-size); line-height: 1.15; font-weight: var(--zpf-heading-weight); letter-spacing: -.035em; text-wrap: balance; }
+  .zpf__text { margin-block-start: 12px; color: inherit; font-family: var(--font-body--family, inherit); font-size: var(--zpf-body-size); line-height: 1.6; text-wrap: pretty; }
+  .zpf__text:first-child { margin-block-start: 0; }
+  .zpf__frame { position: relative; width: 100%; aspect-ratio: var(--zpf-ratio); overflow: hidden; isolation: isolate; border-radius: var(--zpf-radius); background: var(--zpf-media-bg); }
+  .zpf__overlay { position: absolute; inset: 0; z-index: 4; display: grid; align-items: center; padding: clamp(24px, 4vw, 64px); padding-block-end: max(clamp(24px, 4vw, 64px), calc(var(--zpf-control-size) + var(--zpf-control-offset) + 24px)); background: rgb(0 0 0 / var(--zpf-overlay-opacity)); color: var(--zpf-overlay-text); pointer-events: none; }
+  .zpf__overlay .zpf__intro { width: 100%; margin-block-end: 0; }
+  .zpf--overlay-top .zpf__overlay { align-items: start; }
+  .zpf--overlay-bottom .zpf__overlay { align-items: end; }
+  .zpf__poster, .zpf__poster-image, .zpf__mount, .zpf__video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+  .zpf__poster-image, .zpf__video { object-fit: var(--zpf-fit); }
+  .zpf__poster { z-index: 1; }
+  .zpf__mount { z-index: 2; }
+  .zpf__video { opacity: 0; }
+  .zpf.has-started .zpf__video, .zpf__video--fallback { opacity: 1; }
+  .zpf__video--fallback { z-index: 3; }
+  .zpf__controls { position: absolute; inset-inline-end: var(--zpf-control-offset); bottom: var(--zpf-control-offset); z-index: 5; display: flex; gap: 8px; }
+  .zpf__controls[hidden], .zpf__error[hidden] { display: none; }
+  .zpf__button { display: grid; place-items: center; width: var(--zpf-control-size); height: var(--zpf-control-size); min-width: 44px; min-height: 44px; padding: 0; border: 1px solid color-mix(in srgb, var(--zpf-control-fg) 14%, transparent); border-radius: 50%; color: var(--zpf-control-fg); background: var(--zpf-control-bg); cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .zpf__button:hover { filter: brightness(.94); }
+  .zpf__button:focus-visible { outline: 2px solid var(--zpf-control-fg); outline-offset: 3px; }
+  .zpf__icon { width: 20px; height: 20px; }
+  .zpf__icon-pause, .zpf__spinner, .zpf__sound-on { display: none; }
+  .zpf.is-playing .zpf__icon-play, .zpf.is-loading .zpf__icon-play, .zpf.is-loading .zpf__icon-pause { display: none; }
+  .zpf.is-playing:not(.is-loading) .zpf__icon-pause { display: block; }
+  .zpf.is-loading .zpf__spinner { display: block; width: 20px; height: 20px; border: 2px solid currentColor; border-inline-end-color: transparent; border-radius: 50%; animation: zpf-spin .8s linear infinite; }
+  .zpf:not(.is-muted) .zpf__sound-on { display: block; }
+  .zpf:not(.is-muted) .zpf__sound-off { display: none; }
+  .zpf__error { position: absolute; z-index: 6; inset-inline-start: 16px; inset-inline-end: calc(var(--zpf-control-size) * 2 + var(--zpf-control-offset) + 24px); bottom: 16px; width: fit-content; padding: 8px 12px; border-radius: 8px; background: var(--zpf-control-bg); color: var(--zpf-control-fg); font-family: var(--font-body--family, inherit); font-size: 12px; line-height: 1.4; }
+  .zpf__editor-note { margin: 20px; padding: 24px; border: 1px dashed #b8bebc; border-radius: 12px; background: #f7f8f7; color: #01161e; font-family: var(--font-body--family, inherit); font-size: 14px; line-height: 1.5; }
+  .zpf__editor-note p { margin: 8px 0 0; }
+  .zpf__visibility-note { display: none; }
+  @media (min-width: 750px) {
+    .zpf[data-show-desktop="false"], .zpf__video--fallback-mobile { display: none; }
+    .zpf--full { padding-inline: 0; }
+    .zpf--full.zpf--text-above .zpf__intro { padding-inline: max(24px, var(--zpf-gutter)); max-width: calc(var(--zpf-text-width) + 2 * max(24px, var(--zpf-gutter))); }
+    .zpf__visibility-note--desktop { display: block; }
+  }
+  @keyframes zpf-spin { to { transform: rotate(360deg); } }
+  @media (max-width: 749px) {
+    .zpf[data-show-mobile="false"], .zpf__video--fallback-desktop { display: none; }
+    .zpf__visibility-note--mobile { display: block; }
+    .zpf { padding: var(--zpf-top-mobile) var(--zpf-gutter-mobile) var(--zpf-bottom-mobile); }
+    .zpf__heading { font-size: var(--zpf-heading-size-mobile); }
+    .zpf__text { font-size: var(--zpf-body-size-mobile); }
+    .zpf__frame { aspect-ratio: var(--zpf-ratio-mobile); border-radius: var(--zpf-radius-mobile); }
+    .zpf__poster-image, .zpf__video { object-fit: var(--zpf-fit-mobile); }
+    .zpf__controls { bottom: max(10px, calc(var(--zpf-control-offset) * .75)); inset-inline-end: max(10px, calc(var(--zpf-control-offset) * .75)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .zpf.is-loading .zpf__spinner { animation: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('zootify-product-film')) {
+    class ZootifyProductFilm extends HTMLElement {
+      connectedCallback() {
+        this.startFrame = requestAnimationFrame(() => this.initialize());
+      }
+
+      initialize() {
+        if (!this.isConnected || this.controller) return;
+        this.frame = this.querySelector('[data-zpf-frame]');
+        this.mount = this.querySelector('[data-zpf-mount]');
+        this.desktopTemplate = this.querySelector('[data-zpf-video="desktop"]');
+        if (!this.frame || !this.mount || !this.desktopTemplate) return;
+        this.mobileTemplate = this.querySelector('[data-zpf-video="mobile"]');
+        this.controls = this.querySelector('[data-zpf-controls]');
+        this.playButton = this.querySelector('[data-zpf-play]');
+        this.soundButton = this.querySelector('[data-zpf-sound]');
+        this.errorMessage = this.querySelector('[data-zpf-error]');
+        this.controller = new AbortController();
+        const signal = this.controller.signal;
+        this.phone = matchMedia('(max-width: 749px)');
+        this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+        this.token = 0;
+        this.phase = 'idle';
+        this.desired = false;
+        this.manual = false;
+        this.userPaused = false;
+        this.blocked = false;
+        this.failed = false;
+        this.retryCount = 0;
+        this.controls.hidden = !this.isEnabled();
+        this.playButton.addEventListener('click', () => {
+          if (this.phase === 'playing' && this.video && !this.video.paused) {
+            this.userPaused = true;
+            this.pause();
+          } else if (!(this.phase === 'loading' && this.desired && this.manual)) {
+            this.play(true);
+          }
+        }, { signal });
+        this.soundButton?.addEventListener('click', () => {
+          const video = this.ensureVideo();
+          if (!video) return;
+          video.muted = !video.muted;
+          if (video.paused && !video.muted) this.play(true);
+          this.syncControls();
+        }, { signal });
+        this.phone.addEventListener('change', () => this.breakpointChanged(), { signal });
+        const preferenceChanged = () => {
+          if (!this.canAutoplay() && !this.manual) this.pause();
+          this.queue();
+        };
+        this.reducedMotion.addEventListener('change', preferenceChanged, { signal });
+        navigator.connection?.addEventListener?.('change', preferenceChanged, { signal });
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) this.pause();
+          else this.queue();
+        }, { signal });
+        document.addEventListener('zootify:product-film:start', event => {
+          if (!event.detail?.owner || event.detail.owner === this) return;
+          this.peer = event.detail.owner;
+          this.pause();
+        }, { signal });
+        document.addEventListener('zootify:product-film:stop', event => {
+          if (event.detail?.owner !== this.peer) return;
+          this.peer = null;
+          this.queue();
+        }, { signal });
+        window.addEventListener('scroll', () => this.queue(), { passive: true, signal });
+        window.addEventListener('resize', () => this.queue(), { passive: true, signal });
+        window.addEventListener('pagehide', () => this.pause(), { signal });
+        window.addEventListener('pageshow', () => this.queue(), { signal });
+        window.visualViewport?.addEventListener('resize', () => this.queue(), { passive: true, signal });
+        this.observer = new IntersectionObserver(() => this.queue(), { rootMargin: '300px 0px', threshold: [0, .25, .5, .75, 1] });
+        this.observer.observe(this.frame);
+        this.syncControls();
+        this.reconcile();
+      }
+
+      isEnabled() {
+        const enabled = this.phone.matches ? this.dataset.showMobile : this.dataset.showDesktop;
+        return enabled !== 'false';
+      }
+
+      selectedTemplate() {
+        if (!this.isEnabled()) return null;
+        return this.phone.matches && this.mobileTemplate ? this.mobileTemplate : this.desktopTemplate;
+      }
+
+      breakpointChanged() {
+        const nextTemplate = this.selectedTemplate();
+        if (this.video && nextTemplate !== this.template) this.releaseVideo();
+        this.controls.hidden = !this.isEnabled();
+        this.queue();
+      }
+
+      canAutoplay() {
+        const enabled = this.phone.matches ? this.dataset.autoplayMobile : this.dataset.autoplayDesktop;
+        return this.isEnabled() && enabled === 'true' && !this.reducedMotion.matches && !navigator.connection?.saveData &&
+          !document.hidden && !(this.peer?.isConnected && this.peer.desired);
+      }
+
+      measure() {
+        const rect = this.frame.getBoundingClientRect();
+        const viewport = window.visualViewport;
+        const top = viewport?.offsetTop || 0;
+        const height = viewport?.height || window.innerHeight;
+        const width = viewport?.width || window.innerWidth;
+        const left = viewport?.offsetLeft || 0;
+        const visibleHeight = Math.max(0, Math.min(rect.bottom, top + height) - Math.max(rect.top, top));
+        const visibleWidth = Math.max(0, Math.min(rect.right, left + width) - Math.max(rect.left, left));
+        this.near = rect.width > 0 && rect.height > 0 && rect.bottom > top - 300 && rect.top < top + height + 300;
+        this.visible = rect.width > 0 && rect.height > 0 &&
+          visibleHeight / Math.min(rect.height, height) >= .35 && visibleWidth / Math.min(rect.width, width) >= .6;
+        if (this.visible && !this.wasVisible) {
+          this.blocked = false;
+          this.retryCount = 0;
+        }
+        this.wasVisible = this.visible;
+      }
+
+      reconcile() {
+        if (!this.controller || !this.isConnected) return;
+        if (!this.isEnabled()) {
+          this.near = false;
+          this.visible = false;
+          this.wasVisible = false;
+          if (this.video || this.desired || this.retryTimer) this.releaseVideo();
+          if (this.controls) this.controls.hidden = true;
+          return;
+        }
+        if (this.controls) this.controls.hidden = false;
+        this.measure();
+        if (document.hidden || !this.visible) {
+          if (this.desired) this.pause();
+        }
+        if (this.desired && !this.manual && !this.canAutoplay()) this.pause();
+        if (this.near && !document.hidden && !this.reducedMotion.matches && !navigator.connection?.saveData && !this.failed) this.ensureVideo();
+        if (!this.visible || !this.canAutoplay() || this.userPaused || this.blocked || this.failed || this.desired || this.retryTimer) return;
+        this.play(false);
+      }
+
+      ensureVideo() {
+        if (!this.isEnabled()) return null;
+        const template = this.selectedTemplate();
+        if (this.video && this.template === template) return this.video;
+        if (this.video) this.releaseVideo();
+        if (!template) return null;
+        const fragment = template.content.cloneNode(true);
+        const video = fragment.querySelector('video');
+        if (!video) return null;
+        this.video = video;
+        this.template = template;
+        video.autoplay = false;
+        video.controls = false;
+        video.preload = 'metadata';
+        video.muted = true;
+        video.defaultMuted = true;
+        video.playsInline = true;
+        video.loop = this.dataset.loop === 'true';
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.setAttribute('aria-label', this.dataset.mediaLabel);
+        const signal = this.controller.signal;
+        const isCurrent = () => this.video === video && this.isConnected;
+        video.addEventListener('playing', () => {
+          if (!isCurrent()) return;
+          if (!this.desired || document.hidden || !this.isEnabled()) {
+            video.pause();
+            return;
+          }
+          this.phase = 'playing';
+          this.retryCount = 0;
+          this.classList.add('has-started');
+          this.syncControls();
+        }, { signal });
+        video.addEventListener('pause', () => {
+          if (!isCurrent() || !video.paused) return;
+          if (this.desired) this.blocked = true;
+          this.pause(false);
+        }, { signal });
+        video.addEventListener('waiting', () => {
+          if (!isCurrent() || !this.desired) return;
+          this.phase = 'loading';
+          this.syncControls();
+        }, { signal });
+        video.addEventListener('ended', () => {
+          if (!isCurrent()) return;
+          this.userPaused = true;
+          this.pause(false);
+        }, { signal });
+        video.addEventListener('error', () => {
+          if (isCurrent()) this.showError();
+        }, { signal });
+        video.addEventListener('volumechange', () => {
+          if (isCurrent()) this.syncControls();
+        }, { signal });
+        this.mount.appendChild(fragment);
+        return video;
+      }
+
+      play(manual, retry = false) {
+        if (!this.controller || !this.isConnected || document.hidden || !this.isEnabled()) return;
+        if (this.desired && this.phase === 'loading' && (!manual || this.manual)) return;
+        const video = this.ensureVideo();
+        if (!video) return;
+        clearTimeout(this.retryTimer);
+        this.retryTimer = null;
+        if (manual) {
+          this.userPaused = false;
+          this.blocked = false;
+          this.failed = false;
+          this.peer = null;
+          if (!retry) this.retryCount = 0;
+          if (video.error) video.load();
+        } else {
+          video.muted = true;
+          video.defaultMuted = true;
+        }
+        this.manual = manual;
+        this.desired = true;
+        this.phase = 'loading';
+        this.token += 1;
+        const token = this.token;
+        this.errorMessage.hidden = true;
+        video.preload = 'auto';
+        this.syncControls();
+        document.dispatchEvent(new CustomEvent('zootify:product-film:start', { detail: { owner: this } }));
+        try {
+          video.play()?.catch(error => this.playFailed(error, token, manual));
+        } catch (error) {
+          this.playFailed(error, token, manual);
+        }
+      }
+
+      playFailed(error, token, manual) {
+        if (!this.controller || token !== this.token) return;
+        this.pause();
+        if (error.name === 'NotAllowedError') {
+          this.blocked = true;
+          return;
+        }
+        if (error.name !== 'AbortError') {
+          this.showError();
+          return;
+        }
+        this.retryCount += 1;
+        if (this.retryCount > 2) {
+          this.blocked = true;
+          return;
+        }
+        this.phase = 'loading';
+        this.syncControls();
+        this.retryTimer = setTimeout(() => {
+          this.retryTimer = null;
+          if (!this.controller || !this.isConnected) return;
+          this.measure();
+          if (this.isEnabled() && this.visible && !document.hidden && !this.userPaused && (manual || this.canAutoplay())) this.play(manual, true);
+          else this.pause();
+        }, 160 * this.retryCount);
+      }
+
+      pause(invokePause = true) {
+        const wasDesired = this.desired;
+        this.token += 1;
+        this.desired = false;
+        this.phase = this.failed ? 'error' : 'paused';
+        clearTimeout(this.retryTimer);
+        this.retryTimer = null;
+        if (invokePause && this.video && !this.video.paused) this.video.pause();
+        this.syncControls();
+        if (wasDesired) document.dispatchEvent(new CustomEvent('zootify:product-film:stop', { detail: { owner: this } }));
+      }
+
+      showError() {
+        this.failed = true;
+        this.pause();
+        this.classList.remove('has-started');
+        this.errorMessage.hidden = false;
+      }
+
+      releaseVideo() {
+        this.pause();
+        const video = this.video;
+        this.video = null;
+        this.template = null;
+        this.classList.remove('has-started');
+        if (video) {
+          video.pause();
+          video.removeAttribute('src');
+          video.querySelectorAll('source').forEach(source => source.remove());
+          video.load();
+          video.remove();
+        }
+        this.failed = false;
+        this.blocked = false;
+        this.errorMessage.hidden = true;
+      }
+
+      syncControls() {
+        const playing = this.phase === 'playing' && this.video && !this.video.paused && this.desired;
+        const loading = this.phase === 'loading';
+        const muted = this.video ? this.video.muted : true;
+        this.classList.toggle('is-playing', Boolean(playing));
+        this.classList.toggle('is-loading', loading);
+        this.classList.toggle('is-muted', muted);
+        this.playButton?.setAttribute('aria-label', loading ? this.dataset.loadingLabel : playing ? this.dataset.pauseLabel : this.dataset.playLabel);
+        this.playButton?.setAttribute('aria-pressed', String(Boolean(playing)));
+        this.playButton?.setAttribute('aria-busy', String(loading));
+        this.soundButton?.setAttribute('aria-label', muted ? this.dataset.unmuteLabel : this.dataset.muteLabel);
+        this.soundButton?.setAttribute('aria-pressed', String(!muted));
+      }
+
+      queue() {
+        if (this.updateFrame) return;
+        this.updateFrame = requestAnimationFrame(() => {
+          this.updateFrame = null;
+          this.reconcile();
+        });
+      }
+
+      disconnectedCallback() {
+        cancelAnimationFrame(this.startFrame);
+        cancelAnimationFrame(this.updateFrame);
+        this.updateFrame = null;
+        if (this.controller) this.releaseVideo();
+        this.controller?.abort();
+        this.controller = null;
+        this.observer?.disconnect();
+        this.peer = null;
+        this.classList.remove('is-playing', 'is-loading', 'has-started');
+      }
+    }
+    customElements.define('zootify-product-film', ZootifyProductFilm);
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "ZOOTIFY Product Film",
+  "tag": "section",
+  "class": "zootify-product-film-section",
+  "enabled_on": {"templates": ["product"]},
+  "settings": [
+    {"type": "checkbox", "id": "enabled", "label": "Show section", "default": true},
+    {"type": "checkbox", "id": "show_desktop", "label": "Show on desktop", "default": false, "info": "Turn on when a desktop video is ready. Hidden videos do not load or play."},
+    {"type": "checkbox", "id": "show_mobile", "label": "Show on mobile", "default": true},
+    {"type": "paragraph", "content": "Choose shared media in Content → Metaobjects → ZOOTIFY — Family Media. Main video is used on desktop; Mobile video is for a vertical or mobile cut. If Mobile video is empty, it uses Main video. Each product selects its family through the Family Media metafield."},
+    {"type": "header", "content": "Playback"},
+    {"type": "checkbox", "id": "autoplay_desktop", "label": "Autoplay on desktop", "default": true, "info": "Plays muted when visible. Reduced motion and data-saving preferences are respected."},
+    {"type": "checkbox", "id": "autoplay_mobile", "label": "Autoplay on mobile", "default": true},
+    {"type": "checkbox", "id": "loop", "label": "Loop video", "default": true},
+    {"type": "checkbox", "id": "show_sound", "label": "Show sound control", "default": true},
+    {"type": "header", "content": "Media framing"},
+    {"type": "select", "id": "width", "label": "Desktop banner width", "options": [{"value": "contained", "label": "Page width"}, {"value": "full", "label": "Full width (edge to edge)"}], "default": "full"},
+    {"type": "range", "id": "max_width", "label": "Page-width banner maximum", "min": 800, "max": 2000, "step": 40, "unit": "px", "default": 1440, "info": "Used when Desktop banner width is Page width."},
+    {"type": "select", "id": "ratio_desktop", "label": "Desktop aspect ratio", "options": [{"value": "adapt", "label": "Original media"}, {"value": "16 / 9", "label": "Landscape 16:9"}, {"value": "21 / 9", "label": "Cinematic 21:9"}, {"value": "4 / 3", "label": "Landscape 4:3"}, {"value": "1", "label": "Square"}], "default": "16 / 9"},
+    {"type": "select", "id": "ratio_mobile", "label": "Mobile aspect ratio", "options": [{"value": "adapt", "label": "Original media"}, {"value": "16 / 9", "label": "Landscape 16:9"}, {"value": "1", "label": "Square"}, {"value": "4 / 5", "label": "Portrait 4:5"}, {"value": "9 / 16", "label": "Portrait 9:16"}], "default": "adapt", "info": "Upload a mobile video in the family entry for a different composition."},
+    {"type": "select", "id": "media_fit", "label": "Desktop media fit", "options": [{"value": "contain", "label": "Show entire media"}, {"value": "cover", "label": "Fill frame (crop)"}], "default": "cover"},
+    {"type": "select", "id": "media_fit_mobile", "label": "Mobile media fit", "options": [{"value": "contain", "label": "Show entire media"}, {"value": "cover", "label": "Fill frame (crop)"}], "default": "contain"},
+    {"type": "range", "id": "radius", "label": "Desktop corner radius", "min": 0, "max": 48, "step": 2, "unit": "px", "default": 24},
+    {"type": "range", "id": "radius_mobile", "label": "Mobile corner radius", "min": 0, "max": 32, "step": 2, "unit": "px", "default": 16},
+    {"type": "header", "content": "Heading and text"},
+    {"type": "checkbox", "id": "show_heading", "label": "Show family heading and text", "default": true},
+    {"type": "select", "id": "text_position", "label": "Banner text", "options": [{"value": "overlay", "label": "Overlay on banner"}, {"value": "above", "label": "Above banner"}, {"value": "hidden", "label": "Hidden"}], "default": "overlay"},
+    {"type": "select", "id": "overlay_position", "label": "Overlay vertical position", "options": [{"value": "top", "label": "Top"}, {"value": "center", "label": "Center"}, {"value": "bottom", "label": "Bottom"}], "default": "center"},
+    {"type": "color", "id": "overlay_text_color", "label": "Overlay text color", "default": "#ffffff"},
+    {"type": "range", "id": "overlay_opacity", "label": "Overlay darkness", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 40, "info": "Adds contrast behind overlaid text. Set Banner text to Hidden for a clean video."},
+    {"type": "text_alignment", "id": "text_alignment", "label": "Text alignment", "default": "center"},
+    {"type": "range", "id": "text_width", "label": "Text maximum width", "min": 320, "max": 1200, "step": 20, "unit": "px", "default": 720},
+    {"type": "range", "id": "text_gap", "label": "Space below text above banner", "min": 12, "max": 64, "step": 2, "unit": "px", "default": 28},
+    {"type": "range", "id": "heading_size", "label": "Desktop heading size", "min": 20, "max": 64, "step": 2, "unit": "px", "default": 36},
+    {"type": "range", "id": "heading_size_mobile", "label": "Mobile heading size", "min": 18, "max": 44, "step": 1, "unit": "px", "default": 26},
+    {"type": "select", "id": "heading_weight", "label": "Heading weight", "options": [{"value": "400", "label": "Regular"}, {"value": "500", "label": "Medium"}, {"value": "600", "label": "Semibold"}, {"value": "700", "label": "Bold"}, {"value": "800", "label": "Extra bold"}], "default": "600"},
+    {"type": "range", "id": "body_size", "label": "Desktop text size", "min": 12, "max": 22, "step": 1, "unit": "px", "default": 16},
+    {"type": "range", "id": "body_size_mobile", "label": "Mobile text size", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 14},
+    {"type": "header", "content": "Colors and controls"},
+    {"type": "color", "id": "background", "label": "Section background", "default": "#ffffff"},
+    {"type": "color", "id": "media_background", "label": "Media frame background", "default": "#f5f6f5"},
+    {"type": "color", "id": "text_color", "label": "Text above banner color", "default": "#01161e"},
+    {"type": "color", "id": "control_background", "label": "Control background", "default": "#ffffff"},
+    {"type": "color", "id": "control_color", "label": "Control icon color", "default": "#01161e"},
+    {"type": "range", "id": "control_size", "label": "Control size", "min": 44, "max": 64, "step": 2, "unit": "px", "default": 44},
+    {"type": "range", "id": "control_offset", "label": "Control inset", "min": 12, "max": 40, "step": 2, "unit": "px", "default": 20},
+    {"type": "header", "content": "Desktop spacing"},
+    {"type": "range", "id": "gutter_desktop", "label": "Side spacing", "min": 0, "max": 100, "step": 2, "unit": "px", "default": 40},
+    {"type": "range", "id": "padding_top", "label": "Top spacing", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40},
+    {"type": "range", "id": "padding_bottom", "label": "Bottom spacing", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40},
+    {"type": "header", "content": "Mobile spacing"},
+    {"type": "range", "id": "gutter_mobile", "label": "Side spacing", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 16},
+    {"type": "range", "id": "padding_top_mobile", "label": "Top spacing", "min": 0, "max": 100, "step": 2, "unit": "px", "default": 24},
+    {"type": "range", "id": "padding_bottom_mobile", "label": "Bottom spacing", "min": 0, "max": 100, "step": 2, "unit": "px", "default": 24}
+  ],
+  "presets": [{"name": "ZOOTIFY Product Film", "category": "Product"}]
+}
+{% endschema %}

@@ -106,7 +106,8 @@
           {{ 'content.no_products_found' | t }}
         </h2>
         <p>
-          {{ 'content.use_fewer_filters_html' | t: link: collection.url, class: 'main-collection-grid__empty-link' }}
+          {%- capture zbf_clear_url -%}{% render 'zootify-preview-url', url: collection.url %}{%- endcapture -%}
+          {{ 'content.use_fewer_filters_html' | t: link: zbf_clear_url, class: 'main-collection-grid__empty-link' }}
         </p>
       </div>
     {% else %}
@@ -229,3 +230,4 @@
     }
   }
 {% endstylesheet %}
+

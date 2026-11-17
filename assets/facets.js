@@ -37,6 +37,9 @@ class FacetsFormComponent extends Component {
     const searchQuery = this.#getSearchQuery();
     if (searchQuery) newParameters.set(SEARCH_QUERY, searchQuery);
 
+    const currentView = new URL(window.location.href).searchParams.get('view');
+    if (currentView === 'black-friday') newParameters.set('view', currentView);
+
     return newParameters;
   }
 
@@ -97,7 +100,10 @@ class FacetsFormComponent extends Component {
    * @param {string} url - The URL to update filters with
    */
   updateFiltersByURL(url) {
-    history.pushState('', '', url);
+    const destination = new URL(url, window.location.origin);
+    const currentView = new URL(window.location.href).searchParams.get('view');
+    if (currentView === 'black-friday') destination.searchParams.set('view', currentView);
+    history.pushState('', '', destination.toString());
     this.dispatchEvent(new FilterUpdateEvent(this.createURLParameters()));
     this.#updateSection();
   }
@@ -910,3 +916,4 @@ const CURRENCY_DECIMALS = {
   XTS: 0,
   XUA: 0,
 };
+

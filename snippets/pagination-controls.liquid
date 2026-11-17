@@ -31,9 +31,10 @@
     >
       <li class="pagination__item">
         {%- if paginate.previous -%}
-          {%- assign prev_params = paginate.previous.url | split: '?' | last -%}
+          {%- capture zbf_prev_url -%}{% render 'zootify-preview-url', url: paginate.previous.url %}{%- endcapture -%}
+          {%- assign prev_params = zbf_prev_url | split: '?' | last -%}
           <a
-            href="{{ paginate.previous.url }}"
+            href="{{ zbf_prev_url | escape }}"
             aria-label="{{ 'content.pagination.previous' | t }}"
             class="pagination__link pagination__link--arrow"
             {% if on_click_handler != blank %}
@@ -104,9 +105,10 @@
         %}
         <li class="{{ li_classes }}">
           {%- if part.is_link -%}
-            {%- assign part_params = part.url | split: '?' | last -%}
+            {%- capture zbf_part_url -%}{% render 'zootify-preview-url', url: part.url %}{%- endcapture -%}
+          {%- assign part_params = zbf_part_url | split: '?' | last -%}
             <a
-              href="{{ part.url }}"
+              href="{{ zbf_part_url | escape }}"
               aria-label="{{ 'content.pagination.page' | t: page: part.title }}"
               class="pagination__link pagination__link--page"
               {% if on_click_handler != blank %}
@@ -136,9 +138,10 @@
 
       <li class="pagination__item">
         {%- if paginate.next -%}
-          {%- assign next_params = paginate.next.url | split: '?' | last -%}
+          {%- capture zbf_next_url -%}{% render 'zootify-preview-url', url: paginate.next.url %}{%- endcapture -%}
+          {%- assign next_params = zbf_next_url | split: '?' | last -%}
           <a
-            href="{{ paginate.next.url }}"
+            href="{{ zbf_next_url | escape }}"
             aria-label="{{ 'content.pagination.next' | t }}"
             class="pagination__link pagination__link--arrow"
             {% if on_click_handler != blank %}
@@ -363,3 +366,4 @@
     }
   }
 {% endstylesheet %}
+

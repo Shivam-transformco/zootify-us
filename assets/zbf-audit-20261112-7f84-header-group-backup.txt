@@ -1,0 +1,221 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "zootify_announcement_bar_q8K7U9": {
+      "type": "zootify-announcement-bar",
+      "blocks": {
+        "message_W10first": {
+          "type": "message",
+          "settings": {
+            "text": "10% off your first order – use code WELCOME10",
+            "mobile_text": "10% off first order: WELCOME10",
+            "link": "",
+            "link_label": "",
+            "mobile_link_label": "",
+            "new_tab": false,
+            "icon": "none"
+          }
+        },
+        "message_3TART4": {
+          "type": "message",
+          "settings": {
+            "text": "Buy any 2 cases, save 20%",
+            "mobile_text": "",
+            "standard_offer": true,
+            "link": "",
+            "link_label": "",
+            "mobile_link_label": "",
+            "new_tab": false,
+            "icon": "none"
+          }
+        },
+        "message_PB4cj3": {
+          "type": "message",
+          "settings": {
+            "text": "Free standard shipping on all orders.",
+            "mobile_text": "Free standard shipping",
+            "link": "shopify://policies/shipping-policy",
+            "link_label": "",
+            "mobile_link_label": "",
+            "new_tab": false,
+            "icon": "truck"
+          }
+        },
+        "countdown_BF2026": {
+          "type": "countdown",
+          "settings": {
+            "timer_source": "campaign",
+            "prefix": "Black Friday sale starts in",
+            "live_prefix": "Black Friday sale ends in",
+            "mobile_prefix": "Sale starts in",
+            "mobile_live_prefix": "Sale ends in",
+            "custom_date": "",
+            "custom_time": "00:00",
+            "custom_timezone": ""
+          }
+        },
+        "message_BFoffer": {
+          "type": "message",
+          "settings": {
+            "text": "Buy 2 Get 1 FREE · or up to 30% off",
+            "mobile_text": "Buy 2 Get 1 FREE · up to 30% off",
+            "display_phase": "live",
+            "standard_offer": false,
+            "link": "",
+            "link_label": "",
+            "mobile_link_label": "",
+            "new_tab": false,
+            "icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "countdown_BF2026",
+        "message_BFoffer",
+        "message_W10first",
+        "message_3TART4",
+        "message_PB4cj3"
+      ],
+      "name": "ZOOTIFY announcement bar",
+      "settings": {
+        "enable_bar": true,
+        "page_scope": "all",
+        "devices": "both",
+        "auto_rotate": true,
+        "rotation_interval": 5,
+        "transition": "fade",
+        "font_source": "body",
+        "custom_font": "montserrat_n4",
+        "uppercase": false,
+        "underline_links": true,
+        "link_weight": "500",
+        "size_desktop": 14,
+        "weight_desktop": "400",
+        "line_height_desktop": 15,
+        "letter_spacing_desktop": 0,
+        "align_desktop": "center",
+        "min_height_desktop": 36,
+        "padding_top_desktop": 8,
+        "padding_bottom_desktop": 8,
+        "padding_side_desktop": 24,
+        "size_mobile": 13,
+        "weight_mobile": "400",
+        "line_height_mobile": 15,
+        "letter_spacing_mobile": 0,
+        "align_mobile": "center",
+        "min_height_mobile": 40,
+        "padding_top_mobile": 8,
+        "padding_bottom_mobile": 8,
+        "padding_side_mobile": 12,
+        "content_width": "contained",
+        "max_width": 1440,
+        "background_color": "#000000",
+        "background_gradient": "",
+        "text_color": "#ffffff",
+        "link_color": "#ffffff",
+        "link_hover_color": "#7dc762",
+        "icon_color": "#ffffff",
+        "control_color": "#656565",
+        "border_width": 0,
+        "border_color": "#222222",
+        "icon_size_desktop": 16,
+        "icon_size_mobile": 16,
+        "icon_gap": 8,
+        "show_close": false,
+        "dismiss_memory": "session",
+        "dismiss_days": 7,
+        "dismiss_revision": "1",
+        "region_label": "Store announcements",
+        "previous_label": "Previous announcement",
+        "next_label": "Next announcement",
+        "close_label": "Dismiss announcement bar",
+        "position_label": "Announcement {current} of {total}",
+        "new_tab_label": "opens in a new tab"
+      }
+    },
+    "header_section": {
+      "type": "header",
+      "blocks": {
+        "header-logo": {
+          "type": "_header-logo",
+          "static": true,
+          "settings": {
+            "hide_logo_on_home_page": false,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "header-menu": {
+          "type": "_header-menu",
+          "static": true,
+          "settings": {
+            "menu": "main-menu",
+            "color_scheme": "",
+            "type_font_primary_size": "var(--font-size--body-md)",
+            "menu_font_style": "inverse",
+            "type_font_primary_link": "heading",
+            "type_case_primary_link": "none",
+            "menu_style": "text",
+            "featured_products_aspect_ratio": "4 / 5",
+            "featured_collections_aspect_ratio": "16 / 9",
+            "image_border_radius": 0,
+            "navigation_bar": false,
+            "color_scheme_navigation_bar": "",
+            "drawer_accordion": true,
+            "drawer_accordion_expand_first": false,
+            "drawer_dividers": false
+          },
+          "blocks": {}
+        }
+      },
+      "custom_css": [],
+      "settings": {
+        "logo_position": "left",
+        "menu_position": "center",
+        "menu_row": "top",
+        "show_search": true,
+        "search_position": "right",
+        "search_row": "top",
+        "show_country": true,
+        "country_selector_style": true,
+        "show_language": true,
+        "localization_font": "body",
+        "localization_font_size": "0.75rem",
+        "localization_position": "right",
+        "localization_row": "top",
+        "section_width": "full-width",
+        "section_height": "compact",
+        "enable_sticky_header": "always",
+        "divider_width": 0,
+        "divider_size": "page-width",
+        "border_width": 0,
+        "color_scheme_top": "scheme-1",
+        "color_scheme_bottom": "",
+        "color_scheme_transparent": "scheme-6",
+        "enable_transparent_header_home": false,
+        "home_color_scheme": "inverse",
+        "enable_transparent_header_product": false,
+        "product_color_scheme": "default",
+        "enable_transparent_header_collection": false,
+        "collection_color_scheme": "default"
+      }
+    }
+  },
+  "order": [
+    "zootify_announcement_bar_q8K7U9",
+    "header_section"
+  ]
+}

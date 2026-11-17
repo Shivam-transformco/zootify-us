@@ -12,6 +12,86 @@
     "hero_banner_KdECd7": {
       "type": "hero-banner",
       "blocks": {
+        "slide_8J3biY": {
+          "type": "slide",
+          "settings": {
+            "heading": "",
+            "subtext": "",
+            "content_alignment": "left",
+            "heading_color": "#0d0d0d",
+            "subtext_color": "#0d0d0d",
+            "heading_size_desktop": 35,
+            "heading_size_mobile": 26,
+            "subtext_size_desktop": 16,
+            "subtext_size_mobile": 14,
+            "heading_font_weight": 700,
+            "subtext_font_weight": 400,
+            "heading_subtext_spacing": 2,
+            "desktop_layout": "full",
+            "desktop_left_type": "image",
+            "desktop_right_type": "image",
+            "desktop_full_type": "image",
+            "desktop_full_image": "shopify://shop_images/black_friday_desktop_banner_7.png",
+            "mobile_layout": "full",
+            "mobile_top_type": "image",
+            "mobile_bottom_type": "image",
+            "mobile_full_type": "image",
+            "mobile_full_image": "shopify://shop_images/black_friday_916_8.png",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://collections/black-friday",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": true,
+            "button_custom_background": "#0d0d0d",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#0d0d0d",
+            "button_custom_hover_background": "#ce423b",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#ce423b",
+            "button_custom_radius": 3,
+            "button_custom_border_width": 1
+          }
+        },
+        "slide_LQkrUn": {
+          "type": "slide",
+          "settings": {
+            "heading": "",
+            "subtext": "",
+            "content_alignment": "left",
+            "heading_color": "#ffffff",
+            "subtext_color": "#ffffff",
+            "heading_size_desktop": 48,
+            "heading_size_mobile": 28,
+            "subtext_size_desktop": 16,
+            "subtext_size_mobile": 14,
+            "heading_font_weight": 700,
+            "subtext_font_weight": 400,
+            "heading_subtext_spacing": 12,
+            "desktop_layout": "full",
+            "desktop_left_type": "image",
+            "desktop_right_type": "image",
+            "desktop_full_type": "image",
+            "desktop_full_image": "shopify://shop_images/black_friday_desktop_banner_6.png",
+            "mobile_layout": "full",
+            "mobile_top_type": "image",
+            "mobile_bottom_type": "image",
+            "mobile_full_type": "image",
+            "mobile_full_image": "shopify://shop_images/black_friday_916_9.png",
+            "button_label": "SHOP NOW",
+            "button_link": "shopify://collections/black-friday",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": true,
+            "button_custom_background": "#ce423b",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#ce423b",
+            "button_custom_hover_background": "#0d0d0d",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#0d0d0d",
+            "button_custom_radius": 3,
+            "button_custom_border_width": 1
+          }
+        },
         "slide_jafzRT": {
           "type": "slide",
           "settings": {
@@ -38,7 +118,18 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/bannerforgemobile.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/forgecraft-burgundy-for-iphone-18-pro"
+            "button_link": "shopify://products/forgecraft-burgundy-for-iphone-18-pro",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_VpfVbN": {
@@ -69,36 +160,18 @@
             "mobile_full_type": "video",
             "mobile_full_video": "shopify://files/videos/Final Launch video_FROSTAND.mp4",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/frostand-magsafe-kickstand-cases"
-          }
-        },
-        "slide_8J3biY": {
-          "type": "slide",
-          "settings": {
-            "heading": "CARRY WITH PURPOSE",
-            "subtext": "Now available for iPhone 18 Series.",
-            "content_alignment": "left",
-            "heading_color": "#1a1a1a",
-            "subtext_color": "#343434",
-            "heading_size_desktop": 35,
-            "heading_size_mobile": 26,
-            "subtext_size_desktop": 16,
-            "subtext_size_mobile": 16,
-            "heading_font_weight": 700,
-            "subtext_font_weight": 400,
-            "heading_subtext_spacing": 2,
-            "desktop_layout": "full",
-            "desktop_left_type": "image",
-            "desktop_right_type": "image",
-            "desktop_full_type": "image",
-            "desktop_full_image": "shopify://shop_images/Gemini_Generated_Image_unk1okunk1okunk1_copy.png",
-            "mobile_layout": "full",
-            "mobile_top_type": "image",
-            "mobile_bottom_type": "image",
-            "mobile_full_type": "image",
-            "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_cuigeqcuigeqcuig_copy.png",
-            "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/iphone-18-pro"
+            "button_link": "shopify://collections/frostand-magsafe-kickstand-cases",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_3QABPz": {
@@ -124,10 +197,22 @@
             "mobile_layout": "full",
             "mobile_top_type": "image",
             "mobile_bottom_type": "image",
-            "mobile_full_type": "image",
+            "mobile_full_type": "video",
             "mobile_full_image": "shopify://shop_images/ZOOTIFY_Mobile.webp",
+            "mobile_full_video": "shopify://files/videos/Frostand_Mobile_10sec_FINAL_1080p.mp4",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/frostand-magsafe-kickstand-cases"
+            "button_link": "shopify://collections/frostand-magsafe-kickstand-cases",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_RUGfKG": {
@@ -157,7 +242,18 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/banner_ridge_leather.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/ridge-black-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro"
+            "button_link": "shopify://products/ridge-black-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_nML68w": {
@@ -187,7 +283,18 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_dc2er0dc2er0dc2e_copy.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/ridge-silver-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro-max"
+            "button_link": "shopify://products/ridge-silver-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro-max",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_MmmeK8": {
@@ -218,7 +325,18 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/shoot3_1.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/ironclad-transparent-orange-magsafe-case-cover-for-iphone-17-pro"
+            "button_link": "shopify://products/ironclad-transparent-orange-magsafe-case-cover-for-iphone-17-pro",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_mjYDLQ": {
@@ -250,7 +368,18 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/shoot3_1.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/frostand-blue-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-air"
+            "button_link": "shopify://products/frostand-blue-frosted-magsafe-case-cover-with-kickstand-for-iphone-17-air",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_GA8zC4": {
@@ -278,7 +407,18 @@
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://pages/iphone-variants"
+            "button_link": "shopify://pages/iphone-variants",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_WaQFdL": {
@@ -306,7 +446,18 @@
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/ridge-grey-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro"
+            "button_link": "shopify://products/ridge-grey-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_BeNqzx": {
@@ -334,7 +485,18 @@
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/ironcladaura"
+            "button_link": "shopify://collections/ironcladaura",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_JaATGx": {
@@ -362,7 +524,18 @@
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/forgecraft-brown-vintage-leather-grip-case-for-iphone-16-pro"
+            "button_link": "shopify://products/forgecraft-brown-vintage-leather-grip-case-for-iphone-16-pro",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_WMnHti": {
@@ -390,14 +563,26 @@
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/back-covers"
+            "button_link": "shopify://collections/back-covers",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         }
       },
       "block_order": [
+        "slide_8J3biY",
+        "slide_LQkrUn",
         "slide_jafzRT",
         "slide_VpfVbN",
-        "slide_8J3biY",
         "slide_3QABPz",
         "slide_RUGfKG",
         "slide_nML68w",
@@ -490,6 +675,152 @@
         "padding_bottom_mobile": 30,
         "padding_left_mobile": 4,
         "padding_right_mobile": 16
+      }
+    },
+    "zootify_video_stories": {
+      "type": "zootify-video-stories",
+      "blocks": {
+        "frostand_motion": {
+          "type": "story",
+          "settings": {
+            "media_type": "video",
+            "video": "shopify://files/videos/Frostand_White_1080p_Sound_And_Outro.mp4",
+            "image": "shopify://shop_images/Gemini_Generated_Image_c3m836c3m836c3m8_2_copy_3fa91284-2a5f-44b6-a148-29507e5170e3.png",
+            "media_fit": "cover",
+            "media_position": "center center",
+            "title": "Frostand",
+            "caption": "Functional yet playful.",
+            "product": "",
+            "link": "shopify://collections/frostand-magsafe-kickstand-cases",
+            "new_tab": false,
+            "accessibility_label": "Frostand MagSafe cases shown in a short product animation",
+            "captions_url": "",
+            "captions_language": "en",
+            "captions_label": "English"
+          }
+        },
+        "forgecraft_detail": {
+          "type": "story",
+          "settings": {
+            "media_type": "video",
+            "video": "shopify://files/videos/Forgecraft FINAL .mp4",
+            "image": "shopify://shop_images/Forgecraft_Burgundy_05_Leather_Cloth_Silver_iPhone.png",
+            "media_fit": "cover",
+            "media_position": "center center",
+            "title": "ForgeCraft",
+            "caption": "The Ultimate Luxury.",
+            "product": "forgecraft-light-blue-for-iphone-18-pro",
+            "link": "",
+            "new_tab": false,
+            "accessibility_label": "Close-up of the blue ForgeCraft case and camera surround",
+            "captions_url": "",
+            "captions_language": "en",
+            "captions_label": "English"
+          }
+        },
+        "frostand_story": {
+          "type": "story",
+          "settings": {
+            "media_type": "video",
+            "video": "shopify://files/videos/Anita edit 7_FINAL_SHORT (1).mp4",
+            "media_fit": "cover",
+            "media_position": "center center",
+            "title": "Hands free moments.",
+            "caption": "Carry it your way.",
+            "product": "",
+            "link": "shopify://collections/frostand-magsafe-kickstand-cases",
+            "new_tab": false,
+            "accessibility_label": "Zootify Frostand product launch video",
+            "captions_url": "",
+            "captions_language": "en",
+            "captions_label": "English"
+          }
+        },
+        "forgecraft_everyday": {
+          "type": "story",
+          "settings": {
+            "media_type": "video",
+            "video": "shopify://files/videos/hf_20261114_105501_33905130-0e71-477e-aaaf-8c30da0af33d.mp4",
+            "media_fit": "cover",
+            "media_position": "center center",
+            "title": "Leatherite Texture",
+            "caption": "ForgeCraft, every day.",
+            "product": "forgecraft-burgundy-for-iphone-18-pro",
+            "link": "",
+            "new_tab": false,
+            "accessibility_label": "A burgundy ForgeCraft case carried in a jacket pocket",
+            "captions_url": "",
+            "captions_language": "en",
+            "captions_label": "English"
+          }
+        },
+        "ridge_everyday": {
+          "type": "story",
+          "settings": {
+            "media_type": "video",
+            "video": "shopify://files/videos/download (1)_548a96bd-4a09-42c0-8a17-f44281b09b18.mp4",
+            "media_fit": "cover",
+            "media_position": "center center",
+            "title": "Ridge",
+            "caption": "Texture with purpose.",
+            "product": "ridge-orange-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro",
+            "link": "",
+            "new_tab": false,
+            "accessibility_label": "An orange Ridge case held during everyday use",
+            "captions_url": "",
+            "captions_language": "en",
+            "captions_label": "English"
+          }
+        }
+      },
+      "block_order": [
+        "frostand_motion",
+        "forgecraft_detail",
+        "frostand_story",
+        "forgecraft_everyday",
+        "ridge_everyday"
+      ],
+      "settings": {
+        "heading": "Worth Carrying. Worth Watching.",
+        "subheading": "See the details. Watch them work.",
+        "alignment": "left",
+        "heading_size": 44,
+        "heading_size_mobile": 26,
+        "heading_weight": "600",
+        "max_width": 1728,
+        "side_padding": 4,
+        "side_padding_mobile": 20,
+        "cards_desktop": 3.5,
+        "cards_mobile": 1.4,
+        "ratio": "13 / 20",
+        "ratio_mobile": "13 / 20",
+        "gap": 20,
+        "gap_mobile": 16,
+        "radius": 16,
+        "radius_mobile": 16,
+        "title_size": 20,
+        "title_size_mobile": 16,
+        "caption_size": 16,
+        "caption_size_mobile": 13,
+        "overlay_opacity": 80,
+        "autoplay": true,
+        "loop": true,
+        "show_sound": true,
+        "show_arrows": true,
+        "mobile_arrows": false,
+        "show_progress": true,
+        "background": "#ffffff",
+        "text_color": "#01161e",
+        "muted_color": "#606364",
+        "card_background": "#f3f3f1",
+        "card_text": "#ffffff",
+        "control_background": "#01161e",
+        "control_color": "#ffffff",
+        "accent": "#65c352",
+        "padding_top": 56,
+        "padding_bottom": 48,
+        "padding_top_mobile": 24,
+        "padding_bottom_mobile": 28
       }
     },
     "zootify_best_sellers_text_prV8xc": {
@@ -755,14 +1086,25 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/frostandkickstandmagsafe.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://collections/frostand-magsafe-kickstand-cases"
+            "button_link": "shopify://collections/frostand-magsafe-kickstand-cases",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_6zyJRq": {
           "type": "slide",
           "settings": {
             "heading": "THE FORGECRAFT COLLECTION",
-            "subtext": "The Ultimate Luxury.",
+            "subtext": "PRO. NOT PREDICTABLE.",
             "content_alignment": "left",
             "heading_color": "#ffffff",
             "subtext_color": "#ffffff",
@@ -788,7 +1130,18 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_6f10ts6f10ts6f10_copy_7150c10d-5010-405d-9a05-86d8595c0c76.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/forgecraft-light-blue-for-iphone-18-pro"
+            "button_link": "shopify://products/forgecraft-light-blue-for-iphone-18-pro",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_DW4AAE": {
@@ -821,7 +1174,18 @@
             "mobile_full_type": "image",
             "mobile_full_image": "shopify://shop_images/Gemini_Generated_Image_718xem718xem718x_copy_9dfd206e-a1c1-4548-bba2-3c435a04dd0a.png",
             "button_label": "SHOP NOW",
-            "button_link": "shopify://products/ridge-orange-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro"
+            "button_link": "shopify://products/ridge-orange-premium-modern-leather-texture-magsafe-case-cover-for-iphone-17-pro",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         }
       },
@@ -941,7 +1305,44 @@
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
-              "blocks": {}
+              "blocks": {
+                "hero-deal-badge": {
+                  "type": "_zootify-hero-deal-badge",
+                  "static": true,
+                  "settings": {
+                    "zbf_badge_enabled": true,
+                    "zbf_badge_label": "B2G1",
+                    "zbf_badge_scope": "all",
+                    "zbf_badge_mode": "all",
+                    "zbf_badge_products": [],
+                    "zbf_badge_tag": "hero-deal",
+                    "zbf_badge_shape": "pill",
+                    "zbf_badge_position": "top-left",
+                    "zbf_badge_link_insets": true,
+                    "zbf_badge_background": "#ce423b",
+                    "zbf_badge_color": "#ffffff",
+                    "zbf_badge_radius": 13,
+                    "zbf_badge_font": "body",
+                    "zbf_badge_weight": "600",
+                    "zbf_badge_case": "uppercase",
+                    "zbf_badge_size": 11,
+                    "zbf_badge_offset": 10,
+                    "zbf_badge_offset_y": 10,
+                    "zbf_badge_pad_x": 10,
+                    "zbf_badge_pad_y": 5,
+                    "zbf_badge_corner": 64,
+                    "zbf_badge_size_mobile": 10,
+                    "zbf_badge_position_mobile": "inherit",
+                    "zbf_badge_offset_mobile": 8,
+                    "zbf_badge_offset_y_mobile": 8,
+                    "zbf_badge_pad_x_mobile": 8,
+                    "zbf_badge_pad_y_mobile": 4,
+                    "zbf_badge_corner_mobile": 56
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": []
             },
             "product_title_GHQDAP": {
               "type": "product-title",
@@ -1813,7 +2214,18 @@
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
             "button_label": "",
-            "button_link": ""
+            "button_link": "",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         },
         "slide_CY7Qh4": {
@@ -1840,7 +2252,18 @@
             "mobile_bottom_type": "image",
             "mobile_full_type": "image",
             "button_label": "",
-            "button_link": ""
+            "button_link": "",
+            "button_gap_desktop": 18,
+            "button_gap_mobile": 18,
+            "button_style_override": false,
+            "button_custom_background": "#111111",
+            "button_custom_text": "#ffffff",
+            "button_custom_border": "#111111",
+            "button_custom_hover_background": "#333333",
+            "button_custom_hover_text": "#ffffff",
+            "button_custom_hover_border": "#333333",
+            "button_custom_radius": 8,
+            "button_custom_border_width": 1
           }
         }
       },
@@ -1947,6 +2370,7 @@
   "order": [
     "hero_banner_KdECd7",
     "shop_by_category_MGfVXR",
+    "zootify_video_stories",
     "zootify_best_sellers_text_prV8xc",
     "frostand_section_4wMLwq",
     "hero_banner_qCNr7E",

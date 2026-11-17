@@ -99,7 +99,7 @@
         "zc_show_express": false,
         "zc_express_price": 10,
         "zc_express_title": "Need it sooner?",
-        "zc_express_text": "Express shipping available",
+        "zc_express_text": "Express shipping is available for [price] extra.",
         "zc_show_policies": true,
         "zc_policy_label": "Delivery & returns",
         "zc_returns_text": "Request an eligible return within 10 days of delivery. Items must be unused, undamaged and in their original packaging. Opened or used cases are not eligible. Return shipping charges may vary and will be communicated during the return approval process. Applicable charges will be deducted from your refund when a ZOOTIFY-provided return label is used. See our full Returns & Refunds Policy for exclusions and exceptions.",
@@ -188,7 +188,44 @@
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
-              "blocks": {}
+              "blocks": {
+                "hero-deal-badge": {
+                  "type": "_zootify-hero-deal-badge",
+                  "static": true,
+                  "settings": {
+                    "zbf_badge_enabled": true,
+                    "zbf_badge_label": "Hero deal",
+                    "zbf_badge_scope": "collection",
+                    "zbf_badge_mode": "all",
+                    "zbf_badge_products": [],
+                    "zbf_badge_tag": "hero-deal",
+                    "zbf_badge_shape": "pill",
+                    "zbf_badge_position": "top-left",
+                    "zbf_badge_link_insets": true,
+                    "zbf_badge_background": "#111111",
+                    "zbf_badge_color": "#ffffff",
+                    "zbf_badge_radius": 30,
+                    "zbf_badge_font": "body",
+                    "zbf_badge_weight": "600",
+                    "zbf_badge_case": "uppercase",
+                    "zbf_badge_size": 11,
+                    "zbf_badge_offset": 10,
+                    "zbf_badge_offset_y": 10,
+                    "zbf_badge_pad_x": 10,
+                    "zbf_badge_pad_y": 5,
+                    "zbf_badge_corner": 64,
+                    "zbf_badge_size_mobile": 10,
+                    "zbf_badge_position_mobile": "inherit",
+                    "zbf_badge_offset_mobile": 8,
+                    "zbf_badge_offset_y_mobile": 8,
+                    "zbf_badge_pad_x_mobile": 8,
+                    "zbf_badge_pad_y_mobile": 4,
+                    "zbf_badge_corner_mobile": 56
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": []
             },
             "product_title_8LK9Nm": {
               "type": "product-title",
@@ -374,7 +411,44 @@
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
               },
-              "blocks": {}
+              "blocks": {
+                "hero-deal-badge": {
+                  "type": "_zootify-hero-deal-badge",
+                  "static": true,
+                  "settings": {
+                    "zbf_badge_enabled": true,
+                    "zbf_badge_label": "Hero deal",
+                    "zbf_badge_scope": "collection",
+                    "zbf_badge_mode": "all",
+                    "zbf_badge_products": [],
+                    "zbf_badge_tag": "hero-deal",
+                    "zbf_badge_shape": "pill",
+                    "zbf_badge_position": "top-left",
+                    "zbf_badge_link_insets": true,
+                    "zbf_badge_background": "#111111",
+                    "zbf_badge_color": "#ffffff",
+                    "zbf_badge_radius": 30,
+                    "zbf_badge_font": "body",
+                    "zbf_badge_weight": "600",
+                    "zbf_badge_case": "uppercase",
+                    "zbf_badge_size": 11,
+                    "zbf_badge_offset": 10,
+                    "zbf_badge_offset_y": 10,
+                    "zbf_badge_pad_x": 10,
+                    "zbf_badge_pad_y": 5,
+                    "zbf_badge_corner": 64,
+                    "zbf_badge_size_mobile": 10,
+                    "zbf_badge_position_mobile": "inherit",
+                    "zbf_badge_offset_mobile": 8,
+                    "zbf_badge_offset_y_mobile": 8,
+                    "zbf_badge_pad_x_mobile": 8,
+                    "zbf_badge_pad_y_mobile": 4,
+                    "zbf_badge_corner_mobile": 56
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": []
             },
             "product_title_WNMpHe": {
               "type": "product-title",

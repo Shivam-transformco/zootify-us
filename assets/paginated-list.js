@@ -286,7 +286,7 @@ export default class PaginatedList extends Component {
     const parsedPage = new DOMParser().parseFromString(pageHTML, 'text/html');
     const gridElement = parsedPage.querySelector('[ref="grid"]');
     if (!gridElement) return;
-    return gridElement.querySelectorAll(':scope > [ref="cards[]"]');
+    return gridElement.querySelectorAll(':scope > [ref="cards[]"], :scope > [data-zbf-promo]');
   }
 
   get sectionId() {
@@ -353,3 +353,4 @@ export default class PaginatedList extends Component {
     }
   };
 }
+

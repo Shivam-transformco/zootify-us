@@ -1556,7 +1556,29 @@
         "step": 1,
         "unit": "px",
         "label": "t:settings.border_radius",
-        "default": 100
+        "default": 3
+      },
+      {
+        "type": "range",
+        "id": "z_primary_button_height",
+        "label": "Primary button minimum height",
+        "min": 36,
+        "max": 60,
+        "step": 2,
+        "unit": "px",
+        "default": 38,
+        "info": "Compact, reference-style CTA height. Long labels can make a button taller."
+      },
+      {
+        "type": "range",
+        "id": "z_primary_button_padding_x",
+        "label": "Primary button side padding",
+        "min": 12,
+        "max": 34,
+        "step": 2,
+        "unit": "px",
+        "default": 14,
+        "info": "Adjusts width without forcing fixed widths on checkout or full-width CTAs."
       },
       {
         "type": "select",
@@ -2943,6 +2965,716 @@
         "id": "zp_button_text",
         "label": "Button text",
         "default": "#6ac857"
+      }
+    ]
+  },
+  {
+    "name": "Black Friday campaign",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "zbf_enabled",
+        "label": "Enable Black Friday campaign",
+        "default": false
+      },
+      {
+        "type": "paragraph",
+        "content": "The sale starts November 17 and runs through November 30 in New York time. Theme dates control presentation only. Set matching dates in Shopify Discounts. Publishing the theme is a separate manual action."
+      },
+      {
+        "type": "text",
+        "id": "zbf_start_date",
+        "label": "Sale start date",
+        "default": "2026-11-17",
+        "info": "YYYY-MM-DD. Publish the approved theme at the opening time on November 17."
+      },
+      {
+        "type": "text",
+        "id": "zbf_start_time",
+        "label": "Sale start time",
+        "default": "00:00",
+        "info": "24-hour time in the selected timezone. 00:00 means midnight at the beginning of the start date."
+      },
+      {
+        "type": "text",
+        "id": "zbf_close_date",
+        "label": "Sale end date",
+        "info": "YYYY-MM-DD. December 1 at 00:00 keeps the sale open for all of Cyber Monday, November 30.",
+        "default": "2026-12-01"
+      },
+      {
+        "type": "text",
+        "id": "zbf_close_time",
+        "label": "Sale end time",
+        "default": "00:00",
+        "info": "24-hour time. Match the end timestamp in Shopify Discounts."
+      },
+      {
+        "type": "select",
+        "id": "zbf_timezone",
+        "label": "Sale timezone",
+        "default": "America/New_York",
+        "options": [
+          {
+            "value": "America/New_York",
+            "label": "New York / Eastern"
+          },
+          {
+            "value": "America/Chicago",
+            "label": "Chicago / Central"
+          },
+          {
+            "value": "America/Denver",
+            "label": "Denver / Mountain"
+          },
+          {
+            "value": "America/Los_Angeles",
+            "label": "Los Angeles / Pacific"
+          },
+          {
+            "value": "Asia/Kolkata",
+            "label": "India"
+          },
+          {
+            "value": "UTC",
+            "label": "UTC"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "zbf_preview_phase",
+        "label": "Theme editor preview",
+        "default": "schedule",
+        "options": [
+          {
+            "value": "schedule",
+            "label": "Use actual schedule"
+          },
+          {
+            "value": "upcoming",
+            "label": "Before sale: days"
+          },
+          {
+            "value": "last_day",
+            "label": "Before sale: under 24 hours"
+          },
+          {
+            "value": "live",
+            "label": "Sale live"
+          },
+          {
+            "value": "ended",
+            "label": "Sale ended"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": "Preview modes affect only the theme editor and never apply coupons. A live preview needs an end date to show the end countdown."
+      },
+      {
+        "type": "checkbox",
+        "id": "zbf_internal_test_mode",
+        "label": "Test discounts in unpublished theme",
+        "default": false,
+        "info": "Shows live offers for review outside the theme editor. Ignored on a published theme. The Shopify codes themselves are store-wide; deactivate them after testing."
+      },
+      {
+        "type": "checkbox",
+        "id": "zbf_native_ready",
+        "label": "Enable Black Friday cart offers",
+        "default": true,
+        "info": "Enables the cart controls during the sale or unpublished-theme testing. Shopify discount records must also be active."
+      },
+      {
+        "type": "checkbox",
+        "id": "zbf_auto_percentage",
+        "label": "Automatically apply percentage offer",
+        "default": true,
+        "info": "Selects BF10, BF20 or BF30 by cart quantity. Explicit B2G1, WELCOME10 and Remove choices are respected."
+      },
+      {
+        "type": "checkbox",
+        "id": "zbf_announcement_enabled",
+        "label": "Show campaign announcement blocks",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "zbf_pdp_enabled",
+        "label": "Show Black Friday product box",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "zbf_cart_enabled",
+        "label": "Show cart offer selector",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "zbf_disable_signup_popup",
+        "label": "Keep signup popup disabled",
+        "default": true,
+        "info": "WELCOME10 stays available from the cart before, during and after the sale."
+      },
+      {
+        "type": "header",
+        "content": "Coupon codes"
+      },
+      {
+        "type": "text",
+        "id": "zbf_code_b2g1",
+        "label": "Buy 2 Get 1 Free code",
+        "default": "BFB2G1"
+      },
+      {
+        "type": "text",
+        "id": "zbf_code_bf10",
+        "label": "One-item percentage code",
+        "default": "BF10"
+      },
+      {
+        "type": "text",
+        "id": "zbf_code_bf20",
+        "label": "Two-item percentage code",
+        "default": "BF20"
+      },
+      {
+        "type": "text",
+        "id": "zbf_code_bf30",
+        "label": "Three-or-more percentage code",
+        "default": "BF30"
+      },
+      {
+        "type": "text",
+        "id": "zbf_code_welcome",
+        "label": "Existing welcome code",
+        "default": "WELCOME10"
+      }
+    ]
+  },
+  {
+    "name": "Black Friday product offer",
+    "settings": [
+      {
+        "type": "text",
+        "id": "zbf_pdp_eyebrow",
+        "label": "Small heading",
+        "default": "BLACK FRIDAY · SITEWIDE"
+      },
+      {
+        "type": "text",
+        "id": "zbf_pdp_headline",
+        "label": "Primary offer",
+        "default": "Buy 2 Get 1"
+      },
+      {
+        "type": "text",
+        "id": "zbf_pdp_reward",
+        "label": "Accent word",
+        "default": "FREE"
+      },
+      {
+        "type": "text",
+        "id": "zbf_pdp_secondary",
+        "label": "Secondary offer",
+        "default": "or up to 30% off"
+      },
+      {
+        "type": "select",
+        "id": "zbf_font_source",
+        "label": "Campaign font",
+        "default": "body",
+        "options": [
+          {
+            "value": "body",
+            "label": "Theme body font"
+          },
+          {
+            "value": "custom",
+            "label": "Custom font"
+          }
+        ]
+      },
+      {
+        "type": "font_picker",
+        "id": "zbf_custom_font",
+        "label": "Custom campaign font",
+        "default": "montserrat_n4"
+      },
+      {
+        "type": "select",
+        "id": "zbf_pdp_alignment",
+        "label": "Box text alignment",
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "zbf_pdp_heading_weight",
+        "label": "Offer font weight",
+        "default": "600",
+        "options": [
+          {
+            "value": "400",
+            "label": "Regular"
+          },
+          {
+            "value": "500",
+            "label": "Medium"
+          },
+          {
+            "value": "600",
+            "label": "Semibold"
+          },
+          {
+            "value": "700",
+            "label": "Bold"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_heading_size",
+        "label": "Desktop primary offer size",
+        "default": 25,
+        "min": 18,
+        "max": 36,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_heading_size_mobile",
+        "label": "Mobile primary offer size",
+        "default": 22,
+        "min": 18,
+        "max": 30,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_eyebrow_size",
+        "label": "Desktop small heading size",
+        "default": 10,
+        "min": 9,
+        "max": 14,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_eyebrow_size_mobile",
+        "label": "Mobile small heading size",
+        "default": 9,
+        "min": 9,
+        "max": 13,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_secondary_size",
+        "label": "Desktop secondary offer size",
+        "default": 13,
+        "min": 11,
+        "max": 18,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_secondary_size_mobile",
+        "label": "Mobile secondary offer size",
+        "default": 12,
+        "min": 11,
+        "max": 16,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "color",
+        "id": "zbf_pdp_background",
+        "label": "Background",
+        "default": "#111111"
+      },
+      {
+        "type": "color",
+        "id": "zbf_pdp_text",
+        "label": "Main text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "zbf_pdp_accent",
+        "label": "Accent text",
+        "default": "#f15b57"
+      },
+      {
+        "type": "color",
+        "id": "zbf_pdp_secondary_color",
+        "label": "Secondary text",
+        "default": "#dfdfdf"
+      },
+      {
+        "type": "color",
+        "id": "zbf_pdp_border",
+        "label": "Border",
+        "default": "#252525"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_radius",
+        "label": "Corner radius",
+        "default": 8,
+        "min": 0,
+        "max": 24,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_padding",
+        "label": "Desktop inner spacing",
+        "default": 22,
+        "min": 12,
+        "max": 40,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_padding_mobile",
+        "label": "Mobile inner spacing",
+        "default": 18,
+        "min": 12,
+        "max": 32,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_space_top",
+        "label": "Desktop space above",
+        "default": 16,
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_space_bottom",
+        "label": "Desktop space below",
+        "default": 16,
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_space_top_mobile",
+        "label": "Mobile space above",
+        "default": 14,
+        "min": 0,
+        "max": 32,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_pdp_space_bottom_mobile",
+        "label": "Mobile space below",
+        "default": 14,
+        "min": 0,
+        "max": 32,
+        "step": 2,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Black Friday countdown",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Product countdown styling. Days appear when 24 hours or more remain, and seconds update live. Edit announcement text and reminder dates in its Countdown block under Header > ZOOTIFY announcement bar."
+      },
+      {
+        "type": "checkbox",
+        "id": "zbf_pdp_timer_enabled",
+        "label": "Show product countdown panel",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "zbf_starts_label",
+        "label": "Product timer before sale",
+        "default": "Sale starts in"
+      },
+      {
+        "type": "text",
+        "id": "zbf_ends_label",
+        "label": "Product timer during sale",
+        "default": "Sale ends in"
+      },
+      {
+        "type": "range",
+        "id": "zbf_timer_size",
+        "label": "Desktop countdown label size",
+        "default": 13,
+        "min": 10,
+        "max": 18,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "zbf_timer_size_mobile",
+        "label": "Mobile countdown label size",
+        "default": 12,
+        "min": 10,
+        "max": 16,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "select",
+        "id": "zbf_timer_weight",
+        "label": "Number weight",
+        "default": "500",
+        "options": [
+          {
+            "value": "400",
+            "label": "Regular"
+          },
+          {
+            "value": "500",
+            "label": "Medium"
+          },
+          {
+            "value": "600",
+            "label": "Semibold"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "zbf_timer_alignment",
+        "label": "Product timer alignment",
+        "default": "space-between",
+        "options": [
+          {
+            "value": "flex-start",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "space-between",
+            "label": "Label left, numbers right"
+          }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "zbf_timer_text",
+        "label": "Product timer label",
+        "default": "#606060"
+      },
+      {
+        "type": "color",
+        "id": "zbf_timer_digits",
+        "label": "Product timer numbers",
+        "default": "#111111"
+      },
+      {
+        "type": "range",
+        "id": "zbf_timer_space",
+        "label": "Gap between label and timer",
+        "default": 10,
+        "min": 4,
+        "max": 24,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "color",
+        "id": "zbf_timer_panel_background",
+        "label": "Countdown panel background",
+        "default": "#f7f6f6"
+      },
+      {
+        "type": "color",
+        "id": "zbf_timer_cell_background",
+        "label": "Number box background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "zbf_timer_cell_border",
+        "label": "Number box border",
+        "default": "#e8e3e3"
+      },
+      {
+        "type": "range",
+        "id": "zbf_timer_digit_size",
+        "label": "Desktop countdown number size",
+        "min": 14,
+        "max": 30,
+        "step": 1,
+        "unit": "px",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "zbf_timer_digit_size_mobile",
+        "label": "Mobile countdown number size",
+        "min": 14,
+        "max": 26,
+        "step": 1,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "range",
+        "id": "zbf_timer_cell_radius",
+        "label": "Number box corner radius",
+        "min": 0,
+        "max": 12,
+        "step": 1,
+        "unit": "px",
+        "default": 5
+      },
+      {
+        "type": "color",
+        "id": "zbf_timer_accent",
+        "label": "Seconds accent color",
+        "default": "#c62831"
+      }
+    ]
+  },
+  {
+    "name": "Black Friday cart offers",
+    "settings": [
+      {
+        "type": "select",
+        "id": "zbf_cart_font",
+        "label": "Offer font",
+        "options": [
+          {
+            "value": "body",
+            "label": "Body"
+          },
+          {
+            "value": "heading",
+            "label": "Heading"
+          }
+        ],
+        "default": "body"
+      },
+      {
+        "type": "range",
+        "id": "zbf_cart_font_size",
+        "label": "Desktop offer text size",
+        "min": 11,
+        "max": 18,
+        "step": 1,
+        "unit": "px",
+        "default": 13
+      },
+      {
+        "type": "range",
+        "id": "zbf_cart_mobile_font_size",
+        "label": "Mobile offer text size",
+        "min": 11,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "default": 12
+      },
+      {
+        "type": "color",
+        "id": "zbf_cart_text",
+        "label": "Offer text",
+        "default": "#151515"
+      },
+      {
+        "type": "color",
+        "id": "zbf_cart_muted",
+        "label": "Offer secondary text",
+        "default": "#686868"
+      },
+      {
+        "type": "color",
+        "id": "zbf_cart_border",
+        "label": "Offer borders",
+        "default": "#e1e1e1"
+      },
+      {
+        "type": "color",
+        "id": "zbf_cart_surface",
+        "label": "Available offer background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "zbf_cart_locked_surface",
+        "label": "Unavailable offer background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "zbf_cart_button",
+        "label": "Apply button",
+        "default": "#111111"
+      },
+      {
+        "type": "color",
+        "id": "zbf_cart_button_text",
+        "label": "Apply button text",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "zbf_cart_accent",
+        "label": "Buy 2, Get 1 accent",
+        "default": "#c92831"
+      },
+      {
+        "type": "range",
+        "id": "zbf_cart_row_padding",
+        "label": "Offer row padding",
+        "min": 8,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "zbf_cart_radius",
+        "label": "Offer corner radius",
+        "min": 0,
+        "max": 12,
+        "step": 1,
+        "unit": "px",
+        "default": 4
       }
     ]
   }

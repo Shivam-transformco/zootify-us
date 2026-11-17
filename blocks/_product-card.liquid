@@ -7,7 +7,7 @@
   endif
 -%}
 
-<div class="product-card-wrapper">
+<div class="product-card-wrapper" {{ block.shopify_attributes }}>
 
   {% if settings.show_sale_badges and discount_percent %}
     <div class="discount-badge">
@@ -19,11 +19,11 @@
     {% content_for 'blocks', closest.product: product %}
   {% endcapture %}
 
-  {% render 'product-card', children: children, product: product %}
+  {% render 'product-card', children: children, product: product, skip_block_attributes: true %}
 
 </div>
 
-<style>
+{% stylesheet %}
 .product-card-wrapper{
   position: relative;
 }
@@ -51,7 +51,7 @@
                   border-radius: 2px; 
                   letter-spacing: 0.2px;
                  } }
-</style>
+{% endstylesheet %}
 
 {% schema %}
 {

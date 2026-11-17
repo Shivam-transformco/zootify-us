@@ -10,6 +10,7 @@
   @param {string} [editor_attributes] - Theme editor block attributes.
   @param {boolean} [force_empty] - Render an empty cart state.
 {% enddoc %}
+{% if settings.zbf_enabled %}<zootify-bf-region data-zbf-normal hidden>{% endif %}
 {%- if settings.zp_enabled or settings.zp_offer_enabled or settings.zp_discount_code != blank -%}
   {%- liquid
     assign pairing_context = context | default: 'product'
@@ -229,3 +230,5 @@
     </zootify-pairing>
   {% endpaginate %}
 {%- endif -%}
+
+{% if settings.zbf_enabled %}</zootify-bf-region>{% endif %}

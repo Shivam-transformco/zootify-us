@@ -3,18 +3,37 @@ import { morph } from '@theme/morph';
 
 class ProductInventory extends HTMLElement {
   connectedCallback() {
-    const closestSection = this.closest('.shopify-section, dialog');
-    closestSection?.addEventListener(ThemeEvents.variantUpdate, this.updateInventory);
+    this.inventorySection = this.closest('.shopify-section, dialog');
+    this.inventorySection?.addEventListener(ThemeEvents.variantUpdate, this.updateInventory);
+
+    // A small stock badge can be placed immediately after the heading
+    // without including fluctuating inventory quantities in the H1.
+    if (this.dataset.zootifyTitleBadge === 'true') {
+      this.placeBesideProductTitle();
+    }
   }
 
   disconnectedCallback() {
-    const closestSection = this.closest('.shopify-section, dialog');
-    closestSection?.removeEventListener(ThemeEvents.variantUpdate, this.updateInventory);
+    this.inventorySection?.removeEventListener(ThemeEvents.variantUpdate, this.updateInventory);
+    this.inventorySection = null;
+  }
+
+  placeBesideProductTitle() {
+    const details = this.closest('.product-details[data-testid="product-information-details"]');
+    if (!details) return;
+    const titleBlock = details.querySelector(
+      ':scope > .group-block > .group-block-content > [class*="mobile-text-control--"] > .text-block'
+    );
+    const heading = titleBlock?.querySelector(
+      ':scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > h5, :scope > h6'
+    );
+    if (!heading || this.parentElement === titleBlock) return;
+    heading.insertAdjacentElement('afterend', this);
   }
 
   /**
-   * Updates the inventory.
-   * @param {VariantUpdateEvent} event - The variant update event.
+   * Update the inventory when the chosen variant or product changes.
+   * @param {VariantUpdateEvent} event
    */
   updateInventory = (event) => {
     if (event.detail.data.newProduct) {
@@ -24,9 +43,7 @@ class ProductInventory extends HTMLElement {
     }
 
     const newInventory = event.detail.data.html.querySelector('product-inventory');
-
     if (!newInventory) return;
-
     morph(this, newInventory, { childrenOnly: true });
   };
 }

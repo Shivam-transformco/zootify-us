@@ -1,0 +1,1460 @@
+{% liquid
+  assign s = section.settings
+  assign media_count = 0
+  assign image_loading = 'lazy'
+  if section.index == 1
+    assign image_loading = 'eager'
+  endif
+%}
+{% capture story_cards %}
+  {% for block in section.blocks %}
+    {% liquid
+      assign b = block.settings
+      assign has_video = false
+      if b.media_type == 'video' and b.video != blank
+        assign has_video = true
+      endif
+      assign cover = b.image
+      if cover == blank and has_video
+        assign cover = b.video.preview_image
+      endif
+      if cover == blank and b.product != blank
+        assign cover = b.product.featured_image
+      endif
+      assign card_title = b.title
+      if card_title == blank and b.product != blank
+        assign card_title = b.product.title
+      endif
+      assign media_label = b.accessibility_label | default: card_title | default: s.heading | strip_html
+      assign destination = b.link
+      if destination == blank and b.product != blank
+        assign destination = b.product.url
+      endif
+      assign show_card = false
+      if has_video or cover != blank or request.design_mode
+        assign show_card = true
+      endif
+    %}
+    {% if show_card %}
+      {% assign media_count = media_count | plus: 1 %}
+      <li
+        class="zms__card is-muted{% if has_video %} zms__card--video{% endif %}"
+        data-zms-card
+        data-block-id="{{ block.id }}"
+        style="--zms-fit: {{ b.media_fit }}; --zms-position: {{ b.media_position }};"
+        {{ block.shopify_attributes }}
+      >
+        <div class="zms__media">
+          {% if cover != blank %}
+            <picture data-zms-poster>
+              {% if b.mobile_image != blank %}
+                <source media="(max-width: 749px)" srcset="{{ b.mobile_image | image_url: width: 400 }} 400w, {{ b.mobile_image | image_url: width: 600 }} 600w, {{ b.mobile_image | image_url: width: 900 }} 900w" sizes="75vw" width="{{ b.mobile_image.width }}" height="{{ b.mobile_image.height }}">
+              {% endif %}
+              {{ cover | image_url: width: 1000 | image_tag: widths: '240, 360, 480, 640, 800, 1000', sizes: '(min-width: 1800px) 500px, (min-width: 900px) 30vw, (min-width: 500px) 48vw, 75vw', loading: image_loading, class: 'zms__image', alt: media_label }}
+            </picture>
+          {% else %}
+            <div class="zms__placeholder">
+              {{ 'product-1' | placeholder_svg_tag: 'zms__placeholder-svg' }}
+              <span>{{ 'zootify_media_stories.add_media' | t }}</span>
+            </div>
+          {% endif %}
+        </div>
+        {% if has_video %}
+          <template data-zms-video-template>
+            {% capture video_markup %}{{ b.video | video_tag: image_size: '800x', preload: 'none', autoplay: false, muted: true, loop: s.loop, controls: false, class: 'zms__video' }}{% endcapture %}
+            {% if b.captions_url != blank %}
+              {% capture caption_track %}<track kind="captions" src="{{ b.captions_url | escape }}" srclang="{{ b.captions_language | default: 'en' | escape }}" label="{{ b.captions_label | default: 'English' | escape }}" default>{% endcapture %}
+              {% assign caption_track = caption_track | append: '</video>' %}
+              {% assign video_markup = video_markup | replace: '</video>', caption_track | replace: '<video ', '<video crossorigin="anonymous" ' %}
+            {% endif %}
+            {{ video_markup }}
+          </template>
+          <noscript>
+            <div class="zms__native">{{ video_markup | replace: '<video ', '<video controls ' }}</div>
+          </noscript>
+          <button class="zms__icon-button zms__play" type="button" data-zms-play data-play-label="{{ 'zootify_media_stories.play' | t | escape }}: {{ media_label | escape }}" data-pause-label="{{ 'zootify_media_stories.pause' | t | escape }}: {{ media_label | escape }}" aria-label="{{ 'zootify_media_stories.play' | t | escape }}: {{ media_label | escape }}" aria-pressed="false">
+            <svg class="zms__icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6a1 1 0 0 1 1.5-.86l10 6.4a1 1 0 0 1 0 1.72l-10 6.4A1 1 0 0 1 8 18.4Z"/></svg>
+            <svg class="zms__icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          </button>
+          {% if s.show_sound %}
+            <button class="zms__icon-button zms__mute" type="button" data-zms-mute data-mute-label="{{ 'zootify_media_stories.mute' | t | escape }}: {{ media_label | escape }}" data-unmute-label="{{ 'zootify_media_stories.unmute' | t | escape }}: {{ media_label | escape }}" aria-label="{{ 'zootify_media_stories.unmute' | t | escape }}: {{ media_label | escape }}" aria-pressed="false">
+              <svg class="zms__icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 3 18 18M10 5l3-2v6M5 9H3v6h4l6 5v-7M17 8a7 7 0 0 1 1.7 7M19.5 5a11 11 0 0 1 2 13"/></svg>
+              <svg class="zms__icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h4l6-5v16l-6-5H3ZM17 8a6 6 0 0 1 0 8M20 5a10 10 0 0 1 0 14"/></svg>
+            </button>
+          {% endif %}
+          <p class="zms__error" data-zms-error role="status" hidden>{{ 'zootify_media_stories.video_error' | t }}</p>
+        {% endif %}
+        {% if card_title != blank or b.caption != blank or destination != blank %}
+          <div class="zms__caption{% if destination != blank %} zms__caption--linked{% endif %}">
+            <div class="zms__copy">
+              {% if card_title != blank %}<h3 class="zms__card-title">{{ card_title | escape }}</h3>{% endif %}
+              {% if b.caption != blank %}<p class="zms__card-caption">{{ b.caption | escape }}</p>{% endif %}
+            </div>
+            {% if destination != blank %}
+              <a class="zms__icon-button zms__product-link" href="{{ destination }}" aria-label="{{ 'zootify_media_stories.explore' | t | escape }}: {{ media_label | escape }}"{% if b.new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </li>
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+{% if media_count > 0 or request.design_mode %}
+  <zootify-media-stories
+    id="ZootifyMediaStories-{{ section.id }}"
+    class="zms{% if s.show_arrows %} zms--arrows{% endif %}{% if s.mobile_arrows %} zms--mobile-arrows{% endif %}"
+    data-autoplay="{{ s.autoplay }}"
+    data-loop="{{ s.loop }}"
+    data-play-label="{{ 'zootify_media_stories.play' | t | escape }}"
+    data-pause-label="{{ 'zootify_media_stories.pause' | t | escape }}"
+    data-mute-label="{{ 'zootify_media_stories.mute' | t | escape }}"
+    data-unmute-label="{{ 'zootify_media_stories.unmute' | t | escape }}"
+    style="--zms-max-width: {{ s.max_width }}px; --zms-edge-d: {{ s.side_padding }}vw; --zms-edge-m: {{ s.side_padding_mobile }}px; --zms-per-view-d: {{ s.cards_desktop }}; --zms-per-view-m: {{ s.cards_mobile }}; --zms-gap-d: {{ s.gap }}px; --zms-gap-m: {{ s.gap_mobile }}px; --zms-ratio-d: {{ s.ratio }}; --zms-ratio-m: {{ s.ratio_mobile }}; --zms-radius-d: {{ s.radius }}px; --zms-radius-m: {{ s.radius_mobile }}px; --zms-top-d: {{ s.padding_top }}px; --zms-bottom-d: {{ s.padding_bottom }}px; --zms-top-m: {{ s.padding_top_mobile }}px; --zms-bottom-m: {{ s.padding_bottom_mobile }}px; --zms-heading-d: {{ s.heading_size }}px; --zms-heading-m: {{ s.heading_size_mobile }}px; --zms-heading-weight: {{ s.heading_weight }}; --zms-title-d: {{ s.title_size }}px; --zms-title-m: {{ s.title_size_mobile }}px; --zms-caption-d: {{ s.caption_size }}px; --zms-caption-m: {{ s.caption_size_mobile }}px; --zms-background: {{ s.background }}; --zms-text: {{ s.text_color }}; --zms-muted: {{ s.muted_color }}; --zms-card-background: {{ s.card_background }}; --zms-card-text: {{ s.card_text }}; --zms-card-muted: {{ s.card_text | color_modify: 'alpha', 0.8 }}; --zms-accent: {{ s.accent }}; --zms-control-background: {{ s.control_background | color_modify: 'alpha', 0.32 }}; --zms-control-color: {{ s.control_color }}; --zms-overlay: {{ s.overlay_opacity | divided_by: 100.0 }}; --zms-align: {{ s.alignment }};"
+  >
+    <div class="zms__header">
+      <div class="zms__intro">
+        {% if s.heading != blank %}<h2 id="ZootifyMediaHeading-{{ section.id }}" class="zms__heading">{{ s.heading }}</h2>{% endif %}
+        {% if s.subheading != blank %}<p class="zms__subheading">{{ s.subheading | escape }}</p>{% endif %}
+      </div>
+      <div class="zms__navigation" aria-label="{{ 'zootify_media_stories.navigation' | t | escape }}">
+        <button class="zms__nav-button" data-zms-prev type="button" disabled aria-label="{{ 'zootify_media_stories.previous' | t | escape }}" aria-controls="ZootifyMediaTrack-{{ section.id }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+        <button class="zms__nav-button" data-zms-next type="button" aria-label="{{ 'zootify_media_stories.next' | t | escape }}" aria-controls="ZootifyMediaTrack-{{ section.id }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg></button>
+      </div>
+    </div>
+    <ul class="zms__track" id="ZootifyMediaTrack-{{ section.id }}" data-zms-track tabindex="0" aria-label="{{ s.heading | strip_html | default: shop.name | escape }}">
+      {{ story_cards }}
+    </ul>
+    {% if s.show_progress %}<div class="zms__progress" data-zms-progress aria-hidden="true"><span></span></div>{% endif %}
+  </zootify-media-stories>
+{% endif %}
+
+{% stylesheet %}
+.zms {
+  --zms-edge: var(--zms-edge-d);
+  --zms-gutter: max(var(--zms-edge), calc((100% - var(--zms-max-width)) / 2));
+  --zms-per-view: var(--zms-per-view-d);
+  --zms-gap: var(--zms-gap-d);
+  --zms-ratio: var(--zms-ratio-d);
+  --zms-radius: var(--zms-radius-d);
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  padding-block: var(--zms-top-d) var(--zms-bottom-d);
+  background: var(--zms-background);
+  color: var(--zms-text);
+  font-family: var(--font-body--family, inherit);
+}
+.zms *, .zms *::before, .zms *::after { box-sizing: border-box; }
+.zms [hidden] { display: none !important; }
+.zms__header {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin: 0 var(--zms-gutter) 32px;
+}
+.zms__intro { flex: 1; min-width: 0; text-align: var(--zms-align); }
+.zms .zms__heading {
+  margin: 0;
+  max-width: none;
+  font-family: var(--font-heading--family, var(--font-body--family, inherit));
+  font-size: var(--zms-heading-d);
+  font-weight: var(--zms-heading-weight);
+  font-style: normal;
+  line-height: 1.14;
+  letter-spacing: -0.035em;
+  text-transform: none;
+  color: var(--zms-text);
+  text-wrap: balance;
+}
+.zms .zms__subheading { margin: 10px 0 0; font: inherit; font-size: 16px; line-height: 1.5; color: var(--zms-muted); }
+.zms__navigation { display: none; flex: 0 0 auto; gap: 12px; align-items: center; }
+.zms.is-ready.has-overflow.zms--arrows .zms__navigation { display: flex; }
+.zms .zms__nav-button {
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--zms-text) 12%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--zms-text) 4%, var(--zms-background));
+  color: var(--zms-text);
+  box-shadow: none;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.zms .zms__nav-button:disabled { opacity: 0.3; cursor: default; }
+.zms__nav-button svg { display: block; width: 20px; height: 20px; }
+.zms__track {
+  display: flex;
+  align-items: stretch;
+  gap: var(--zms-gap);
+  list-style: none;
+  width: 100%;
+  margin: 0;
+  padding: 0 var(--zms-gutter) 2px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--zms-gutter);
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.zms__track::-webkit-scrollbar { display: none; }
+.zms__card {
+  position: relative;
+  isolation: isolate;
+  flex: 0 0 calc((100% - (var(--zms-per-view) - 1) * var(--zms-gap)) / var(--zms-per-view));
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--zms-radius);
+  aspect-ratio: var(--zms-ratio);
+  background: var(--zms-card-background);
+  scroll-snap-align: start;
+}
+.zms__media, .zms__media picture, .zms__native { position: absolute; inset: 0; display: block; }
+.zms__media picture { transition: opacity 180ms ease; }
+.zms .zms__image, .zms .zms__video, .zms__native video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: var(--zms-fit);
+  object-position: var(--zms-position);
+  border-radius: 0;
+}
+.zms .zms__video { position: absolute; inset: 0; opacity: 0; }
+.zms__card.has-started .zms__video { opacity: 1; }
+.zms__card.has-started [data-zms-poster] { opacity: 0; }
+.zms__card.has-error .zms__video { opacity: 0; }
+.zms__card.has-error [data-zms-poster] { opacity: 1; }
+.zms__native { z-index: 3; }
+.zms__placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; text-align: center; color: var(--zms-muted); font-size: 14px; }
+.zms__placeholder-svg { width: 75%; max-height: 65%; fill: currentColor; opacity: 0.32; }
+.zms .zms__icon-button {
+  appearance: none;
+  position: absolute;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 50%;
+  background: var(--zms-control-background);
+  color: var(--zms-control-color);
+  text-decoration: none;
+  box-shadow: none;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  touch-action: manipulation;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+.zms__icon-button svg { width: 22px; height: 22px; display: block; }
+.zms .zms__play { top: 50%; left: 50%; transform: translate(-50%, -50%); width: 56px; height: 56px; }
+.zms .zms__play svg { width: 26px; height: 26px; }
+.zms .zms__mute { top: 20px; right: 20px; }
+.zms .zms__product-link { position: relative; align-self: flex-end; }
+.zms:not(.is-ready) .zms__play, .zms:not(.is-ready) .zms__mute { display: none; }
+.zms__icon-pause, .zms__icon-unmuted { display: none !important; }
+.zms__card.is-playing .zms__icon-play, .zms__card:not(.is-muted) .zms__icon-muted { display: none !important; }
+.zms__card.is-playing .zms__icon-pause, .zms__card:not(.is-muted) .zms__icon-unmuted { display: block !important; }
+.zms .zms__card.is-playing .zms__play { top: 20px; left: 20px; transform: none; width: 48px; height: 48px; }
+.zms .zms__card.is-playing .zms__play svg { width: 20px; height: 20px; }
+.zms__card.is-loading:not(.is-playing) .zms__play .zms__icon-play { opacity: 0; }
+.zms__card.is-loading:not(.is-playing) .zms__play::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: zms-loading 800ms linear infinite;
+}
+@keyframes zms-loading { to { transform: rotate(360deg); } }
+.zms__caption {
+  position: absolute;
+  z-index: 2;
+  inset: auto 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 80px 24px 28px;
+  color: var(--zms-card-text);
+  pointer-events: none;
+}
+.zms__caption::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 35%) 48%, #000 100%); opacity: var(--zms-overlay); }
+.zms__copy { min-width: 0; }
+.zms__caption a { pointer-events: auto; }
+.zms .zms__card-title { margin: 0; font-family: inherit; font-size: var(--zms-title-d); font-weight: 600; line-height: 1.3; letter-spacing: -0.02em; text-transform: none; color: var(--zms-card-text); overflow-wrap: anywhere; }
+.zms .zms__card-caption { margin: 5px 0 0; font-family: inherit; font-size: var(--zms-caption-d); font-weight: 400; line-height: 1.4; color: var(--zms-card-muted); }
+.zms__card-title, .zms__card-caption { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.zms .zms__error { position: absolute; z-index: 5; top: 50%; left: 16px; right: 16px; transform: translateY(40px); padding: 10px 12px; border-radius: 6px; background: rgb(0 0 0 / 80%); color: #fff; font-size: 12px; line-height: 1.4; text-align: center; }
+.zms__progress { display: none; width: 88px; height: 3px; margin: 24px auto 0; overflow: hidden; border-radius: 3px; background: color-mix(in srgb, var(--zms-text) 12%, transparent); }
+.zms.is-ready.has-overflow .zms__progress { display: block; }
+.zms__progress span { display: block; width: 24px; height: 3px; background: var(--zms-text); border-radius: inherit; transform: translateX(calc(var(--progress, 0) * 64px)); transition: transform 120ms linear; }
+.zms button:focus-visible, .zms a:focus-visible { outline: 3px solid var(--zms-accent); outline-offset: -3px; }
+.zms__track:focus-visible { outline: 2px solid var(--zms-accent); outline-offset: -2px; }
+@media (hover: hover) {
+  .zms .zms__nav-button:not(:disabled):hover { background: var(--zms-accent); border-color: var(--zms-accent); }
+  .zms .zms__icon-button:hover { background: color-mix(in srgb, var(--zms-accent) 85%, #000); border-color: transparent; color: #01161e; }
+}
+@media screen and (max-width: 899px) {
+  .zms { --zms-per-view: 2.1; --zms-gap: var(--zms-gap-m); }
+}
+@media screen and (max-width: 749px) {
+  .zms { --zms-edge: var(--zms-edge-m); --zms-ratio: var(--zms-ratio-m); --zms-radius: var(--zms-radius-m); padding-block: var(--zms-top-m) var(--zms-bottom-m); }
+  .zms__header { flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+  .zms__intro { flex-basis: 100%; }
+  .zms .zms__heading { font-size: var(--zms-heading-m); line-height: 1.16; letter-spacing: -0.025em; text-wrap: initial; }
+  .zms .zms__subheading { font-size: 14px; margin-top: 8px; }
+  .zms.is-ready.has-overflow.zms--arrows:not(.zms--mobile-arrows) .zms__navigation { display: none; }
+  .zms.is-ready.has-overflow.zms--mobile-arrows .zms__navigation { display: flex; margin-left: auto; }
+  .zms .zms__icon-button { width: 44px; height: 44px; }
+  .zms .zms__play { width: 48px; height: 48px; }
+  .zms .zms__mute { top: 12px; right: 12px; }
+  .zms .zms__card.is-playing .zms__play { top: 12px; left: 12px; width: 44px; height: 44px; }
+  .zms__caption { gap: 10px; padding: 64px 16px 20px; }
+  .zms .zms__card-title { font-size: var(--zms-title-m); }
+  .zms .zms__card-caption { font-size: var(--zms-caption-m); margin-top: 4px; }
+  .zms__progress { margin-top: 20px; }
+}
+@media screen and (max-width: 499px) { .zms { --zms-per-view: var(--zms-per-view-m); } }
+@media (prefers-reduced-motion: reduce) { .zms *, .zms *::before, .zms *::after { transition: none !important; scroll-behavior: auto !important; animation: none !important; } }
+
+{% endstylesheet %}
+
+{% javascript %}
+if (!customElements.get('zootify-media-stories')) {
+  class ZootifyMediaStories extends HTMLElement {
+    connectedCallback() {
+      this.startupFrame = requestAnimationFrame(() => this.initialize());
+    }
+
+    initialize() {
+      if (!this.isConnected || this.abortController) return;
+      this.track = this.querySelector('[data-zms-track]');
+      if (!this.track) return;
+      this.abortController = new AbortController();
+      const signal = this.abortController.signal;
+      this.generation = (this.generation || 0) + 1;
+      this.cards = Array.from(this.track.querySelectorAll('[data-zms-card]'));
+      this.previousButton = this.querySelector('[data-zms-prev]');
+      this.nextButton = this.querySelector('[data-zms-next]');
+      this.progress = this.querySelector('[data-zms-progress]');
+      this.dots = Array.from(this.querySelectorAll('[data-zms-dot]'));
+      this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      this.rtl = getComputedStyle(this.track).direction === 'rtl';
+      this.active = null;
+      this.peerOwner = null;
+      this.states = this.cards.map(card => ({
+        card,
+        template: card.querySelector('template[data-zms-video-template]'),
+        mount: card.querySelector('.zms__media'),
+        playButton: card.querySelector('[data-zms-play]'),
+        muteButton: card.querySelector('[data-zms-mute]'),
+        error: card.querySelector('[data-zms-error]'),
+        video: null,
+        phase: 'idle',
+        ratio: 0,
+        horizontalVisibility: 0,
+        verticalVisibility: 0,
+        eligible: false,
+        wasEligible: false,
+        token: 0,
+        generation: this.generation,
+        shouldPlay: false,
+        requested: false,
+        userPaused: false,
+        autoBlocked: false,
+        retryExhausted: false,
+        retryCount: 0,
+        retryTimer: null,
+        mediaFailed: false,
+        manual: false
+      }));
+
+      for (const state of this.states) {
+        if (!state.template) continue;
+        state.card.classList.add('is-muted');
+        state.playButton?.addEventListener('click', () => {
+          if (state.phase === 'playing' && state.video && !state.video.paused) {
+            state.userPaused = true;
+            this.pause(state);
+          } else {
+            state.userPaused = false;
+            state.autoBlocked = false;
+            state.retryExhausted = false;
+            if (state.requested && state.manual && state.phase === 'loading') return;
+            this.play(state, true);
+          }
+        }, { signal });
+        state.muteButton?.addEventListener('click', () => {
+          const video = this.ensureVideo(state);
+          if (!video) return;
+          video.muted = !video.muted;
+          this.syncControls(state);
+        }, { signal });
+        this.syncControls(state);
+      }
+
+      this.previousButton?.addEventListener('click', () => this.step(-1), { signal });
+      this.nextButton?.addEventListener('click', () => this.step(1), { signal });
+      for (const dot of this.dots) {
+        dot.addEventListener('click', () => {
+          const index = Number(dot.dataset.index);
+          if (Number.isInteger(index) && this.cards[index]) this.scrollToCard(this.cards[index]);
+        }, { signal });
+      }
+      this.track.addEventListener('scroll', () => this.queueNavigation(), { passive: true, signal });
+      this.track.addEventListener('scrollend', () => this.queueNavigation(), { signal });
+      this.track.addEventListener('touchend', event => {
+        if (event.target?.closest?.('button, a, input, select, textarea')) return;
+        this.reconcilePlayback({ gesture: true });
+      }, { passive: true, signal });
+      this.track.addEventListener('keydown', event => {
+        if (document.activeElement !== this.track) return;
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        if (event.key === 'Home') this.scrollToPosition(0);
+        else if (event.key === 'End') this.scrollToPosition(this.maxScroll());
+        else this.step((event.key === 'ArrowRight' ? 1 : -1) * (this.rtl ? -1 : 1));
+      }, { signal });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) this.pauseAll();
+        else this.queueNavigation();
+      }, { signal });
+      document.addEventListener('zms:play', event => {
+        if (!event.detail?.owner || event.detail.owner === this) return;
+        this.peerOwner = event.detail.owner;
+        this.pauseAll();
+      }, { signal });
+      document.addEventListener('zms:stop', event => {
+        if (event.detail?.owner !== this.peerOwner) return;
+        this.peerOwner = null;
+        this.queueNavigation();
+      }, { signal });
+      document.addEventListener('shopify:block:select', event => {
+        const card = this.cards.find(item => item.dataset.blockId === event.detail?.blockId);
+        if (!card) return;
+        this.pauseAll();
+        this.scrollToCard(card, 'auto');
+        this.queueNavigation();
+      }, { signal });
+      const preferenceChanged = () => {
+        if (!this.canAutoplay() && this.active && !this.active.manual) this.pause(this.active);
+        this.queueNavigation();
+      };
+      this.reducedMotion.addEventListener('change', preferenceChanged, { signal });
+      navigator.connection?.addEventListener?.('change', preferenceChanged, { signal });
+      window.addEventListener('scroll', () => this.queueNavigation(), { passive: true, signal });
+      window.addEventListener('resize', () => this.queueNavigation(), { passive: true, signal });
+      window.visualViewport?.addEventListener('scroll', () => this.queueNavigation(), { passive: true, signal });
+      window.visualViewport?.addEventListener('resize', () => this.queueNavigation(), { passive: true, signal });
+      window.addEventListener('pagehide', () => this.pauseAll(), { signal });
+      window.addEventListener('pageshow', () => this.queueNavigation(), { signal });
+      this.intersectionObserver = new IntersectionObserver(() => this.queueNavigation(), {
+        rootMargin: '300px 0px', threshold: [0, 1]
+      });
+      this.intersectionObserver.observe(this.track);
+      this.resizeObserver = new ResizeObserver(() => this.queueNavigation());
+      this.resizeObserver.observe(this.track);
+      if (this.cards[0]) this.resizeObserver.observe(this.cards[0]);
+      this.classList.add('is-ready');
+      this.updateNavigation();
+      this.reconcilePlayback();
+    }
+
+    canAutoplay() {
+      const peerPlaying = this.peerOwner?.isConnected && this.peerOwner.active?.shouldPlay;
+      return this.dataset.autoplay === 'true' && !this.reducedMotion.matches &&
+        !navigator.connection?.saveData && !document.hidden && !peerPlaying;
+    }
+
+    viewportBounds() {
+      const viewport = window.visualViewport;
+      const left = viewport?.offsetLeft || 0;
+      const top = viewport?.offsetTop || 0;
+      const width = viewport?.width || window.innerWidth || document.documentElement.clientWidth;
+      const height = viewport?.height || window.innerHeight || document.documentElement.clientHeight;
+      return { left, top, right: left + width, bottom: top + height, width, height };
+    }
+
+    measureCards() {
+      const viewport = this.viewportBounds();
+      const track = this.track.getBoundingClientRect();
+      this.nearViewport = track.width > 0 && track.height > 0 &&
+        track.bottom > viewport.top - 300 && track.top < viewport.bottom + 300;
+      for (const state of this.states) {
+        const rect = state.card.getBoundingClientRect();
+        const width = Math.max(0, Math.min(rect.right, track.right, viewport.right) - Math.max(rect.left, track.left, viewport.left));
+        const height = Math.max(0, Math.min(rect.bottom, track.bottom, viewport.bottom) - Math.max(rect.top, track.top, viewport.top));
+        state.horizontalVisibility = rect.width > 0 ? width / rect.width : 0;
+        state.verticalVisibility = rect.height > 0 ? height / Math.min(rect.height, viewport.height) : 0;
+        state.ratio = state.horizontalVisibility * state.verticalVisibility;
+        state.leadingEdge = this.rtl ? track.right - rect.right : rect.left - track.left;
+        state.eligible = state.horizontalVisibility >= 0.55 && state.verticalVisibility >= 0.35;
+        if (state.eligible && !state.wasEligible) {
+          state.autoBlocked = false;
+          state.retryExhausted = false;
+          state.retryCount = 0;
+        }
+        state.wasEligible = state.eligible;
+      }
+    }
+
+    prominentCard(visibleOnly = true) {
+      const candidates = this.states.filter(state => visibleOnly ? state.eligible : state.horizontalVisibility >= 0.55);
+      candidates.sort((a, b) => {
+        const difference = b.horizontalVisibility - a.horizontalVisibility;
+        return Math.abs(difference) > 0.02 ? difference : a.leadingEdge - b.leadingEdge;
+      });
+      const first = candidates[0];
+      if (first && this.active?.manual && this.active.eligible &&
+        this.active.horizontalVisibility >= 0.98 &&
+        this.active.horizontalVisibility >= first.horizontalVisibility - 0.02 &&
+        this.active.shouldPlay) return this.active;
+      return first || null;
+    }
+
+    warmVideos(candidate) {
+      if (!this.nearViewport || document.hidden || navigator.connection?.saveData || this.reducedMotion.matches) return;
+      const first = candidate || this.prominentCard(false);
+      const start = Math.max(0, this.states.indexOf(first));
+      const upcoming = this.states.slice(start).filter(state => state.template).slice(0, 2);
+      for (const state of upcoming) {
+        if (state.mediaFailed) continue;
+        const video = this.ensureVideo(state);
+        if (video && !state.shouldPlay) video.preload = 'metadata';
+      }
+      for (const state of this.states) {
+        if (state.video && !state.shouldPlay && !upcoming.includes(state)) state.video.preload = 'none';
+      }
+    }
+
+    chooseAutoplay(options = {}) {
+      this.reconcilePlayback(options);
+    }
+
+    reconcilePlayback({ gesture = false } = {}) {
+      if (!this.abortController || !this.isConnected) return;
+      if (document.hidden) {
+        this.pauseAll();
+        return;
+      }
+      this.measureCards();
+      const candidate = this.prominentCard();
+      if (this.active && (!this.active.eligible || (candidate && candidate !== this.active))) this.pause(this.active);
+      this.warmVideos(candidate);
+      if (!candidate || !candidate.template || !this.canAutoplay()) {
+        if (this.active && !this.active.manual && !this.canAutoplay()) this.pause(this.active);
+        return;
+      }
+      if (gesture) {
+        candidate.autoBlocked = false;
+        candidate.retryExhausted = false;
+        candidate.retryCount = 0;
+      }
+      if (candidate.userPaused || candidate.autoBlocked || candidate.retryExhausted || candidate.mediaFailed || candidate.retryTimer) return;
+      if (this.active === candidate && candidate.shouldPlay) return;
+      this.play(candidate, false);
+    }
+
+    ensureVideo(state) {
+      if (state.video) return state.video;
+      if (!state.template || !state.mount) return null;
+      const fragment = state.template.content.cloneNode(true);
+      const video = fragment.querySelector('video');
+      if (!video) return null;
+      const signal = this.abortController.signal;
+      state.video = video;
+      video.classList.add('zms__video');
+      video.autoplay = false;
+      video.controls = false;
+      video.preload = 'metadata';
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+      video.loop = this.dataset.loop === 'true';
+      video.addEventListener('playing', () => {
+        if (!state.shouldPlay || this.active !== state || document.hidden) {
+          video.pause();
+          return;
+        }
+        state.requested = false;
+        state.phase = 'playing';
+        state.retryCount = 0;
+        state.retryExhausted = false;
+        state.card.classList.add('has-started');
+        state.card.classList.remove('has-error');
+        if (state.error) state.error.hidden = true;
+        this.syncControls(state);
+      }, { signal });
+      video.addEventListener('pause', () => {
+        if (!video.paused) return;
+        const unexpected = state.shouldPlay || state.requested;
+        if (unexpected) state.autoBlocked = true;
+        this.pause(state, false);
+      }, { signal });
+      video.addEventListener('ended', () => {
+        state.userPaused = true;
+        this.pause(state);
+      }, { signal });
+      video.addEventListener('error', () => this.showError(state), { signal });
+      video.addEventListener('volumechange', () => this.syncControls(state), { signal });
+      state.mount.appendChild(fragment);
+      return video;
+    }
+
+    play(state, manual, retry = false) {
+      if (!this.isConnected || !this.abortController || document.hidden) return;
+      if (state.requested && state.shouldPlay && (!manual || state.manual)) return;
+      const video = this.ensureVideo(state);
+      if (!video) return;
+      for (const other of this.states) {
+        if (other !== state && (other.shouldPlay || other.retryTimer || (other.video && !other.video.paused))) this.pause(other);
+      }
+      clearTimeout(state.retryTimer);
+      state.retryTimer = null;
+      if (manual) {
+        state.userPaused = false;
+        state.autoBlocked = false;
+        state.retryExhausted = false;
+        state.mediaFailed = false;
+        if (!retry) state.retryCount = 0;
+      }
+      if (video.error && manual && !state.requested) video.load();
+      state.token += 1;
+      const token = state.token;
+      state.manual = manual;
+      state.shouldPlay = true;
+      state.requested = true;
+      state.phase = 'loading';
+      if (!manual) {
+        video.muted = true;
+        video.defaultMuted = true;
+        video.setAttribute('muted', '');
+      }
+      video.preload = 'auto';
+      this.active = state;
+      state.card.classList.remove('has-error');
+      if (state.error) state.error.hidden = true;
+      this.syncControls(state);
+      document.dispatchEvent(new CustomEvent('zms:play', { detail: { owner: this } }));
+      let attempt;
+      try {
+        attempt = video.play();
+      } catch (error) {
+        this.handlePlayFailure(state, error, token, manual);
+        return;
+      }
+      attempt?.catch(error => this.handlePlayFailure(state, error, token, manual));
+    }
+
+    handlePlayFailure(state, error, token, manual) {
+      if (!this.abortController || state.generation !== this.generation || token !== state.token) return;
+      this.pause(state);
+      if (error.name === 'NotAllowedError') {
+        state.autoBlocked = true;
+        return;
+      }
+      if (error.name !== 'AbortError') {
+        this.showError(state);
+        return;
+      }
+      state.autoBlocked = false;
+      state.retryCount += 1;
+      if (state.retryCount > 2) {
+        state.retryExhausted = true;
+        return;
+      }
+      state.phase = 'loading';
+      this.syncControls(state);
+      state.retryTimer = setTimeout(() => {
+        state.retryTimer = null;
+        if (!this.abortController || state.generation !== this.generation || document.hidden) return;
+        this.measureCards();
+        if (this.prominentCard() === state && !state.userPaused && (manual || this.canAutoplay())) this.play(state, manual, true);
+        else {
+          state.phase = 'paused';
+          this.syncControls(state);
+        }
+      }, 160 * state.retryCount);
+    }
+
+    pause(state, invokePause = true) {
+      state.token += 1;
+      state.shouldPlay = false;
+      state.requested = false;
+      state.phase = state.mediaFailed ? 'error' : 'paused';
+      clearTimeout(state.retryTimer);
+      state.retryTimer = null;
+      const wasActive = this.active === state;
+      if (wasActive) this.active = null;
+      if (invokePause && state.video && !state.video.paused) state.video.pause();
+      this.syncControls(state);
+      if (wasActive) document.dispatchEvent(new CustomEvent('zms:stop', { detail: { owner: this } }));
+    }
+
+    pauseAll() {
+      for (const state of this.states || []) this.pause(state);
+    }
+
+    showError(state) {
+      state.mediaFailed = true;
+      this.pause(state);
+      state.card.classList.add('has-error');
+      state.card.classList.remove('has-started');
+      if (state.error) state.error.hidden = false;
+    }
+
+    syncControls(state) {
+      const playing = Boolean(state.phase === 'playing' && state.video && !state.video.paused && state.shouldPlay);
+      const loading = state.phase === 'loading';
+      const muted = state.video ? state.video.muted : true;
+      state.card.classList.toggle('is-muted', muted);
+      state.card.classList.toggle('is-playing', playing);
+      state.card.classList.toggle('is-loading', loading);
+      if (state.playButton) {
+        const label = playing ? 'pauseLabel' : 'playLabel';
+        state.playButton.setAttribute('aria-label', state.playButton.dataset[label] || this.dataset[label] || '');
+        state.playButton.setAttribute('aria-pressed', String(playing));
+        state.playButton.setAttribute('aria-busy', String(loading));
+      }
+      if (state.muteButton) {
+        const label = muted ? 'unmuteLabel' : 'muteLabel';
+        state.muteButton.setAttribute('aria-label', state.muteButton.dataset[label] || this.dataset[label] || '');
+        state.muteButton.setAttribute('aria-pressed', String(!muted));
+      }
+    }
+
+    maxScroll() {
+      return Math.max(0, this.track.scrollWidth - this.track.clientWidth);
+    }
+
+    position() {
+      return Math.max(0, this.track.scrollLeft * (this.rtl ? -1 : 1));
+    }
+
+    scrollToPosition(value, behavior) {
+      const left = Math.min(this.maxScroll(), Math.max(0, value));
+      this.track.scrollTo({
+        left: left * (this.rtl ? -1 : 1),
+        behavior: behavior || (this.reducedMotion.matches ? 'auto' : 'smooth')
+      });
+    }
+
+    cardPosition(card) {
+      const outer = this.track.getBoundingClientRect();
+      const inner = card.getBoundingClientRect();
+      const style = getComputedStyle(this.track);
+      const padding = parseFloat(this.rtl ? style.paddingRight : style.paddingLeft) || 0;
+      return this.position() + (this.rtl ? outer.right - inner.right : inner.left - outer.left) - padding;
+    }
+
+    scrollToCard(card, behavior) {
+      this.scrollToPosition(this.cardPosition(card), behavior);
+    }
+
+    step(direction) {
+      if (!this.cards.length) return;
+      const width = this.cards[0].getBoundingClientRect().width;
+      const gap = parseFloat(getComputedStyle(this.track).columnGap) || 0;
+      this.scrollToPosition(this.position() + direction * (width + gap));
+    }
+
+    queueNavigation() {
+      if (this.navigationFrame) return;
+      this.navigationFrame = requestAnimationFrame(() => {
+        this.navigationFrame = null;
+        if (this.abortController) {
+          this.updateNavigation();
+          this.reconcilePlayback();
+        }
+      });
+    }
+
+    updateNavigation() {
+      const max = this.maxScroll();
+      const position = Math.min(max, this.position());
+      this.classList.toggle('has-overflow', max > 2);
+      if (this.previousButton) this.previousButton.disabled = position <= 2;
+      if (this.nextButton) this.nextButton.disabled = position >= max - 2;
+      this.progress?.style.setProperty('--progress', String(max ? position / max : 1));
+      let index = 0;
+      if (max > 2 && position >= max - 2) index = this.cards.length - 1;
+      else {
+        let nearest = Infinity;
+        this.cards.forEach((card, candidate) => {
+          const distance = Math.abs(this.cardPosition(card) - position);
+          if (distance < nearest) {
+            nearest = distance;
+            index = candidate;
+          }
+        });
+      }
+      for (const dot of this.dots) {
+        const selected = Number(dot.dataset.index) === index;
+        dot.setAttribute('aria-current', String(selected));
+        dot.classList.toggle('is-active', selected);
+      }
+    }
+
+    disconnectedCallback() {
+      cancelAnimationFrame(this.startupFrame);
+      cancelAnimationFrame(this.navigationFrame);
+      this.navigationFrame = null;
+      this.pauseAll();
+      this.abortController?.abort();
+      this.abortController = null;
+      this.intersectionObserver?.disconnect();
+      this.resizeObserver?.disconnect();
+      for (const state of this.states || []) {
+        clearTimeout(state.retryTimer);
+        state.video?.remove();
+        state.card.classList.remove('has-started', 'has-error', 'is-playing', 'is-loading');
+      }
+      this.classList.remove('is-ready');
+      this.peerOwner = null;
+      this.generation = (this.generation || 0) + 1;
+    }
+  }
+
+  customElements.define('zootify-media-stories', ZootifyMediaStories);
+}
+
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "ZOOTIFY Video Stories",
+  "tag": "section",
+  "class": "zootify-media-section",
+  "max_blocks": 12,
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Worth Carrying. Worth Watching."
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Supporting text",
+      "default": "See the details. Watch them work."
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Heading alignment",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size — desktop",
+      "default": 44,
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size — mobile",
+      "default": 26,
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "default": "600",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Card layout"
+    },
+    {
+      "type": "paragraph",
+      "content": "Defaults follow the TORRAS proportions: portrait cards, three and a half cards across on desktop, and one card with a generous next-card preview on phones. Font families follow your theme."
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum content width",
+      "default": 1728,
+      "min": 960,
+      "max": 1920,
+      "step": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side spacing — desktop",
+      "default": 4,
+      "min": 0,
+      "max": 10,
+      "step": 0.5,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "side_padding_mobile",
+      "label": "Side spacing — mobile",
+      "default": 20,
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "cards_desktop",
+      "label": "Visible cards — desktop",
+      "default": 3.5,
+      "min": 2.5,
+      "max": 5,
+      "step": 0.5
+    },
+    {
+      "type": "range",
+      "id": "cards_mobile",
+      "label": "Visible cards — phones",
+      "default": 1.4,
+      "min": 1.1,
+      "max": 2,
+      "step": 0.1
+    },
+    {
+      "type": "paragraph",
+      "content": "Small tablets show 2.1 cards. Desktop card count applies from 900px; phone card count applies below 500px."
+    },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "Card proportions — desktop",
+      "default": "13 / 20",
+      "options": [
+        {
+          "value": "13 / 20",
+          "label": "Portrait — TORRAS proportions"
+        },
+        {
+          "value": "9 / 16",
+          "label": "Vertical — 9:16"
+        },
+        {
+          "value": "3 / 4",
+          "label": "Portrait — 3:4"
+        },
+        {
+          "value": "1 / 1",
+          "label": "Square"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "ratio_mobile",
+      "label": "Card proportions — mobile",
+      "default": "13 / 20",
+      "options": [
+        {
+          "value": "13 / 20",
+          "label": "Portrait — TORRAS proportions"
+        },
+        {
+          "value": "9 / 16",
+          "label": "Vertical — 9:16"
+        },
+        {
+          "value": "3 / 4",
+          "label": "Portrait — 3:4"
+        },
+        {
+          "value": "1 / 1",
+          "label": "Square"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Card gap — desktop",
+      "default": 20,
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Card gap — mobile",
+      "default": 16,
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Corner radius — desktop",
+      "default": 16,
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "radius_mobile",
+      "label": "Corner radius — mobile",
+      "default": 16,
+      "min": 0,
+      "max": 28,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Card text"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size — desktop",
+      "default": 20,
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Title size — mobile",
+      "default": 16,
+      "min": 13,
+      "max": 22,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "caption_size",
+      "label": "Caption size — desktop",
+      "default": 16,
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "caption_size_mobile",
+      "label": "Caption size — mobile",
+      "default": 13,
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Bottom gradient strength",
+      "default": 80,
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Playback and navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay visible video, muted",
+      "default": true,
+      "info": "The most visible video plays muted on desktop and mobile, including the theme editor preview. Videos pause off screen. Reduced-motion, data-saving and browser autoplay preferences are respected."
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop videos",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sound",
+      "label": "Show sound control",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show desktop arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_arrows",
+      "label": "Show mobile arrows",
+      "default": false,
+      "info": "Phones always support swiping. When enabled, arrows sit below the heading so the text has room."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress",
+      "label": "Show scroll progress",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Heading and arrows",
+      "default": "#01161e"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Supporting text",
+      "default": "#606364"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#f3f3f1"
+    },
+    {
+      "type": "color",
+      "id": "card_text",
+      "label": "Card titles and captions",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "control_background",
+      "label": "Playback control background",
+      "default": "#01161e"
+    },
+    {
+      "type": "color",
+      "id": "control_color",
+      "label": "Playback control icons",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accent",
+      "label": "Hover and focus accent",
+      "default": "#65c352"
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top spacing — desktop",
+      "default": 100,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom spacing — desktop",
+      "default": 48,
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top spacing — mobile",
+      "default": 48,
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom spacing — mobile",
+      "default": 28,
+      "min": 0,
+      "max": 96,
+      "step": 4,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "story",
+      "name": "Video or photo",
+      "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media type",
+          "default": "video",
+          "options": [
+            {
+              "value": "video",
+              "label": "Video"
+            },
+            {
+              "value": "image",
+              "label": "Photo"
+            }
+          ]
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Shopify video",
+          "info": "Select or upload a video. Short portrait videos work best. Sound starts muted."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Photo / video cover",
+          "info": "For videos, this replaces the first-frame cover. Leave empty to use the video preview image."
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile photo / cover (optional)",
+          "info": "Use a separate crop for phones. Video playback uses the same video on every screen."
+        },
+        {
+          "type": "select",
+          "id": "media_fit",
+          "label": "Photo and video fit",
+          "default": "cover",
+          "options": [
+            {
+              "value": "cover",
+              "label": "Fill card (crop edges)"
+            },
+            {
+              "value": "contain",
+              "label": "Fit entire media"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "media_position",
+          "label": "Crop position",
+          "default": "center center",
+          "options": [
+            {
+              "value": "center center",
+              "label": "Center"
+            },
+            {
+              "value": "center top",
+              "label": "Top"
+            },
+            {
+              "value": "center bottom",
+              "label": "Bottom"
+            },
+            {
+              "value": "left center",
+              "label": "Left"
+            },
+            {
+              "value": "right center",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Caption and destination"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "Keep it short, for example Frostand or ForgeCraft."
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Short caption / creator credit"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Linked product (optional)",
+          "info": "The arrow opens the full product page. It does not add a model to the cart."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Custom destination (optional)",
+          "info": "Overrides the linked product. Choose a collection, product, or another page."
+        },
+        {
+          "type": "checkbox",
+          "id": "new_tab",
+          "label": "Open destination in a new tab",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Accessibility"
+        },
+        {
+          "type": "text",
+          "id": "accessibility_label",
+          "label": "Media description",
+          "info": "Describe what the customer can see. Used for the image description and video buttons."
+        },
+        {
+          "type": "url",
+          "id": "captions_url",
+          "label": "Caption file URL (.vtt)",
+          "info": "Optional WebVTT subtitles for videos with speech."
+        },
+        {
+          "type": "text",
+          "id": "captions_language",
+          "label": "Caption language code",
+          "default": "en"
+        },
+        {
+          "type": "text",
+          "id": "captions_label",
+          "label": "Caption language name",
+          "default": "English"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ZOOTIFY Video Stories",
+      "category": "Media",
+      "blocks": [
+        {
+          "type": "story",
+          "settings": {
+            "title": "Frostand",
+            "caption": "Function, in motion."
+          }
+        },
+        {
+          "type": "story",
+          "settings": {
+            "title": "ForgeCraft",
+            "caption": "A closer look."
+          }
+        },
+        {
+          "type": "story",
+          "settings": {
+            "title": "Made to move",
+            "caption": "Designed for your everyday."
+          }
+        },
+        {
+          "type": "story",
+          "settings": {
+            "title": "Find your color",
+            "caption": "Carry it your way."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

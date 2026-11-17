@@ -19,7 +19,7 @@
   endif
   assign zt_code = 'WELCOME10'
   assign zt_show = true
-  if customer or request.design_mode
+  if customer or request.design_mode or settings.zbf_disable_signup_popup
     assign zt_show = false
   endif
   if request.page_type == 'cart' or request.page_type == 'customers/login' or request.page_type == 'customers/register' or request.page_type == 'customers/account' or request.page_type == 'password'

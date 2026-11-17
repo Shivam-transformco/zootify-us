@@ -151,6 +151,7 @@ class PairingController {
       if (event.detail?.data?.source !== PAIRING_SOURCE) this.schedule();
     });
     document.addEventListener(ThemeEvents.discountUpdate, () => this.schedule());
+    document.addEventListener('zootify:bf-state', () => this.schedule());
     document.addEventListener(TRANSACTION_EVENT, () => {
       for (const instance of this.instances) instance.syncBusy();
     });
@@ -197,7 +198,17 @@ class PairingController {
     if (!code) return { cart, changed: false };
     const existing = allCodes(cart);
     const present = existing.some((value) => normalize(value) === normalize(code));
-    const wanted = Boolean(config.campaignEnabled) && eligibleUnits(cart, config.eligibleProductIds || []) >= 2;
+    const bf = window.ZootifyBlackFriday;
+    const bfState = bf?.getState();
+    if (bfState?.preview) return { cart, changed: false };
+    let bfEnabled = Boolean(bf?.config.enabled);
+    if (!bf) {
+      try { bfEnabled = Boolean(JSON.parse(document.getElementById('zootify-bf-config')?.textContent || '{}').enabled); } catch {}
+    }
+    const normalAllowed = !bfEnabled || ['off', 'ended'].includes(bfState?.actualPhase);
+    const welcomeCode = bf?.config.codes?.welcome || 'WELCOME10';
+    const welcomeChosen = existing.some((value) => normalize(value) === normalize(welcomeCode));
+    const wanted = Boolean(config.campaignEnabled) && normalAllowed && !welcomeChosen && eligibleUnits(cart, config.eligibleProductIds || []) >= 2;
     if (present === wanted) return { cart, changed: false };
     const desired = existing.filter((value) => normalize(value) !== normalize(code));
     if (wanted) desired.push(code);

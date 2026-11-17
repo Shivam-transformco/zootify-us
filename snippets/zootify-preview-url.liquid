@@ -1,0 +1,26 @@
+{%- doc -%}
+  Preserves the draft sale template and selected product sort through navigation.
+  @param {string} url - Collection, clear-filter or pagination URL.
+{%- enddoc -%}
+{%- liquid
+  assign target_url = url
+  assign sale_handle = settings.zbf_sale_handle | default: 'black-friday' | handleize
+  if settings.zbf_preview_mode and template.suffix == 'black-friday' and collection.handle != sale_handle
+    unless target_url contains 'view='
+      if target_url contains '?'
+        assign target_url = target_url | append: '&view=black-friday'
+      else
+        assign target_url = target_url | append: '?view=black-friday'
+      endif
+    endunless
+    unless target_url contains 'sort_by='
+      assign preview_sort = collection.sort_by | default: 'best-selling' | url_encode
+      if target_url contains '?'
+        assign target_url = target_url | append: '&sort_by=' | append: preview_sort
+      else
+        assign target_url = target_url | append: '?sort_by=' | append: preview_sort
+      endif
+    endunless
+  endif
+  echo target_url
+-%}

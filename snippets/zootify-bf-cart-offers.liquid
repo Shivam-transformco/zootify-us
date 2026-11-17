@@ -1,0 +1,142 @@
+{% doc %}
+  Renders two Black Friday offers and a two-case B2G1 browsing prompt.
+  @param {string} section_id - Main cart section ID.
+{% enddoc %}
+{{ 'zootify-bf-native-offers.css' | asset_url | stylesheet_tag }}
+{%- assign zbf_offer_kinds = 'b2g1,tiered' | split: ',' -%}
+{%- capture zbf_browse_url -%}{% render 'zootify-sale-url' %}{%- endcapture -%}
+<div
+  class="zc-offers zc-offers--native"
+  data-zbf-offers
+  style="
+    --zbf-cart-font: {% if settings.zbf_cart_font == 'heading' %}var(--font-heading--family){% else %}var(--font-body--family){% endif %};
+    --zbf-cart-size: {{ settings.zbf_cart_font_size | default: 13 }}px;
+    --zbf-cart-mobile-size: {{ settings.zbf_cart_mobile_font_size | default: 12 }}px;
+    --zbf-cart-text: {{ settings.zbf_cart_text | default: '#151515' }};
+    --zbf-cart-muted: {{ settings.zbf_cart_muted | default: '#686868' }};
+    --zbf-cart-border: {{ settings.zbf_cart_border | default: '#e1e1e1' }};
+    --zbf-cart-surface: {{ settings.zbf_cart_surface | default: '#ffffff' }};
+    --zbf-cart-locked-surface: {{ settings.zbf_cart_locked_surface | default: '#ffffff' }};
+    --zbf-cart-button: {{ settings.zbf_cart_button | default: '#111111' }};
+    --zbf-cart-button-text: {{ settings.zbf_cart_button_text | default: '#ffffff' }};
+    --zbf-cart-accent: {{ settings.zbf_cart_accent | default: '#c92831' }};
+    --zbf-cart-row-padding: {{ settings.zbf_cart_row_padding | default: 12 }}px;
+    --zbf-cart-radius: {{ settings.zbf_cart_radius | default: 4 }}px;
+  "
+>
+  <p class="zc-offers__heading">{{ 'zootify_bf_cart.title' | t }}</p>
+  <ul class="zc-offers__list" role="list" aria-label="{{ 'zootify_bf_cart.title' | t | escape }}">
+    {%- for zbf_kind in zbf_offer_kinds -%}
+      {%- liquid
+        case zbf_kind
+          when 'b2g1'
+            assign zbf_code = settings.zbf_code_b2g1 | default: 'BFB2G1'
+            assign zbf_description = 'zootify_bf_cart.b2g1_description' | t
+          when 'tiered'
+            assign zbf_code = settings.zbf_code_bf20 | default: 'BF20'
+            assign zbf_description = 'Flat 20% off'
+        endcase
+        assign zbf_normalized_code = zbf_code | strip | downcase
+        assign zbf_saving = 0
+        for entry in cart.cart_level_discount_applications
+          assign application = entry.discount_application | default: entry
+          assign zbf_allocation_code = application.title | strip | downcase
+          if application.type == 'discount_code' and zbf_allocation_code == zbf_normalized_code
+            if entry.discount_application and entry.amount != nil
+              assign zbf_saving = zbf_saving | plus: entry.amount
+            else
+              assign zbf_saving = zbf_saving | plus: application.total_allocated_amount
+            endif
+          endif
+        endfor
+        for item in cart.items
+          for allocation in item.line_level_discount_allocations
+            assign zbf_allocation_code = allocation.discount_application.title | strip | downcase
+            if allocation.discount_application.type == 'discount_code' and zbf_allocation_code == zbf_normalized_code
+              assign zbf_saving = zbf_saving | plus: allocation.amount
+            endif
+          endfor
+        endfor
+        assign zbf_applied = false
+        if zbf_saving > 0
+          assign zbf_applied = true
+        endif
+        assign zbf_reason = 'zootify_bf_cart.not_ready' | t
+        if zbf_applied
+          assign zbf_reason = ''
+        endif
+      -%}
+      <li class="zc-offer" data-zbf-kind="{{ zbf_kind }}" hidden data-applied="{{ zbf_applied }}" data-locked="{% if zbf_reason != blank %}true{% else %}false{% endif %}">
+        <div class="zc-offer__copy">
+          <div class="zc-offer__heading">
+            <span class="zc-offer__benefit"{% if zbf_kind == 'tiered' %} data-zbf-tier-description{% endif %}>{{ zbf_description | escape }}</span>
+            <span class="zc-offer__applied" data-zbf-applied{% unless zbf_applied %} hidden{% endunless %}>{{ 'zootify_bf_cart.applied_badge' | t }}</span>
+          </div>
+          {% if zbf_kind == 'tiered' %}<p class="zc-offer__terms">On orders $100+</p>{% endif %}
+          <p class="zc-offer__saving" data-zbf-saving hidden></p>
+          <span class="zc-offer__code" data-zbf-code hidden>{{ zbf_code | escape }}</span>
+          <p class="zc-offer__reason" id="ZbfReason-{{ section_id }}-{{ zbf_kind }}" data-zbf-reason{% if zbf_reason == blank %} hidden{% endif %}>{{ zbf_reason }}</p>
+        </div>
+        <button
+          type="button"
+          class="zc-offer__action"
+          data-zbf-offer-action
+          data-zbf-kind="{{ zbf_kind }}"
+          data-zbf-operation="{% if zbf_applied %}remove{% else %}apply{% endif %}"
+          data-zc-offer-locked="true"
+          aria-describedby="ZbfReason-{{ section_id }}-{{ zbf_kind }}"
+          aria-label="{% if zbf_applied %}{{ 'zootify_bf_cart.remove_label' | t | replace: '__code__', zbf_code | escape }}{% else %}{{ 'zootify_bf_cart.apply_label' | t | replace: '__code__', zbf_code | escape }}{% endif %}"
+          disabled
+        >{% if zbf_applied %}{{ 'zootify_bf_cart.remove' | t }}{% else %}{{ 'zootify_bf_cart.apply' | t }}{% endif %}</button>
+        {% if zbf_kind == 'b2g1' %}
+          <div class="zc-offer-unlock" data-zbf-b2g1-nudge hidden>
+            <div class="zc-offer-unlock__heading">
+              <span>Add one more case</span>
+              <span class="zc-offer-unlock__count" aria-hidden="true">2 / 3</span>
+            </div>
+            <div class="zc-offer-unlock__progress" role="progressbar" aria-label="Cases for Buy 2, Get 1 Free" aria-valuemin="0" aria-valuemax="3" aria-valuenow="2" aria-valuetext="2 of 3 cases in your cart">
+              <span class="is-filled"></span><span class="is-filled"></span><span></span>
+            </div>
+            <div class="zc-offer-unlock__footer">
+              <span class="zc-offer-unlock__reward">Unlock a <strong>FREE</strong> case</span>
+              <a class="zc-offer-unlock__link" href="{{ zbf_browse_url | strip | escape }}" aria-label="Browse cases to choose your third case"><span>Browse cases</span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            </div>
+          </div>
+        {% endif %}
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+<script type="application/json" data-zbf-cart-state>{{ cart | json }}</script>
+<script type="application/json" data-zbf-cart-strings>
+  {
+    "save_amount": {{ 'zootify_bf_cart.save_amount' | t | json }},
+    "saved_amount": {{ 'zootify_bf_cart.saved_amount' | t | json }},
+    "test_mode": {{ 'zootify_bf_cart.test_mode' | t | json }},
+    "apply": {{ 'zootify_bf_cart.apply' | t | json }},
+    "remove": {{ 'zootify_bf_cart.remove' | t | json }},
+    "apply_label": {{ 'zootify_bf_cart.apply_label' | t | json }},
+    "remove_label": {{ 'zootify_bf_cart.remove_label' | t | json }},
+    "preview": {{ 'zootify_bf_cart.preview' | t | json }},
+    "empty": {{ 'zootify_bf_cart.empty' | t | json }},
+    "upcoming": {{ 'zootify_bf_cart.upcoming' | t | json }},
+    "ended": {{ 'zootify_bf_cart.ended' | t | json }},
+    "not_ready": {{ 'zootify_bf_cart.not_ready' | t | json }},
+    "tiered_empty_description": "Flat 20% off",
+    "legacy_unavailable": {{ 'zootify_bf_cart.legacy_unavailable' | t | json }},
+    "minimum_spend": "Spend __amount__ more to unlock",
+    "quantity_three": {{ 'zootify_bf_cart.quantity_three' | t | replace: 'Requires 3 or more products in your cart.', '3+ items' | json }},
+    "applying": {{ 'zootify_bf_cart.applying' | t | json }},
+    "removing": {{ 'zootify_bf_cart.removing' | t | json }},
+    "already_applied": {{ 'zootify_bf_cart.already_applied' | t | json }},
+    "saved_inactive": {{ 'zootify_bf_cart.saved_inactive' | t | json }},
+    "remove_failed": {{ 'zootify_bf_cart.remove_failed' | t | json }},
+    "invalid_removed": "Offer updated for your cart.",
+    "removed": {{ 'zootify_bf_cart.removed' | t | json }},
+    "not_applicable": {{ 'zootify_bf_cart.not_applicable' | t | json }},
+    "applied": "Offer applied.",
+    "accepted_checkout": {{ 'zootify_bf_cart.accepted_checkout' | t | json }},
+    "invalid_code": {{ 'zootify_bf_cart.invalid_code' | t | json }},
+    "update_failed": {{ 'zootify_bf_cart.update_failed' | t | json }}
+  }
+</script>
