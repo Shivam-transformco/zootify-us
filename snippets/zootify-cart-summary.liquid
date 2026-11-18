@@ -295,31 +295,43 @@
       </div>
     {% endif %}
 
-    <div class="zc-actions">
-      <button type="submit" id="checkout" name="checkout" form="cart-form" class="button cart__checkout-button zc-checkout" data-zc-main-checkout{% if cart.empty? %} disabled{% endif %}>
-        <span class="button-text">{{ checkout_label | escape }}</span>
-      </button>
+    {% if drawer %}
       {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
-        {% if drawer %}
+        <div class="zc-actions">
           <div class="zcd-wallet-options">
             <div class="zc-wallet-label">{{ config.zc_wallet_label | escape }}</div>
             <div class="additional-checkout-buttons zc-wallets{% if config.zc_wallet_layout == 'vertical' %} additional-checkout-buttons--vertical{% endif %}" data-zc-wallets>
               {{ content_for_additional_checkout_buttons }}
             </div>
           </div>
-        {% else %}
-        <div class="zc-wallet-label"><span>{{ config.zc_wallet_label | escape }}</span></div>
-        <div class="additional-checkout-buttons zc-wallets{% if config.zc_wallet_layout == 'vertical' %} additional-checkout-buttons--vertical{% endif %}" data-zc-wallets>
-          {{ content_for_additional_checkout_buttons }}
         </div>
-        {% endif %}
       {% endif %}
-    </div>
+    {% else %}
+      <div class="zc-actions">
+        <button type="submit" id="checkout" name="checkout" form="cart-form" class="button cart__checkout-button zc-checkout" data-zc-main-checkout{% if cart.empty? %} disabled{% endif %}>
+          <span class="button-text">{{ checkout_label | escape }}</span>
+        </button>
+        {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
+          <div class="zc-wallet-label"><span>{{ config.zc_wallet_label | escape }}</span></div>
+          <div class="additional-checkout-buttons zc-wallets{% if config.zc_wallet_layout == 'vertical' %} additional-checkout-buttons--vertical{% endif %}" data-zc-wallets>
+            {{ content_for_additional_checkout_buttons }}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
 
     {% unless drawer %}{{ zcd_policies }}{% endunless %}
   </div>
-  {% if drawer %}</div>{% endif %}
-
+  {% if drawer %}
+    </div>
+    <div class="zcd-checkout-sticky">
+      <div class="zc-actions">
+        <button type="submit" id="checkout" name="checkout" form="cart-form" class="button cart__checkout-button zc-checkout" data-zc-main-checkout{% if cart.empty? %} disabled{% endif %}>
+          <span class="button-text">{{ checkout_label | escape }}</span>
+        </button>
+      </div>
+    </div>
+  {% endif %}
   {% if config.zc_mobile_sticky and drawer != true %}
     <div class="zc-mobile-bar" data-zc-mobile-bar hidden>
       <div class="zc-mobile-price"><span>{{ total_label }}</span><strong data-zc-mobile-total>{{ total_price }}</strong></div>

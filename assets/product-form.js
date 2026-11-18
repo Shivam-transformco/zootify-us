@@ -18,6 +18,16 @@ const GO_TO_CART_TEXT = 'GO TO CART';
 const ADDING_TO_CART_TEXT = 'ADDING…';
 const CART_BUTTON_LABEL = '.add-to-cart-text__content > span > span';
 
+/** Open the existing shopping bag instead of navigating away from the product. */
+function openShoppingBagFromProductPage() {
+  const drawer = document.querySelector('cart-drawer-component.zcd-cart-drawer');
+  if (drawer && typeof drawer.open === 'function') {
+    drawer.open();
+    return;
+  }
+  window.location.assign(Theme.routes.cart_url || '/cart');
+}
+
 /** @param {HTMLButtonElement | undefined} button */
 function isProductPageButton(button) {
   return Boolean(
@@ -93,7 +103,7 @@ export class AddToCartComponent extends Component {
     // If the selected variant is already in the cart, use the same button to open the cart.
     if (addToCartButton.dataset.goToCart === 'true') {
       event.preventDefault();
-      window.location.href = Theme.routes.cart_url || '/cart';
+      openShoppingBagFromProductPage();
       return;
     }
 
@@ -416,7 +426,7 @@ class ProductFormComponent extends Component {
     if (mainPurchase && (this.hasAttribute('data-zootify-submitting') || this.#variantUpdating)) return;
     // Also cover keyboard / requestSubmit(), not only a pointer click.
     if (mainPurchase && mainButton?.dataset.goToCart === 'true') {
-      window.location.href = Theme.routes.cart_url || '/cart';
+      openShoppingBagFromProductPage();
       return;
     }
 

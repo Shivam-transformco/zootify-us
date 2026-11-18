@@ -1,5 +1,5 @@
 {% doc %}
-  A display-only title for the cart page. No product data is rewritten.
+  Display-only cart product title. Does not change Shopify product data.
   @param {object} item - The Shopify cart line item.
 {% enddoc %}
 {%- liquid
@@ -8,18 +8,24 @@
   assign display_title = original_title
   assign model = ''
   assign color = ''
+
   if title_parts.size == 2 and item.product.has_only_default_variant and item.item_components.size == 0
     assign display_title = title_parts.first
     assign model = 'iPhone ' | append: title_parts.last
+
+    assign color = item.product.metafields.custom.color_name.value | default: '' | strip
+
     assign normalized_title = title_parts.first | replace: ' – ', ' - '
     assign family_parts = normalized_title | split: ' - '
-    assign family_name = family_parts.first | downcase
+    assign family_name = family_parts.first | downcase | strip
     if family_name == 'frostand' and normalized_title contains 'MagSafe'
       assign candidate = family_parts.last | split: ' ' | first
       assign known_colors = 'Orange,Blue,Grey,Gray,Purple,Black,Burgundy,Silver' | split: ','
       if known_colors contains candidate
-        assign color = candidate
         assign display_title = 'Frostand MagSafe Case'
+        if color == blank
+          assign color = candidate
+        endif
       endif
     endif
   endif

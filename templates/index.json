@@ -606,7 +606,7 @@
         "category_DX9Bra": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/FORGECRAFTCASE_THUMBNAIL.png",
+            "image": "shopify://shop_images/01-iphone-18-pro-max.png",
             "title": "iPhone 18 Pro Max",
             "link": "shopify://collections/iphone-18-pro-max"
           }
@@ -614,7 +614,7 @@
         "category_dF3UYf": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_cakxv2cakxv2cakx_copy_301c028b-ce87-4465-be35-ab3c4c0ccf26.png",
+            "image": "shopify://shop_images/02-iphone-18-pro.png",
             "title": "iPhone 18 Pro",
             "link": "shopify://collections/iphone-18-pro"
           }
@@ -622,7 +622,7 @@
         "category_dqXL6q": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_e620lne620lne620.png",
+            "image": "shopify://shop_images/03-iphone-17-pro-max.png",
             "title": "iPhone 17 Pro Max",
             "link": "shopify://collections/iphone-17-pro-max"
           }
@@ -630,7 +630,7 @@
         "category_qUADQD": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_mv7zc1mv7zc1mv7z_copy.png",
+            "image": "shopify://shop_images/04-iphone-17-pro.png",
             "title": "iPhone 17 Pro",
             "link": "shopify://collections/iphone-17-pro"
           }
@@ -638,7 +638,7 @@
         "category_WdNmMF": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_j45ofij45ofij45o_copy.png",
+            "image": "shopify://shop_images/05-iphone-17.png",
             "title": "iPhone 17",
             "link": "shopify://collections/iphone-17"
           }
@@ -646,7 +646,7 @@
         "category_xbzzd6": {
           "type": "category",
           "settings": {
-            "image": "shopify://shop_images/thumbnail_air.png",
+            "image": "shopify://shop_images/06-iphone-air.png",
             "title": "iPhone Air",
             "link": "shopify://collections/iphone-air"
           }
@@ -1092,9 +1092,9 @@
             "button_custom_background": "#181818",
             "button_custom_text": "#ffffff",
             "button_custom_border": "#181818",
-            "button_custom_hover_background": "#CE423B",
+            "button_custom_hover_background": "#ce423b",
             "button_custom_hover_text": "#ffffff",
-            "button_custom_hover_border": "#CE423B",
+            "button_custom_hover_border": "#ce423b",
             "button_custom_radius": 4,
             "button_custom_border_width": 1
           }
@@ -1136,9 +1136,9 @@
             "button_custom_background": "#181818",
             "button_custom_text": "#ffffff",
             "button_custom_border": "#181818",
-            "button_custom_hover_background": "#CE423B",
+            "button_custom_hover_background": "#ce423b",
             "button_custom_hover_text": "#ffffff",
-            "button_custom_hover_border": "#CE423B",
+            "button_custom_hover_border": "#ce423b",
             "button_custom_radius": 4,
             "button_custom_border_width": 1
           }
@@ -1180,9 +1180,9 @@
             "button_custom_background": "#181818",
             "button_custom_text": "#ffffff",
             "button_custom_border": "#181818",
-            "button_custom_hover_background": "#CE423B",
+            "button_custom_hover_background": "#ce423b",
             "button_custom_hover_text": "#ffffff",
-            "button_custom_hover_border": "#CE423B",
+            "button_custom_hover_border": "#ce423b",
             "button_custom_radius": 4,
             "button_custom_border_width": 1
           }
