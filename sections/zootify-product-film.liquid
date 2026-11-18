@@ -281,6 +281,14 @@
         window.visualViewport?.addEventListener('resize', () => this.queue(), { passive: true, signal });
         this.observer = new IntersectionObserver(() => this.queue(), { rootMargin: '300px 0px', threshold: [0, .25, .5, .75, 1] });
         this.observer.observe(this.frame);
+        this.mobileVisibilityObserver = new IntersectionObserver(entries => {
+          if (!this.phone.matches) return;
+          const entry = entries[entries.length - 1];
+          this.mobileInView = entry.isIntersecting;
+          this.queue();
+        }, { threshold: [0, 0.3] });
+        this.mobileInView = false;
+        this.mobileVisibilityObserver.observe(this.frame);
         this.syncControls();
         this.reconcile();
       }
@@ -344,7 +352,9 @@
         }
         if (this.desired && !this.manual && !this.canAutoplay()) this.pause();
         if (this.near && !document.hidden && !this.reducedMotion.matches && !navigator.connection?.saveData && !this.failed) this.ensureVideo();
-        if (!this.visible || !this.canAutoplay() || this.userPaused || this.blocked || this.failed || this.desired || this.retryTimer) return;
+        const inView = this.phone.matches ? this.mobileInView : this.visible;
+        if (!inView && this.desired && !this.manual) this.pause();
+        if (!inView || !this.canAutoplay() || this.userPaused || this.blocked || this.failed || this.desired || this.retryTimer) return;
         this.play(false);
       }
 
@@ -536,6 +546,7 @@
         this.controller?.abort();
         this.controller = null;
         this.observer?.disconnect();
+        this.mobileVisibilityObserver?.disconnect();
         this.peer = null;
         this.classList.remove('is-playing', 'is-loading', 'has-started');
       }
