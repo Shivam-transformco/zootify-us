@@ -1209,6 +1209,424 @@ assign header_offset = 'var(--announcement-height)'
       ],
       "default": "default",
       "visible_if": "{{ section.settings.enable_transparent_header_collection }}"
+    },
+    {
+      "type": "header",
+      "content": "ZOOTIFY cart drawer"
+    },
+    {
+      "type": "range",
+      "id": "zcd_width",
+      "label": "Drawer width on desktop",
+      "min": 440,
+      "max": 720,
+      "step": 20,
+      "unit": "px",
+      "default": 560
+    },
+    {
+      "type": "text",
+      "id": "zcd_title",
+      "label": "Drawer heading",
+      "default": "SHOPPING BAG"
+    },
+    {
+      "type": "checkbox",
+      "id": "zcd_show_subtitle",
+      "label": "Show selected-item count under heading",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "Cart offers, pricing and checkout below use the drawer's own settings. The full cart page keeps its separate configuration."
+    },
+    {
+      "type": "text",
+      "id": "zc_heading",
+      "label": "Drawer · Order summary heading",
+      "default": "Order summary"
+    },
+    {
+      "type": "text",
+      "id": "zc_discount_label",
+      "label": "Drawer · Discount control label",
+      "default": "Apply discount code"
+    },
+    {
+      "type": "text",
+      "id": "zc_checkout_label",
+      "label": "Drawer · Checkout button label",
+      "default": "Checkout"
+    },
+    {
+      "type": "text",
+      "id": "zc_wallet_label",
+      "label": "Drawer · Accelerated payments label",
+      "default": "Or pay faster with"
+    },
+    {
+      "type": "select",
+      "id": "zc_wallet_layout",
+      "label": "Drawer · Accelerated payment layout",
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatic: row when there is room"
+        },
+        {
+          "value": "vertical",
+          "label": "Stacked"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "zc_short_titles",
+      "label": "Drawer · Simplify supported product titles",
+      "default": true,
+      "info": "Shows the phone model separately. Known Frostand titles can also show the color. Product data and checkout titles are unchanged."
+    },
+    {
+      "type": "checkbox",
+      "id": "zc_free_shipping",
+      "label": "Drawer · Show free Standard shipping for US / USD carts",
+      "default": true,
+      "info": "Enable only while your actual US Standard shipping rate is free."
+    },
+    {
+      "type": "checkbox",
+      "id": "zc_show_express",
+      "label": "Drawer · Show Express shipping information",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "zc_express_price",
+      "label": "Drawer · Express surcharge in USD",
+      "default": 10,
+      "info": "Display only. Must match the actual shipping rate in Settings > Shipping and delivery. Shown only for US / USD carts."
+    },
+    {
+      "type": "text",
+      "id": "zc_express_title",
+      "label": "Drawer · Express heading",
+      "default": "Need it sooner?"
+    },
+    {
+      "type": "textarea",
+      "id": "zc_express_text",
+      "label": "Drawer · Express explanation",
+      "default": "Express shipping is available for [price] extra.",
+      "info": "Use [price] to insert the surcharge above. Do not promise arrival times unless confirmed by your fulfillment setup."
+    },
+    {
+      "type": "checkbox",
+      "id": "zc_show_policies",
+      "label": "Drawer · Show Delivery & returns disclosure",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "zc_policy_label",
+      "label": "Drawer · Disclosure label",
+      "default": "Delivery & returns"
+    },
+    {
+      "type": "textarea",
+      "id": "zc_returns_text",
+      "label": "Drawer · Returns summary",
+      "default": "Request an eligible return within 10 days of delivery. Items must be unused, undamaged and in their original packaging. Opened or used cases are not eligible. An $8 fee is deducted when a ZOOTIFY return label is used. See the full policy for exclusions and defective or incorrect items."
+    },
+    {
+      "type": "checkbox",
+      "id": "zc_mobile_sticky",
+      "label": "Drawer · Show mobile checkout bar",
+      "default": true,
+      "info": "Appears only when the main checkout button is off-screen. Hidden while editing fields or when a dialog is open."
+    },
+    {
+      "type": "checkbox",
+      "id": "zc_desktop_sticky",
+      "label": "Drawer · Keep summary visible on desktop",
+      "default": true,
+      "info": "Sticky only when the complete summary fits below the header. Otherwise it scrolls normally."
+    },
+    {
+      "type": "range",
+      "id": "zc_column_gap",
+      "label": "Drawer · Desktop column gap",
+      "default": 40,
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zc_content_space",
+      "label": "Drawer · Space below cart heading",
+      "default": 28,
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zc_summary_width",
+      "label": "Drawer · Desktop summary width",
+      "default": 440,
+      "min": 380,
+      "max": 520,
+      "step": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zc_summary_padding",
+      "label": "Drawer · Summary padding: desktop",
+      "default": 24,
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zc_mobile_padding",
+      "label": "Drawer · Summary padding: mobile",
+      "default": 18,
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zc_summary_radius",
+      "label": "Drawer · Summary corner radius",
+      "default": 12,
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "zc_surface",
+      "label": "Drawer · Summary background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "zc_text",
+      "label": "Drawer · Main text",
+      "default": "#01151e"
+    },
+    {
+      "type": "color",
+      "id": "zc_muted",
+      "label": "Drawer · Secondary text",
+      "default": "#60686b"
+    },
+    {
+      "type": "color",
+      "id": "zc_border",
+      "label": "Drawer · Borders",
+      "default": "#e3e8e5"
+    },
+    {
+      "type": "color",
+      "id": "zc_discount_surface",
+      "label": "Drawer · Discount control background",
+      "default": "#f5f7f5"
+    },
+    {
+      "type": "color",
+      "id": "zc_shipping_surface",
+      "label": "Drawer · Express information background",
+      "default": "#f4f8f1"
+    },
+    {
+      "type": "color",
+      "id": "zc_button_bg",
+      "label": "Drawer · Checkout button background",
+      "default": "#01151e"
+    },
+    {
+      "type": "color",
+      "id": "zc_button_text",
+      "label": "Drawer · Checkout button text",
+      "default": "#7dc762"
+    },
+    {
+      "type": "select",
+      "id": "zc_font",
+      "label": "Drawer · Summary font",
+      "default": "body",
+      "options": [
+        {
+          "value": "body",
+          "label": "Theme body font"
+        },
+        {
+          "value": "heading",
+          "label": "Theme heading font"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "zc_body_size",
+      "label": "Drawer · Summary text size",
+      "default": 14,
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zc_heading_size",
+      "label": "Drawer · Summary heading size",
+      "default": 16,
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zc_discount_size",
+      "label": "Drawer · Discount label size",
+      "default": 15,
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "zc_discount_weight",
+      "label": "Drawer · Discount label weight",
+      "default": "600",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "zc_total_size",
+      "label": "Drawer · Total size: desktop",
+      "default": 24,
+      "min": 20,
+      "max": 32,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zc_mobile_total_size",
+      "label": "Drawer · Total size: mobile",
+      "default": 22,
+      "min": 18,
+      "max": 28,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "zc_total_weight",
+      "label": "Drawer · Total weight",
+      "default": "700",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "zc_button_size",
+      "label": "Drawer · Checkout label size",
+      "default": 15,
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "zc_button_weight",
+      "label": "Drawer · Checkout label weight",
+      "default": "600",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "zc_button_height",
+      "label": "Drawer · Checkout button height",
+      "default": 54,
+      "min": 48,
+      "max": 60,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "zc_button_radius",
+      "label": "Drawer · Button corner radius",
+      "default": 6,
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px"
     }
   ],
   "presets": []

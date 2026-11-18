@@ -1,5 +1,17 @@
 {% liquid
   assign block_settings = block.settings
+  assign zcd_gap = block_settings.gap | default: 12
+  assign zcd_dividers = block_settings.dividers
+  assign zcd_image_ratio = block_settings.image_ratio
+  assign zcd_short_titles = false
+  if drawer_context == 'drawer'
+    assign zcd_gap = 12
+    assign zcd_dividers = true
+    assign zcd_image_ratio = 'square'
+    assign zcd_short_titles = section.settings.zc_short_titles
+  elsif request.page_type == 'cart' and section.settings.zc_enable and section.settings.zc_short_titles
+    assign zcd_short_titles = true
+  endif
 %}
 
 <script
@@ -53,8 +65,8 @@
       method="post"
     >
       <div
-        class="cart-items spacing-style{% if block_settings.dividers %} cart-items--dividers{% endif %}"
-        style="{%  render 'spacing-style', settings: block_settings %} --cart-items-gap:{{ block_settings.gap | append: "px" }};"
+        class="cart-items spacing-style{% if zcd_dividers %} cart-items--dividers{% endif %}"
+        style="{%  render 'spacing-style', settings: block_settings %} --cart-items-gap:{{ zcd_gap }}px;"
       >
         <table
           class="cart-items__table"
@@ -130,9 +142,9 @@
                       if settings.cart_thumbnail_border_radius > 0
                         assign border_override = border_override | append: ' overflow: hidden;'
                       endif
-                      if block_settings.image_ratio == 'portrait'
+                      if zcd_image_ratio == 'portrait'
                         assign ratio = 0.8
-                      elsif block_settings.image_ratio == 'adapt'
+                      elsif zcd_image_ratio == 'adapt'
                         assign ratio = item.image.aspect_ratio
                       endif
                     %}
@@ -160,7 +172,7 @@
                         aria-label="{{ 'accessibility.nested_product' | t: product_title: item.product.title, parent_title: item.parent_relationship.parent.title | escape }}"
                       {% endif %}
                     >
-                      {%- if request.page_type == 'cart' and section.settings.zc_enable and section.settings.zc_short_titles -%}
+                      {%- if zcd_short_titles -%}
                         {%- render 'zootify-cart-product-title', item: item -%}
                       {%- else -%}
                         {{- item.product.title -}}

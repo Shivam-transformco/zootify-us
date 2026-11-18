@@ -1,9 +1,11 @@
 {% doc %}
-  Page-only order summary. All amounts come from the current Shopify cart.
+  Order summary shared by the full cart page and compact cart drawer. All amounts come from the current Shopify cart.
   Compare-at savings are NOT subtracted from the cart a second time.
   Shipping copy is informational; checkout owns shipping-method selection.
   @param {string} section_id - Main cart section ID.
-  @param {object} config - Settings from the main-cart section.
+  @param {object} config - Settings for the cart page or drawer.
+  @param {boolean} [drawer] - Use compact scrolling cart drawer layout.
+  @param {string} [drawer_products] - Products already rendered with native cart controls.
 {% enddoc %}
 {%- liquid
   assign zbf_cart_mode = false
@@ -68,8 +70,26 @@
   endfor
   assign other_saving = cart.total_discount | minus: pairing_saving | at_least: 0
 -%}
+{% capture zcd_policies %}
+    {% if config.zc_show_policies %}
+      <details class="zc-policies">
+        <summary>{{ config.zc_policy_label | escape }}<span class="zc-plus" aria-hidden="true"></span></summary>
+        <div class="zc-policy-content">
+          <p class="zc-policy-heading">Delivery</p>
+          <p>{% if show_free %}Free Standard shipping on US orders. {% endif %}{% if is_us and config.zc_show_express and cart.requires_shipping %}Express is available for {{ express_price }} extra. {% endif %}Choose your shipping method at checkout, where delivery estimates are shown for your address.</p>
+          <p class="zc-policy-heading">Returns</p>
+          <p>{{ config.zc_returns_text | escape | newline_to_br }}</p>
+          <div class="zc-policy-links">
+            {% if shop.shipping_policy.url != blank %}<a href="{{ shop.shipping_policy.url }}" target="_blank" rel="noopener">Shipping policy<span class="visually-hidden"> (opens in a new tab)</span></a>{% endif %}
+            {% if shop.refund_policy.url != blank %}<a href="{{ shop.refund_policy.url }}" target="_blank" rel="noopener">Returns policy<span class="visually-hidden"> (opens in a new tab)</span></a>{% endif %}
+          </div>
+        </div>
+      </details>
+    {% endif %}
+
+{% endcapture %}
 <zootify-cart-summary
-  class="zc-summary"
+  class="zc-summary{% if drawer %} zc-summary--drawer{% endif %}"
   id="ZcSummary-{{ section_id }}"
   data-section-id="{{ section_id }}"
   data-sticky-desktop="{{ config.zc_desktop_sticky }}"
@@ -99,7 +119,13 @@
     --zc-button-radius: {{ config.zc_button_radius }}px;
   "
 >
-  <div class="zc-panel" data-zc-panel>
+  {% if drawer %}
+    <div class="zcd-scroll" data-zcd-scroll>
+      <div class="zcd-products">{{ drawer_products }}</div>
+      <div class="zc-panel zcd-info" data-zc-panel>
+  {% else %}
+    <div class="zc-panel" data-zc-panel>
+  {% endif %}
     <h2 class="zc-heading">{{ config.zc_heading | escape }}</h2>
 
     {% unless zbf_cart_mode %}
@@ -226,6 +252,11 @@
       </cart-note>
     {% endif %}
 
+    {% if drawer %}
+        {{ zcd_policies }}
+      </div>
+      <div class="zcd-footer">
+    {% endif %}
     <dl class="zc-breakdown" aria-label="Order price breakdown">
       <div class="zc-price-row">
         <dt>{{ 'content.cart_subtotal' | t }} <span class="zc-item-count">· {{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %}</span></dt>
@@ -269,31 +300,27 @@
         <span class="button-text">{{ checkout_label | escape }}</span>
       </button>
       {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
+        {% if drawer %}
+          <div class="zcd-wallet-options">
+            <div class="zc-wallet-label">{{ config.zc_wallet_label | escape }}</div>
+            <div class="additional-checkout-buttons zc-wallets{% if config.zc_wallet_layout == 'vertical' %} additional-checkout-buttons--vertical{% endif %}" data-zc-wallets>
+              {{ content_for_additional_checkout_buttons }}
+            </div>
+          </div>
+        {% else %}
         <div class="zc-wallet-label"><span>{{ config.zc_wallet_label | escape }}</span></div>
         <div class="additional-checkout-buttons zc-wallets{% if config.zc_wallet_layout == 'vertical' %} additional-checkout-buttons--vertical{% endif %}" data-zc-wallets>
           {{ content_for_additional_checkout_buttons }}
         </div>
+        {% endif %}
       {% endif %}
     </div>
 
-    {% if config.zc_show_policies %}
-      <details class="zc-policies">
-        <summary>{{ config.zc_policy_label | escape }}<span class="zc-plus" aria-hidden="true"></span></summary>
-        <div class="zc-policy-content">
-          <p class="zc-policy-heading">Delivery</p>
-          <p>{% if show_free %}Free Standard shipping on US orders. {% endif %}{% if is_us and config.zc_show_express and cart.requires_shipping %}Express is available for {{ express_price }} extra. {% endif %}Choose your shipping method at checkout, where delivery estimates are shown for your address.</p>
-          <p class="zc-policy-heading">Returns</p>
-          <p>{{ config.zc_returns_text | escape | newline_to_br }}</p>
-          <div class="zc-policy-links">
-            {% if shop.shipping_policy.url != blank %}<a href="{{ shop.shipping_policy.url }}" target="_blank" rel="noopener">Shipping policy<span class="visually-hidden"> (opens in a new tab)</span></a>{% endif %}
-            {% if shop.refund_policy.url != blank %}<a href="{{ shop.refund_policy.url }}" target="_blank" rel="noopener">Returns policy<span class="visually-hidden"> (opens in a new tab)</span></a>{% endif %}
-          </div>
-        </div>
-      </details>
-    {% endif %}
+    {% unless drawer %}{{ zcd_policies }}{% endunless %}
   </div>
+  {% if drawer %}</div>{% endif %}
 
-  {% if config.zc_mobile_sticky %}
+  {% if config.zc_mobile_sticky and drawer != true %}
     <div class="zc-mobile-bar" data-zc-mobile-bar hidden>
       <div class="zc-mobile-price"><span>{{ total_label }}</span><strong data-zc-mobile-total>{{ total_price }}</strong></div>
       <button type="button" class="button zc-checkout zc-mobile-checkout" data-zc-mobile-checkout>{{ checkout_label | escape }}</button>

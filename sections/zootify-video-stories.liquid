@@ -352,6 +352,7 @@ if (!customElements.get('zootify-media-stories')) {
       this.abortController = new AbortController();
       const signal = this.abortController.signal;
       this.generation = (this.generation || 0) + 1;
+      this.isDesktop = window.matchMedia('(min-width: 769px)');
       this.cards = Array.from(this.track.querySelectorAll('[data-zms-card]'));
       this.previousButton = this.querySelector('[data-zms-prev]');
       this.nextButton = this.querySelector('[data-zms-next]');
@@ -475,11 +476,30 @@ if (!customElements.get('zootify-media-stories')) {
       this.resizeObserver.observe(this.track);
       if (this.cards[0]) this.resizeObserver.observe(this.cards[0]);
       this.classList.add('is-ready');
+
+      /* Desktop hover-to-play: play on mouseenter, pause on mouseleave */
+      for (const state of this.states) {
+        if (!state.template) continue;
+        state.card.addEventListener('mouseenter', () => {
+          if (!this.isDesktop.matches) return;
+          state.userPaused = false;
+          state.autoBlocked = false;
+          state.retryExhausted = false;
+          this.play(state, true);
+        }, { signal });
+        state.card.addEventListener('mouseleave', () => {
+          if (!this.isDesktop.matches) return;
+          this.pause(state);
+        }, { signal });
+      }
+
       this.updateNavigation();
       this.reconcilePlayback();
     }
 
     canAutoplay() {
+      /* Desktop: no autoplay — videos play only on hover */
+      if (this.isDesktop?.matches) return false;
       const peerPlaying = this.peerOwner?.isConnected && this.peerOwner.active?.shouldPlay;
       return this.dataset.autoplay === 'true' && !this.reducedMotion.matches &&
         !navigator.connection?.saveData && !document.hidden && !peerPlaying;

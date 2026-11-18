@@ -97,6 +97,9 @@
   {% endif %}
 
   {% if settings.cart_type == 'drawer' and template.name != 'cart' %}
+    {{ 'zootify-cart-page.css' | asset_url | stylesheet_tag }}
+    {{ 'zootify-cart-drawer.css' | asset_url | stylesheet_tag }}
+    <script type="module" src="{{ 'zootify-cart-page.js' | asset_url }}"></script>
     <script
       src="{{ 'cart-drawer.js' | asset_url }}"
       type="module"
@@ -104,14 +107,15 @@
     ></script>
 
     <cart-drawer-component
-      class="cart-drawer"
+      class="cart-drawer zcd-cart-drawer zootify-cart-page--v3"
+      style="--zcd-width: {{ section.settings.zcd_width | default: 560 }}px;"
       {{ block.shopify_attributes }}
       {% if settings.auto_open_cart_drawer %}
         auto-open
       {% endif %}
     >
       <button
-        class="button header-actions__action button-unstyled"
+        class="button header-actions__action button-unstyled zcd-trigger"
         on:click="/open"
         aria-haspopup="dialog"
         aria-label="{{ 'accessibility.cart' | t }}"
@@ -123,87 +127,50 @@
 
       <dialog
         ref="dialog"
-        class="cart-drawer__dialog dialog-modal dialog-drawer color-{{ settings.drawer_color_scheme }}{% if cart.empty? %} cart-drawer--empty{%endif%}"
-        aria-labelledby="{% if cart.empty? %}cart-drawer-heading-empty{% else %}cart-drawer-heading{% endif %}"
+        class="cart-drawer__dialog dialog-modal dialog-drawer zcd-dialog color-{{ settings.drawer_color_scheme }}"
+        aria-labelledby="zcd-cart-heading"
         scroll-lock
-        cart-summary-sticky="true"
       >
-        <div class="cart-drawer__inner">
+        <div class="cart-drawer__inner zcd-inner">
           <cart-items-component
-            class="cart-items-component"
+            class="cart-items-component zcd-cart-items"
+            data-drawer
             data-section-id="{{ section.id }}"
           >
-            {%- if cart.empty? -%}
-              <div class="cart-drawer__header">
-                <button
-                  ref="closeButton"
-                  on:click="cart-drawer-component/close"
-                  class="button close-button cart-drawer__close-button button-unstyled"
-                  aria-label="{{ 'actions.close_dialog' | t }}"
-                >
-                  <span class="svg-wrapper">
-                    {{- 'icon-close.svg' | inline_asset_content -}}
-                  </span>
-                </button>
+            <div class="zcd-top">
+              <div class="zcd-title">
+                <h2 id="zcd-cart-heading" tabindex="-1" autofocus>{{ section.settings.zcd_title | default: 'SHOPPING BAG' | escape }}</h2>
+                {% if section.settings.zcd_show_subtitle %}
+                  <p class="zcd-selected" aria-live="polite">
+                    {{ cart.item_count }}
+                    {% if cart.item_count == 1 %}item{% else %}items{% endif %}
+                    selected
+                  </p>
+                {% endif %}
               </div>
-
-              <div
-                class="cart-drawer__content motion-reduce"
-                aria-label="{{ 'accessibility.cart' | t }}"
-              >
-                <h2
-                  class="cart-drawer__heading h4 cart-drawer__heading--empty"
-                  id="cart-drawer-heading-empty"
-                >
-                  {{ 'content.your_cart_is_empty' | t }}
-                </h2>
-
-                <div class="cart-drawer__items">
-                  {% render 'cart-products', drawer_context: 'drawer' %}
-                </div>
+              <button
+                type="button"
+                ref="closeButton"
+                on:click="cart-drawer-component/close"
+                class="button button-unstyled zcd-close"
+                aria-label="{{ 'actions.close_dialog' | t }}"
+              ><span class="svg-wrapper" aria-hidden="true">{{ 'icon-close.svg' | inline_asset_content }}</span></button>
+            </div>
+            {%- if cart.empty? -%}
+              <div class="zcd-empty">
+                {% render 'cart-products', drawer_context: 'drawer' %}
               </div>
             {%- else -%}
-              <div
-                class="cart-drawer__header"
-                id="cart-drawer-header"
-              >
-                <h2
-                  class="cart-drawer__heading h4"
-                  id="cart-drawer-heading"
-                >
-                  {{ 'content.cart_title' | t }}
-                  {% render 'cart-bubble' %}
-                </h2>
-
-                <button
-                  ref="closeButton"
-                  on:click="cart-drawer-component/close"
-                  class="button close-button cart-drawer__close-button button-unstyled"
-                  aria-label="{{ 'actions.close_dialog' | t }}"
-                >
-                  <span class="svg-wrapper">
-                    {{- 'icon-close.svg' | inline_asset_content -}}
-                  </span>
-                </button>
-              </div>
-
-              <scroll-hint
-                class="cart-drawer__content motion-reduce"
-                aria-label="{{ 'accessibility.cart' | t }}"
-                style="--header-height: 60px;"
-              >
-                <scroll-hint
-                  class="cart-drawer__items"
-                >
-                  {% render 'cart-products', drawer_context: 'drawer' %}
-                </scroll-hint>
-
-                <div
-                  class="cart-drawer__summary"
-                >
-                  {% render 'cart-summary' %}
-                </div>
-              </scroll-hint>
+              {% capture zcd_products %}
+                {% render 'cart-products', drawer_context: 'drawer' %}
+                {% render 'upsell-products', context: 'cart', section_id: section.id, component_id: section.id %}
+              {% endcapture %}
+              {% render 'zootify-cart-summary',
+                section_id: section.id,
+                config: section.settings,
+                drawer: true,
+                drawer_products: zcd_products
+              %}
             {%- endif -%}
           </cart-items-component>
         </div>

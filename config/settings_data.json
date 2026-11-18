@@ -35,7 +35,7 @@
     "z_primary_button_padding_x": 14,
     "button_text_case_primary": "uppercase",
     "secondary_button_border_width": 0,
-    "cart_type": "page",
+    "cart_type": "drawer",
     "icon_stroke": "heavy",
     "popover_color_scheme": "",
     "popover_border": "none",
@@ -544,7 +544,8 @@
           "selected_variant_hover_border_color": "#1a1a1a"
         }
       }
-    }
+    },
+    "auto_open_cart_drawer": true
   },
   "presets": {
     "Tinker": {
