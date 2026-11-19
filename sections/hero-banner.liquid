@@ -2,14 +2,45 @@
   Hero – Dynamic Slider. Existing media, appearance and editor controls preserved.
   Fix 2026-11-12: ignore descendant transition events; a single slide never translates.
 {% endcomment %}
+
+{%- comment -%} Preload the first slide's LCP images so the browser discovers them immediately {%- endcomment -%}
+{%- if section.index == 1 -%}
+  {%- assign first_block = section.blocks | first -%}
+  {%- if first_block -%}
+    {%- if first_block.settings.desktop_layout == 'split' -%}
+      {%- if first_block.settings.desktop_left_type == 'image' and first_block.settings.desktop_left_image != blank -%}
+        <link rel="preload" as="image" href="{{ first_block.settings.desktop_left_image | image_url: width: 1400 }}" imagesrcset="{{ first_block.settings.desktop_left_image | image_url: width: 100 }} 100w, {{ first_block.settings.desktop_left_image | image_url: width: 480 }} 480w, {{ first_block.settings.desktop_left_image | image_url: width: 750 }} 750w, {{ first_block.settings.desktop_left_image | image_url: width: 1000 }} 1000w, {{ first_block.settings.desktop_left_image | image_url: width: 1400 }} 1400w" imagesizes="(max-width: 768px) 1px, 50vw" media="(min-width: 769px)" fetchpriority="high">
+      {%- endif -%}
+      {%- if first_block.settings.desktop_right_type == 'image' and first_block.settings.desktop_right_image != blank -%}
+        <link rel="preload" as="image" href="{{ first_block.settings.desktop_right_image | image_url: width: 1400 }}" imagesrcset="{{ first_block.settings.desktop_right_image | image_url: width: 100 }} 100w, {{ first_block.settings.desktop_right_image | image_url: width: 480 }} 480w, {{ first_block.settings.desktop_right_image | image_url: width: 750 }} 750w, {{ first_block.settings.desktop_right_image | image_url: width: 1000 }} 1000w, {{ first_block.settings.desktop_right_image | image_url: width: 1400 }} 1400w" imagesizes="(max-width: 768px) 1px, 50vw" media="(min-width: 769px)" fetchpriority="high">
+      {%- endif -%}
+    {%- else -%}
+      {%- if first_block.settings.desktop_full_type == 'image' and first_block.settings.desktop_full_image != blank -%}
+        <link rel="preload" as="image" href="{{ first_block.settings.desktop_full_image | image_url: width: 1920 }}" imagesrcset="{{ first_block.settings.desktop_full_image | image_url: width: 100 }} 100w, {{ first_block.settings.desktop_full_image | image_url: width: 750 }} 750w, {{ first_block.settings.desktop_full_image | image_url: width: 1100 }} 1100w, {{ first_block.settings.desktop_full_image | image_url: width: 1500 }} 1500w, {{ first_block.settings.desktop_full_image | image_url: width: 1920 }} 1920w" imagesizes="(max-width: 768px) 1px, 100vw" media="(min-width: 769px)" fetchpriority="high">
+      {%- endif -%}
+    {%- endif -%}
+    {%- if first_block.settings.mobile_layout == 'split' -%}
+      {%- if first_block.settings.mobile_top_type == 'image' and first_block.settings.mobile_top_image != blank -%}
+        <link rel="preload" as="image" href="{{ first_block.settings.mobile_top_image | image_url: width: 1200 }}" imagesrcset="{{ first_block.settings.mobile_top_image | image_url: width: 100 }} 100w, {{ first_block.settings.mobile_top_image | image_url: width: 480 }} 480w, {{ first_block.settings.mobile_top_image | image_url: width: 750 }} 750w, {{ first_block.settings.mobile_top_image | image_url: width: 1000 }} 1000w, {{ first_block.settings.mobile_top_image | image_url: width: 1200 }} 1200w" imagesizes="(min-width: 769px) 1px, 100vw" media="(max-width: 768px)" fetchpriority="high">
+      {%- endif -%}
+    {%- else -%}
+      {%- if first_block.settings.mobile_full_type == 'image' and first_block.settings.mobile_full_image != blank -%}
+        <link rel="preload" as="image" href="{{ first_block.settings.mobile_full_image | image_url: width: 1200 }}" imagesrcset="{{ first_block.settings.mobile_full_image | image_url: width: 100 }} 100w, {{ first_block.settings.mobile_full_image | image_url: width: 480 }} 480w, {{ first_block.settings.mobile_full_image | image_url: width: 750 }} 750w, {{ first_block.settings.mobile_full_image | image_url: width: 1000 }} 1000w, {{ first_block.settings.mobile_full_image | image_url: width: 1200 }} 1200w" imagesizes="(min-width: 769px) 1px, 100vw" media="(max-width: 768px)" fetchpriority="high">
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
 <section id="hero-{{ section.id }}" class="hero-dynamic" style="--mobile-hero-height: {{ section.settings.mobile_banner_height | default: 62 }}vh;">
   <div class="hero-slides" id="hero-track-{{ section.id }}">
     {% for block in section.blocks %}
       {% liquid
         if forloop.first and section.index == 1
           assign hero_img_priority = 'high'
+          assign hero_img_loading = 'eager'
         else
           assign hero_img_priority = 'auto'
+          assign hero_img_loading = 'lazy'
         endif
       %}
       <div class="hero-slide{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
@@ -20,14 +51,14 @@
                 {% if block.settings.desktop_left_type == 'video' and block.settings.desktop_left_video != blank %}
                   <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.desktop_left_video.sources[0].url }}"></video>
                 {% elsif block.settings.desktop_left_image != blank %}
-                  {{ block.settings.desktop_left_image | image_url: width: 1400 | image_tag: widths: '100, 480, 750, 1000, 1400', sizes: '(max-width: 768px) 1px, 50vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.desktop_left_image.alt }}
+                  {{ block.settings.desktop_left_image | image_url: width: 1400 | image_tag: widths: '100, 480, 750, 1000, 1400', sizes: '(max-width: 768px) 1px, 50vw', loading: hero_img_loading, fetchpriority: hero_img_priority, alt: block.settings.desktop_left_image.alt }}
                 {% endif %}
               </div>
               <div class="hero-side">
                 {% if block.settings.desktop_right_type == 'video' and block.settings.desktop_right_video != blank %}
                   <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.desktop_right_video.sources[0].url }}"></video>
                 {% elsif block.settings.desktop_right_image != blank %}
-                  {{ block.settings.desktop_right_image | image_url: width: 1400 | image_tag: widths: '100, 480, 750, 1000, 1400', sizes: '(max-width: 768px) 1px, 50vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.desktop_right_image.alt }}
+                  {{ block.settings.desktop_right_image | image_url: width: 1400 | image_tag: widths: '100, 480, 750, 1000, 1400', sizes: '(max-width: 768px) 1px, 50vw', loading: hero_img_loading, fetchpriority: hero_img_priority, alt: block.settings.desktop_right_image.alt }}
                 {% endif %}
               </div>
             </div>
@@ -36,7 +67,7 @@
               {% if block.settings.desktop_full_type == 'video' and block.settings.desktop_full_video != blank %}
                 <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.desktop_full_video.sources[0].url }}"></video>
               {% elsif block.settings.desktop_full_image != blank %}
-                {{ block.settings.desktop_full_image | image_url: width: 1920 | image_tag: widths: '100, 750, 1100, 1500, 1920', sizes: '(max-width: 768px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.desktop_full_image.alt }}
+                {{ block.settings.desktop_full_image | image_url: width: 1920 | image_tag: widths: '100, 750, 1100, 1500, 1920', sizes: '(max-width: 768px) 1px, 100vw', loading: hero_img_loading, fetchpriority: hero_img_priority, alt: block.settings.desktop_full_image.alt }}
               {% endif %}
             </div>
           {% endif %}
@@ -48,14 +79,14 @@
                 {% if block.settings.mobile_top_type == 'video' and block.settings.mobile_top_video != blank %}
                   <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.mobile_top_video.sources[0].url }}"></video>
                 {% elsif block.settings.mobile_top_image != blank %}
-                  {{ block.settings.mobile_top_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.mobile_top_image.alt }}
+                  {{ block.settings.mobile_top_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: hero_img_loading, fetchpriority: hero_img_priority, alt: block.settings.mobile_top_image.alt }}
                 {% endif %}
               </div>
               <div class="hero-side">
                 {% if block.settings.mobile_bottom_type == 'video' and block.settings.mobile_bottom_video != blank %}
                   <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.mobile_bottom_video.sources[0].url }}"></video>
                 {% elsif block.settings.mobile_bottom_image != blank %}
-                  {{ block.settings.mobile_bottom_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.mobile_bottom_image.alt }}
+                  {{ block.settings.mobile_bottom_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: hero_img_loading, fetchpriority: hero_img_priority, alt: block.settings.mobile_bottom_image.alt }}
                 {% endif %}
               </div>
             </div>
@@ -64,7 +95,7 @@
               {% if block.settings.mobile_full_type == 'video' and block.settings.mobile_full_video != blank %}
                 <video autoplay loop muted playsinline data-hero-video data-video-src="{{ block.settings.mobile_full_video.sources[0].url }}"></video>
               {% elsif block.settings.mobile_full_image != blank %}
-                {{ block.settings.mobile_full_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: 'lazy', fetchpriority: hero_img_priority, alt: block.settings.mobile_full_image.alt }}
+                {{ block.settings.mobile_full_image | image_url: width: 1200 | image_tag: widths: '100, 480, 750, 1000, 1200', sizes: '(min-width: 769px) 1px, 100vw', loading: hero_img_loading, fetchpriority: hero_img_priority, alt: block.settings.mobile_full_image.alt }}
               {% endif %}
             </div>
           {% endif %}
