@@ -122,9 +122,9 @@
 
       <div class="za-about__hero-overlay" aria-hidden="true"></div>
 
-      <div class="za-about__hero-position za-about__hero-position--desktop za-about__hero-position--{{ section.settings.hero_horizontal_desktop }} za-about__hero-position--v-{{ section.settings.hero_vertical_desktop }}">
+      <div class="za-about__hero-position za-about__hero-position--desktop za-about__hero-position--{{ section.settings.hero_horizontal_desktop }} za-about__hero-position--v-{{ section.settings.hero_vertical_desktop }} za-about__hero-position--mobile-h-{{ section.settings.hero_horizontal_mobile }} za-about__hero-position--mobile-v-{{ section.settings.hero_vertical_mobile }}">
         <div
-          class="za-about__hero-content za-about__text-{{ section.settings.hero_text_align_desktop }}"
+          class="za-about__hero-content za-about__text-{{ section.settings.hero_text_align_desktop }} za-about__hero-text-mobile-{{ section.settings.hero_text_align_mobile }}"
           data-za-reveal
           data-animation="{{ section.settings.hero_animation }}"
           style="--za-delay: {{ section.settings.hero_animation_delay }}ms;"
@@ -138,21 +138,6 @@
         </div>
       </div>
 
-      <div class="za-about__hero-position za-about__hero-position--mobile za-about__hero-position--{{ section.settings.hero_horizontal_mobile }} za-about__hero-position--v-{{ section.settings.hero_vertical_mobile }}">
-        <div
-          class="za-about__hero-content za-about__text-{{ section.settings.hero_text_align_mobile }}"
-          data-za-reveal
-          data-animation="{{ section.settings.hero_animation }}"
-          style="--za-delay: {{ section.settings.hero_animation_delay }}ms;"
-        >
-          {% if section.settings.hero_eyebrow != blank %}
-            <div class="za-about__hero-eyebrow">{{ section.settings.hero_eyebrow | escape }}</div>
-          {% endif %}
-          {% if section.settings.hero_heading != blank %}
-            <{{ section.settings.hero_heading_tag }} class="za-about__hero-heading">{{ section.settings.hero_heading | escape }}</{{ section.settings.hero_heading_tag }}>
-          {% endif %}
-        </div>
-      </div>
     </div>
   {% endif %}
 
@@ -568,13 +553,20 @@
     }
 
     #AnimatedAbout-{{ section.id }} .za-about__hero-position--desktop {
-      display: none;
-    }
-
-    #AnimatedAbout-{{ section.id }} .za-about__hero-position--mobile {
       display: flex;
       padding: var(--za-hero-pad-mobile);
     }
+
+    /* A single heading follows desktop/mobile positioning without duplicate H1 markup. */
+    #AnimatedAbout-{{ section.id }} .za-about__hero-position--mobile-h-left { justify-content: flex-start; }
+    #AnimatedAbout-{{ section.id }} .za-about__hero-position--mobile-h-center { justify-content: center; }
+    #AnimatedAbout-{{ section.id }} .za-about__hero-position--mobile-h-right { justify-content: flex-end; }
+    #AnimatedAbout-{{ section.id }} .za-about__hero-position--mobile-v-top { align-items: flex-start; }
+    #AnimatedAbout-{{ section.id }} .za-about__hero-position--mobile-v-middle { align-items: center; }
+    #AnimatedAbout-{{ section.id }} .za-about__hero-position--mobile-v-bottom { align-items: flex-end; }
+    #AnimatedAbout-{{ section.id }} .za-about__hero-text-mobile-left { text-align: left; }
+    #AnimatedAbout-{{ section.id }} .za-about__hero-text-mobile-center { text-align: center; }
+    #AnimatedAbout-{{ section.id }} .za-about__hero-text-mobile-right { text-align: right; }
 
     #AnimatedAbout-{{ section.id }} .za-about__hero-image,
     #AnimatedAbout-{{ section.id }} .za-about__hero-video,

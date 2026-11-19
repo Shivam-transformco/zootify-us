@@ -102,6 +102,10 @@ function blackFridaySubtotal(cart) {
 }
 function blackFridayMinimumSpend() { return 10000; }
 function blackFridayOffers(cart) {
+  if (blackFridayConfig().offerMode === 'flat25') {
+    const codes = blackFridayConfig().codes || {};
+    return [{ kind: 'flat25', code: String(codes.flat25 || 'BF25').trim() }];
+  }
   const codes = blackFridayConfig().codes || {};
   return [
     { kind: 'b2g1', code: String(codes.b2g1 || 'BFB2G1').trim() },
@@ -123,6 +127,10 @@ function blackFridayLegacyCode(code) {
   return blackFridayLegacyCodes().some((value) => normalizeCode(value) === normalizeCode(code));
 }
 
+function blackFridaySupersededCode(code) {
+  const codes = blackFridayConfig().codes || {};
+  return [codes.b2g1 || 'BFB2G1', codes.bf20 || 'BF20'].some((value) => normalizeCode(value) === normalizeCode(code));
+}
 function blackFridayManagedCode(code) {
   const regular = blackFridayConfig().codes?.regular;
   return Boolean(blackFridayOffer(code) || blackFridayLegacyCode(code) || (regular && normalizeCode(regular) === normalizeCode(code)));
@@ -160,6 +168,7 @@ function blackFridayQuantityEligibility(kind, cart) {
     return { eligible: count > 0, reason: count > 0 ? '' : 'empty' };
   }
   if (count === 0) return { eligible: false, reason: 'empty' };
+  if (kind === 'flat25') return { eligible: true, reason: '' };
   if (kind === 'tiered') {
     if (count < 2) return { eligible: false, reason: 'quantity_two' };
     const eligible = blackFridaySubtotal(cart) >= blackFridayMinimumSpend();
@@ -172,7 +181,7 @@ function blackFridayQuantityEligibility(kind, cart) {
 function blackFridayEligibility(kind, cart) {
   const state = blackFridayState();
   if (state.preview) return { eligible: false, reason: 'preview' };
-  if (kind === 'tiered' && !blackFridayConfig().releaseReady) return { eligible: false, reason: 'not_ready' };
+  if ((kind === 'tiered' || kind === 'flat25') && !blackFridayConfig().releaseReady) return { eligible: false, reason: 'not_ready' };
   if (kind !== 'welcome' && !state.canApplyCampaign) {
     const reason = state.actualPhase === 'ended' ? 'ended' : state.actualPhase === 'upcoming' ? 'upcoming' : 'not_ready';
     return { eligible: false, reason };
@@ -189,7 +198,7 @@ function blackFridayVisualEligibility(kind, cart) {
 
 function nativeSavings(cart, kind) {
   const lines = blackFridayEligibleLines(cart);
-  const rate = kind === 'welcome' ? 10 : blackFridayTieredPercentage(cart);
+  const rate = kind === 'welcome' ? 10 : kind === 'flat25' ? 25 : blackFridayTieredPercentage(cart);
   if (kind === 'b2g1') return blackFridayUnits(cart) >= 3 ? Math.min(...lines.map((item) => Number(item.original_price ?? item.price) || 0)) : 0;
   return lines.reduce((total, item) => total + Math.round(Number(item.original_line_price ?? item.line_price ?? 0) * rate / 100), 0);
 }
@@ -530,7 +539,7 @@ class ZootifyCartDiscount extends HTMLElement {
           return;
         }
         const desired = operation === 'apply'
-          ? (managed ? [...existing.filter((value) => !blackFridayManagedCode(value)), code] : [...existing, code])
+          ? (managed ? [...existing.filter((value) => !blackFridayManagedCode(value) && !(offer?.kind === 'flat25' && blackFridaySupersededCode(value))), code] : [...existing, code])
           : existing.filter((value) => normalizeCode(value) !== normalizeCode(code));
         data = await request(desired);
         accepted = managed ? allocatedSaving(data, code) > 0 : codesFromCart(data).some((value) => normalizeCode(value) === normalizeCode(code));
@@ -539,10 +548,11 @@ class ZootifyCartDiscount extends HTMLElement {
             const previousOffer = blackFridayOffer(value);
             return previousOffer && allocatedSaving(currentCart, value) > 0 && blackFridayEligibility(previousOffer.kind, data).eligible;
           });
+          const previousSuperseded = offer?.kind === 'flat25' ? existing.find((value) => blackFridaySupersededCode(value) && allocatedSaving(currentCart, value) > 0) : undefined;
           const previousRegular = existing.find((value) => normalizeCode(value) === normalizeCode(blackFridayConfig().codes?.regular) && allocatedSaving(currentCart, value) > 0);
           const restoreRegular = previousRegular && !blackFridayState().testing && ['off', 'ended', 'upcoming'].includes(blackFridayState().actualPhase);
           const retained = codesFromCart(data, desired, true).filter((value) => !blackFridayManagedCode(value));
-          data = await request([...retained, ...(previousChoice ? [previousChoice] : restoreRegular ? [previousRegular] : [])]);
+          data = await request([...retained, ...(previousChoice ? [previousChoice] : previousSuperseded ? [previousSuperseded] : restoreRegular ? [previousRegular] : [])]);
           rollback = true;
         }
         let html = data.sections?.[sectionId];

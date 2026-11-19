@@ -48,6 +48,7 @@
     {
       "enabled": {{ settings.zbf_enabled | json }},
       "cartEnabled": {{ settings.zbf_cart_enabled | json }},
+      "offerMode": {{ settings.zbf_offer_mode | default: "legacy" | json }},
       "startDate": {{ settings.zbf_start_date | json }},
       "startTime": {{ settings.zbf_start_time | json }},
       "endDate": {{ settings.zbf_close_date | default: '2026-12-01' | json }},
@@ -60,6 +61,7 @@
       "previewPhase": {% if request.design_mode %}{{ settings.zbf_preview_phase | json }}{% else %}"schedule"{% endif %},
       "customer": { "loggedIn": {% if customer %}true{% else %}false{% endif %}, "ordersCount": {% if customer %}{{ customer.orders_count | json }}{% else %}null{% endif %} },
       "codes": {
+        "flat25": {{ settings.zbf_code_flat25 | default: "BF25" | json }},
         "b2g1": {{ settings.zbf_code_b2g1 | json }},
         "tiered": "",
         "bf30": {{ settings.zbf_code_bf30 | default: 'BF30' | json }},

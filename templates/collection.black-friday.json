@@ -267,7 +267,7 @@
                   "static": true,
                   "settings": {
                     "zbf_badge_enabled": true,
-                    "zbf_badge_label": "B2G1",
+                    "zbf_badge_label": "25% OFF",
                     "zbf_badge_scope": "collection",
                     "zbf_badge_mode": "all",
                     "zbf_badge_products": [],

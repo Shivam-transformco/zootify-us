@@ -30,8 +30,8 @@
         "message_BFoffer": {
           "type": "message",
           "settings": {
-            "text": "Buy 2 Get 1 FREE · Sitewide",
-            "mobile_text": "Buy 2 Get 1 FREE · Sitewide",
+            "text": "FLAT 25% OFF · Sitewide",
+            "mobile_text": "FLAT 25% OFF",
             "standard_offer": false,
             "display_phase": "live",
             "link": "",
@@ -43,6 +43,7 @@
         },
         "message_BF20": {
           "type": "message",
+          "disabled": true,
           "settings": {
             "text": "Flat 20% off on orders $100+",
             "mobile_text": "Flat 20% off · Orders $100+",
@@ -57,6 +58,7 @@
         },
         "message_3TART4": {
           "type": "message",
+          "disabled": true,
           "settings": {
             "text": "Buy any 2 cases, save 20%",
             "mobile_text": "",
@@ -125,7 +127,7 @@
         "padding_side_mobile": 12,
         "content_width": "contained",
         "max_width": 1440,
-        "background_color": "#CE423B",
+        "background_color": "#ce423b",
         "text_color": "#ffffff",
         "link_color": "#ffffff",
         "link_hover_color": "#7dc762",

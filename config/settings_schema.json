@@ -3117,6 +3117,28 @@
         "content": "Coupon codes"
       },
       {
+        "type": "select",
+        "id": "zbf_offer_mode",
+        "label": "Black Friday cart offer shown",
+        "options": [
+          {
+            "value": "legacy",
+            "label": "Original B2G1 and BF20 offers"
+          },
+          {
+            "value": "flat25",
+            "label": "Flat 25% off only"
+          }
+        ],
+        "default": "legacy"
+      },
+      {
+        "type": "text",
+        "id": "zbf_code_flat25",
+        "label": "Flat 25% discount code",
+        "default": "BF25"
+      },
+      {
         "type": "text",
         "id": "zbf_code_b2g1",
         "label": "Buy 2 Get 1 Free code",

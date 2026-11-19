@@ -287,7 +287,7 @@ assign header_offset = 'var(--announcement-height)'
   data-scroll-direction="none"
 >
   {%- if request.page_type == 'index' -%}
-    <h1 class="visually-hidden">{{ shop.name }}</h1>
+    <h1 class="visually-hidden">{{ shop.name | escape }} — Premium iPhone Cases &amp; Covers</h1>
   {%- endif -%}
   {% for row in rows %}
     {% liquid

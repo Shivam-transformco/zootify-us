@@ -1,0 +1,261 @@
+{% comment %}
+  ZOOTIFY moving statement. Self-contained: no cart, promotions or other sections affected.
+  Shopify editor can add/reorder/delete phrases and edit every presentation control.
+{% endcomment %}
+{% liquid
+  assign motion_font = settings.type_heading_font
+  case section.settings.font_source
+    when 'body'
+      assign motion_font = settings.type_body_font
+    when 'accent'
+      assign motion_font = settings.type_accent_font
+    when 'custom'
+      assign motion_font = section.settings.custom_font
+  endcase
+%}
+{% if section.settings.font_source == 'custom' %}
+  {% style %}{{ motion_font | font_face: font_display: 'swap' }}{% endstyle %}
+{% endif %}
+<zootify-moving-statement
+  id="ZootifyMovingStatement-{{ section.id }}"
+  class="zms{% if section.settings.full_width == false %} zms--contained{% endif %}"
+  data-motion="{% if section.settings.enable_motion %}true{% else %}false{% endif %}"
+  data-pause-on-hover="{{ section.settings.pause_on_hover }}"
+  {% if section.settings.start_paused %}data-paused{% endif %}
+  style="
+    --zms-bg: {{ section.settings.background_color }};
+    --zms-color: {{ section.settings.text_color }};
+    --zms-control-bg: {{ section.settings.control_background }};
+    --zms-control-color: {{ section.settings.control_color }};
+    --zms-font: {{ motion_font.family | escape }}, {{ motion_font.fallback_families }};
+    --zms-size-d: {{ section.settings.text_size_desktop }}px;
+    --zms-size-m: {{ section.settings.text_size_mobile }}px;
+    --zms-weight: {{ section.settings.text_weight }};
+    --zms-case: {{ section.settings.text_case }};
+    --zms-spacing: {{ section.settings.letter_spacing }}px;
+    --zms-gap: {{ section.settings.phrase_gap }}px;
+    --zms-duration: {{ section.settings.cycle_duration }}s;
+    --zms-direction: {{ section.settings.direction }};
+    --zms-pad-d: {{ section.settings.padding_desktop }}px;
+    --zms-pad-m: {{ section.settings.padding_mobile }}px;
+    --zms-border-color: {{ section.settings.border_color }};
+    --zms-border-size: {% if section.settings.show_borders %}1px{% else %}0px{% endif %};
+  "
+>
+  {% comment %}One readable copy for assistive technology; duplicate moving rows are decorative.{% endcomment %}
+  <p class="visually-hidden">
+    {% for block in section.blocks %}
+      {% if block.settings.text != blank %}{{ block.settings.text | escape }}{% unless forloop.last %}. {% endunless %}{% endif %}
+    {% endfor %}
+  </p>
+
+  <div class="zms__viewport">
+    <div class="zms__track" aria-hidden="true">
+      {% for copy in (1..2) %}
+        <div class="zms__group">
+          {% for repetition in (1..3) %}
+            {% for block in section.blocks %}
+              {% if block.settings.text != blank %}
+                <span class="zms__phrase" {% if copy == 1 and repetition == 1 %}{{ block.shopify_attributes }}{% endif %}>{{ block.settings.text | escape }}</span>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if section.settings.enable_motion %}
+    <button
+      class="zms__motion-button zms__motion-button--{{ section.settings.button_position }}"
+      type="button"
+      aria-label="{% if section.settings.start_paused %}Play moving text{% else %}Pause moving text{% endif %}"
+      aria-pressed="{% if section.settings.start_paused %}true{% else %}false{% endif %}"
+      data-motion-button
+    >
+      <svg class="zms__icon-pause" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="5" y="3.5" width="3" height="13" rx="0.75" fill="currentColor"/><rect x="12" y="3.5" width="3" height="13" rx="0.75" fill="currentColor"/></svg>
+      <svg class="zms__icon-play" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M6 3.5L16.5 10 6 16.5V3.5Z" fill="currentColor"/></svg>
+    </button>
+  {% endif %}
+</zootify-moving-statement>
+<script src="{{ 'zootify-moving-statement.js' | asset_url }}" type="module"></script>
+
+{% stylesheet %}
+  .zms {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    background: var(--zms-bg);
+    border-top: var(--zms-border-size) solid var(--zms-border-color);
+    border-bottom: var(--zms-border-size) solid var(--zms-border-color);
+    isolation: isolate;
+  }
+  .zms--contained {
+    max-width: var(--page-width, 1400px);
+    margin-inline: auto;
+  }
+  .zms__viewport {
+    width: 100%;
+    overflow: hidden;
+    padding-block: var(--zms-pad-d);
+  }
+  .zms__track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    will-change: transform;
+  }
+  .zms__group {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex: 0 0 auto;
+    min-width: 100vw;
+    width: max-content;
+    white-space: nowrap;
+  }
+  .zms__phrase {
+    flex: 0 0 auto;
+    display: inline-block;
+    padding-inline-end: var(--zms-gap);
+    font-family: var(--zms-font);
+    font-weight: var(--zms-weight);
+    font-size: var(--zms-size-d);
+    line-height: 1.04;
+    letter-spacing: var(--zms-spacing);
+    color: var(--zms-color);
+    text-transform: var(--zms-case);
+    white-space: nowrap;
+    user-select: none;
+  }
+  .zms[data-motion="true"] .zms__track {
+    animation: zms-scroll var(--zms-duration) linear infinite;
+    animation-direction: var(--zms-direction);
+  }
+  .zms[data-paused] .zms__track,
+  .zms[data-hidden] .zms__track,
+  .zms[data-pause-on-hover="true"]:hover:not([data-user-resume]) .zms__track,
+  .zms[data-pause-on-hover="true"]:focus-within:not([data-user-resume]) .zms__track {
+    animation-play-state: paused;
+  }
+  @keyframes zms-scroll {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+  .zms__motion-button {
+    position: absolute;
+    z-index: 2;
+    bottom: 10px;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background: var(--zms-control-bg);
+    color: var(--zms-control-color);
+    cursor: pointer;
+    opacity: .88;
+    transition: opacity 150ms ease;
+  }
+  .zms__motion-button--right { right: 16px; }
+  .zms__motion-button--left { left: 16px; }
+  .zms__motion-button:hover,
+  .zms__motion-button:focus-visible { opacity: 1; }
+  .zms__motion-button:focus-visible {
+    outline: 2px solid var(--zms-control-color);
+    outline-offset: 3px;
+  }
+  .zms__icon-play { display: none; }
+  .zms[data-paused] .zms__icon-play { display: block; }
+  .zms[data-paused] .zms__icon-pause { display: none; }
+  @media (max-width: 749px) {
+    .zms__viewport { padding-block: var(--zms-pad-m); }
+    .zms__phrase { font-size: var(--zms-size-m); }
+    .zms__motion-button { bottom: 8px; width: 32px; height: 32px; }
+    .zms__motion-button--right { right: 10px; }
+    .zms__motion-button--left { left: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .zms .zms__track { animation: none !important; transform: none !important; will-change: auto; }
+    .zms .zms__motion-button { display: none !important; }
+  }
+{% endstylesheet %}
+{% schema %}
+{
+  "name": "ZOOTIFY Moving text",
+  "tag": "section",
+  "class": "zootify-moving-text-section",
+  "enabled_on": {"templates": ["index"]},
+  "max_blocks": 8,
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Text phrase",
+      "settings": [
+        {"type": "text", "id": "text", "label": "Moving text", "default": "CARRY THINGS WORTH CARRYING"}
+      ]
+    }
+  ],
+  "settings": [
+    {"type": "header", "content": "Movement"},
+    {"type": "checkbox", "id": "enable_motion", "label": "Enable moving text", "default": true},
+    {"type": "select", "id": "direction", "label": "Direction", "options": [
+      {"value": "normal", "label": "Right to left"},
+      {"value": "reverse", "label": "Left to right"}
+    ], "default": "normal"},
+    {"type": "range", "id": "cycle_duration", "label": "Movement speed (seconds per loop)", "min": 20, "max": 160, "step": 5, "unit": "s", "default": 70, "info": "Lower values move faster."},
+    {"type": "checkbox", "id": "start_paused", "label": "Start paused", "default": false},
+    {"type": "checkbox", "id": "pause_on_hover", "label": "Pause while hovered or focused", "default": false},
+    {"type": "select", "id": "button_position", "label": "Pause/play button position", "options": [
+      {"value": "left", "label": "Bottom left"},
+      {"value": "right", "label": "Bottom right"}
+    ], "default": "right"},
+    {"type": "header", "content": "Typography"},
+    {"type": "select", "id": "font_source", "label": "Font family", "options": [
+      {"value": "heading", "label": "Theme heading font"},
+      {"value": "body", "label": "Theme body font"},
+      {"value": "accent", "label": "Theme accent font"},
+      {"value": "custom", "label": "Custom font"}
+    ], "default": "heading"},
+    {"type": "font_picker", "id": "custom_font", "label": "Custom font", "default": "montserrat_n4", "visible_if": "{{ section.settings.font_source == 'custom' }}"},
+    {"type": "select", "id": "text_case", "label": "Text capitalization", "options": [
+      {"value": "uppercase", "label": "Uppercase"},
+      {"value": "none", "label": "As entered"}
+    ], "default": "uppercase"},
+    {"type": "select", "id": "text_weight", "label": "Font weight", "options": [
+      {"value": "400", "label": "Regular"},
+      {"value": "500", "label": "Medium"},
+      {"value": "600", "label": "Semibold"},
+      {"value": "700", "label": "Bold"},
+      {"value": "800", "label": "Extra bold"}
+    ], "default": "700"},
+    {"type": "range", "id": "text_size_desktop", "label": "Text size desktop", "min": 48, "max": 200, "step": 4, "unit": "px", "default": 128},
+    {"type": "range", "id": "text_size_mobile", "label": "Text size mobile", "min": 24, "max": 100, "step": 2, "unit": "px", "default": 60},
+    {"type": "range", "id": "letter_spacing", "label": "Letter spacing", "min": -5, "max": 12, "step": 1, "unit": "px", "default": -2},
+    {"type": "range", "id": "phrase_gap", "label": "Space between phrases", "min": 20, "max": 240, "step": 5, "unit": "px", "default": 100},
+    {"type": "header", "content": "Colors and spacing"},
+    {"type": "color", "id": "background_color", "label": "Background", "default": "#ffffff"},
+    {"type": "color", "id": "text_color", "label": "Text color", "default": "#8a8a8a"},
+    {"type": "color", "id": "control_background", "label": "Pause button background", "default": "#ffffff"},
+    {"type": "color", "id": "control_color", "label": "Pause button color", "default": "#222222"},
+    {"type": "checkbox", "id": "full_width", "label": "Full-width section", "default": true},
+    {"type": "range", "id": "padding_desktop", "label": "Vertical padding desktop", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 40},
+    {"type": "range", "id": "padding_mobile", "label": "Vertical padding mobile", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 28},
+    {"type": "checkbox", "id": "show_borders", "label": "Show top and bottom lines", "default": false},
+    {"type": "color", "id": "border_color", "label": "Line color", "default": "#e7e7e7"}
+  ],
+  "presets": [
+    {
+      "name": "ZOOTIFY Moving text",
+      "category": "Text",
+      "blocks": [
+        {"type": "message", "settings": {"text": "CARRY THINGS WORTH CARRYING"}}
+      ]
+    }
+  ]
+}
+{% endschema %}

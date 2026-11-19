@@ -1,10 +1,13 @@
 {% doc %}
-  Renders two Black Friday offers and a two-case B2G1 browsing prompt.
+  Renders the selected Black Friday cart offers. Original modes are preserved.
   @param {string} section_id - Main cart section ID.
 {% enddoc %}
 {{ 'zootify-bf-native-offers.css' | asset_url | stylesheet_tag }}
 {%- liquid
   assign zbf_offer_kinds = 'b2g1,tiered' | split: ','
+  if settings.zbf_offer_mode == 'flat25'
+    assign zbf_offer_kinds = 'flat25' | split: ','
+  endif
   assign zbf_units = 0
   assign zbf_subtotal = 0
   for line in cart.items
@@ -40,6 +43,9 @@
     {%- for zbf_kind in zbf_offer_kinds -%}
       {%- liquid
         case zbf_kind
+          when 'flat25'
+            assign zbf_code = settings.zbf_code_flat25 | default: 'BF25'
+            assign zbf_description = 'Flat 25% OFF'
           when 'b2g1'
             assign zbf_code = settings.zbf_code_b2g1 | default: 'BFB2G1'
             assign zbf_description = 'zootify_bf_cart.b2g1_description' | t
@@ -75,6 +81,8 @@
         assign zbf_initial_eligible = false
         if zbf_kind == 'b2g1' and zbf_units >= 3
           assign zbf_initial_eligible = true
+        elsif zbf_kind == 'flat25' and zbf_units > 0
+          assign zbf_initial_eligible = true
         elsif zbf_kind == 'tiered' and zbf_units >= 2 and zbf_subtotal >= 10000
           assign zbf_initial_eligible = true
         endif
@@ -94,6 +102,7 @@
             <span class="zc-offer__applied" data-zbf-applied{% unless zbf_applied %} hidden{% endunless %}>{{ 'zootify_bf_cart.applied_badge' | t }}</span>
           </div>
           {% if zbf_kind == 'tiered' %}<p class="zc-offer__terms">On orders $100+</p>{% endif %}
+          {% if zbf_kind == 'flat25' %}<p class="zc-offer__terms">No minimum purchase</p>{% endif %}
           <p class="zc-offer__saving" data-zbf-saving hidden></p>
           <span class="zc-offer__code" data-zbf-code hidden>{{ zbf_code | escape }}</span>
           <p class="zc-offer__reason" id="ZbfReason-{{ section_id }}-{{ zbf_kind }}" data-zbf-reason{% if zbf_reason == blank %} hidden{% endif %}>{{ zbf_reason }}</p>

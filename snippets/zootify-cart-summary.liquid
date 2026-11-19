@@ -18,7 +18,8 @@
   assign zbf_code_bf20 = settings.zbf_code_bf20 | default: 'BF20' | strip | downcase
   assign zbf_code_bf10 = settings.zbf_code_bf10 | default: 'BF10' | strip | downcase
   assign zbf_code_welcome = settings.zbf_code_welcome | default: 'WELCOME10' | strip | downcase
-  assign zbf_managed_codes = zbf_code_b2g1 | append: '|' | append: zbf_code_tiered | append: '|' | append: zbf_code_bf30 | append: '|' | append: zbf_code_bf20 | append: '|' | append: zbf_code_bf10 | append: '|' | append: zbf_code_welcome | split: '|'
+  assign zbf_code_flat25 = settings.zbf_code_flat25 | default: 'BF25' | strip | downcase
+  assign zbf_managed_codes = zbf_code_b2g1 | append: '|' | append: zbf_code_tiered | append: '|' | append: zbf_code_bf30 | append: '|' | append: zbf_code_bf20 | append: '|' | append: zbf_code_bf10 | append: '|' | append: zbf_code_welcome | append: '|' | append: zbf_code_flat25 | split: '|'
   assign is_us = false
   if localization.country.iso_code == 'US' and cart.currency.iso_code == 'USD'
     assign is_us = true
@@ -69,6 +70,17 @@
     endunless
   endfor
   assign other_saving = cart.total_discount | minus: pairing_saving | at_least: 0
+  assign compare_at_saving = 0
+  for item in cart.items
+    assign original_unit_price = item.original_price
+    assign compare_at_unit_price = item.variant.compare_at_price | default: 0
+    if compare_at_unit_price > original_unit_price
+      assign saving_per_unit = compare_at_unit_price | minus: original_unit_price
+      assign saving_line = saving_per_unit | times: item.quantity
+      assign compare_at_saving = compare_at_saving | plus: saving_line
+    endif
+  endfor
+  assign compare_at_subtotal = cart.original_total_price | plus: compare_at_saving
 -%}
 {% capture zcd_policies %}
     {% if config.zc_show_policies %}
@@ -128,7 +140,7 @@
   {% endif %}
     <h2 class="zc-heading">{{ config.zc_heading | escape }}</h2>
 
-    {% unless zbf_cart_mode %}
+    {% unless settings.zbf_enabled %}
         {%- comment -%} WELCOME10 offer card (Claude, 6 Nov 2026): one-tap apply, shown OUTSIDE the discount dropdown (option 2). Hidden once applied, when the Buy-2 pair offer is active (they don't combine), or for signed-in customers who have already ordered. {%- endcomment -%}
         {%- liquid
           assign zt_offer_code = 'WELCOME10'
@@ -260,8 +272,11 @@
     <dl class="zc-breakdown" aria-label="Order price breakdown">
       <div class="zc-price-row">
         <dt>{{ 'content.cart_subtotal' | t }} <span class="zc-item-count">· {{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %}</span></dt>
-        <dd data-testid="cart-subtotal-value">{{ cart.original_total_price | money }}</dd>
+        <dd data-testid="cart-subtotal-value">{{ compare_at_subtotal | money }}</dd>
       </div>
+      {% if compare_at_saving > 0 %}
+        <div class="zc-price-row zc-savings"><dt>Black Friday savings</dt><dd>−{{ compare_at_saving | money }}</dd></div>
+      {% endif %}
       {% if pairing_saving > 0 %}
         <div class="zc-price-row zc-savings"><dt>{{ 'zootify_pairing.discount_applied' | t }}</dt><dd>−{{ pairing_saving | money }}</dd></div>
       {% endif %}

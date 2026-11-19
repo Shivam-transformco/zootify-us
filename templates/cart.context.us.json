@@ -19,6 +19,27 @@
         "zc_short_titles": false
       },
       "blocks": {}
+    },
+    "product_recommendations_akVN8L": {
+      "settings": {},
+      "blocks": {
+        "static-product-card": {
+          "blocks": {
+            "product_card_gallery_3dcXmD": {
+              "blocks": {
+                "hero-deal-badge": {
+                  "settings": {
+                    "zbf_badge_weight": "600",
+                    "zbf_badge_background": "#CE423B"
+                  }
+                }
+              },
+              "settings": {}
+            }
+          },
+          "settings": {}
+        }
+      }
     }
   }
 }
