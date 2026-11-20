@@ -287,11 +287,11 @@
                     "zbf_badge_pad_x": 10,
                     "zbf_badge_pad_y": 5,
                     "zbf_badge_corner": 64,
-                    "zbf_badge_size_mobile": 10,
+                    "zbf_badge_size_mobile": 8,
                     "zbf_badge_position_mobile": "inherit",
                     "zbf_badge_offset_mobile": 8,
                     "zbf_badge_offset_y_mobile": 8,
-                    "zbf_badge_pad_x_mobile": 8,
+                    "zbf_badge_pad_x_mobile": 4,
                     "zbf_badge_pad_y_mobile": 4,
                     "zbf_badge_corner_mobile": 56
                   },
