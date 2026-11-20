@@ -173,6 +173,13 @@
     endfor
   endif
 -%}
+
+{%- comment -%} Preload the first product image (LCP element) so the browser fetches it early {%- endcomment -%}
+{%- assign first_media = sorted_media | first -%}
+{%- if first_media and first_media.preview_image -%}
+  <link rel="preload" as="image" href="{{ first_media.preview_image | image_url: width: 1200 }}" imagesrcset="{{ first_media.preview_image | image_url: width: 240 }} 240w, {{ first_media.preview_image | image_url: width: 352 }} 352w, {{ first_media.preview_image | image_url: width: 832 }} 832w, {{ first_media.preview_image | image_url: width: 1200 }} 1200w" imagesizes="{{ sizes }}" fetchpriority="high">
+{%- endif -%}
+
 {%- if has_image_drop -%}
   <script
     src="{{ 'drag-zoom-wrapper.js' | asset_url }}"
@@ -341,13 +348,18 @@
               else
                 assign media_sizes = sizes
               endif
+              if forloop.first
+                assign media_loading = 'eager'
+              else
+                assign media_loading = 'lazy'
+              endif
           -%}
           {% if block_settings.aspect_ratio != 'adapt' and block_settings.constrain_to_viewport %}
             <div class="product-media-constraint-wrapper">
-              {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
+              {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first, loading: media_loading -%}
             </div>
           {% else %}
-            {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
+            {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first, loading: media_loading -%}
           {% endif %}
         {% endcapture %}
         {% capture class %}
@@ -451,13 +463,18 @@
               else
                 assign media_sizes = sizes
               endif
+              if forloop.first
+                assign media_loading = 'eager'
+              else
+                assign media_loading = 'lazy'
+              endif
             -%}
             {% if block_settings.aspect_ratio != 'adapt' and block_settings.constrain_to_viewport %}
               <div class="product-media-constraint-wrapper">
-                {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
+                {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first, loading: media_loading -%}
               </div>
             {% else %}
-              {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first -%}
+              {%- render 'product-media', media: media, sizes: media_sizes, is_main_product_media: forloop.first, loading: media_loading -%}
             {% endif %}
           </li>
         {% endfor %}

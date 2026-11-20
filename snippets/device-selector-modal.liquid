@@ -326,8 +326,14 @@
     });
   }
 
+  var fetched = false;
+
   document.getElementById('dsm-trigger').addEventListener('click', function() {
     document.getElementById('dsm-overlay').classList.add('active');
+    if (!fetched) {
+      fetched = true;
+      fetchSiblings();
+    }
   });
 
   document.getElementById('dsm-close').addEventListener('click', function() {
@@ -337,12 +343,6 @@
   document.getElementById('dsm-overlay').addEventListener('click', function(e) {
     if (e.target === this) document.getElementById('dsm-overlay').classList.remove('active');
   });
-
-  // commented out — only needed when multiple brands exist
-  // document.getElementById('dsm-back').addEventListener('click', showBrands);
-
-  // ✅ Pre-fetch in background on page load
-  fetchSiblings();
 
 })();
 </script>
