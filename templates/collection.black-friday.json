@@ -277,7 +277,7 @@
                     "zbf_badge_link_insets": true,
                     "zbf_badge_background": "#ce423b",
                     "zbf_badge_color": "#ffffff",
-                    "zbf_badge_radius": 13,
+                    "zbf_badge_radius": 4,
                     "zbf_badge_font": "body",
                     "zbf_badge_weight": "600",
                     "zbf_badge_case": "uppercase",

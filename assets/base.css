@@ -1771,7 +1771,7 @@ media-gallery.media-gallery--grid .media-gallery__grid .product-media-container 
   position: absolute;
   width: 100%;
   height: 100%;
-  z-index: var(--layer-flat);
+  z-index: var(--layer-raised);
   cursor: zoom-in;
   background-color: transparent;
 

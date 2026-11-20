@@ -28,7 +28,7 @@
           "type": "_product-media-gallery",
           "static": true,
           "settings": {
-            "media_presentation": "carousel",
+            "media_presentation": "grid",
             "media_columns": "two",
             "image_gap": 12,
             "large_first_image": true,
@@ -1990,7 +1990,7 @@
                     "zbf_badge_shape": "pill",
                     "zbf_badge_position": "top-left",
                     "zbf_badge_link_insets": true,
-                    "zbf_badge_background": "#CE423B",
+                    "zbf_badge_background": "#ce423b",
                     "zbf_badge_color": "#ffffff",
                     "zbf_badge_radius": 4,
                     "zbf_badge_font": "body",
